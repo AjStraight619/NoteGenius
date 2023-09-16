@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  folders      Folder[]
+  chats        Chat[]
+  refinedNotes RefinedNote[]
+}
+
+model Folder {
+  id           String        @id @default(uuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  notes        Note[]
+  refinedNotes RefinedNote[]
+
+  @@unique([name, userId])
+  @@index([userId])
+}
+
+model Note {
+  id          String        @id @default(uuid())
+  title       String
+  content     String?
+  isRefined   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  folderId    String
+  folder      Folder        @relation(fields: [folderId], references: [id])
+  RefinedNote RefinedNote[]
+
+  @@index([folderId])
+}
+
+model RefinedNote {
+  id        String   @id @default(uuid())
+  original  String
+  refined   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  folderId  String
+  folder    Folder   @relation(fields: [folderId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  noteId    String
+  note      Note     @relation(fields: [noteId], references: [id])
+
+  @@index([folderId, userId, noteId])
+  @@index([userId, noteId])
+  @@index([noteId])
+}
+
+model Chat {
+  id           String        @id @default(uuid())
+  title        String
+  content      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  chatMessages ChatMessage[]
+
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  @@index([chatId])
+}
