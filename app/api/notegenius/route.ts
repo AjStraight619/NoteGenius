@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// export const runtine = "edge";
-
 const apiConfig = new Configuration({
   apiKey: process.env.OPENAI_API_KEY!,
 });
