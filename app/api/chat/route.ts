@@ -1,6 +1,8 @@
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Configuration, OpenAIApi } from "openai-edge";
 
+export const runtime = "edge";
+
 const apiConfig = new Configuration({
   apiKey: process.env.OPENAI_API_KEY!,
 });
@@ -13,6 +15,7 @@ export async function POST(req: Request) {
     model: "gpt-4",
     stream: true,
     messages: messages,
+    max_tokens: 4096,
   });
   const stream = OpenAIStream(response);
   return new StreamingTextResponse(stream);
