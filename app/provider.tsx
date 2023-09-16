@@ -18,5 +18,5 @@ export const Providers = ({ children }: Props) => {
     return null; // or a loading spinner or some initial content
   }
 
-  return <SessionProvider>{children}</SessionProvider>;
+  return <SessionProvider basePath="/api/auth">{children}</SessionProvider>;
 };
