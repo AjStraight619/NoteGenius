@@ -27,21 +27,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}></body>
-      <Providers>
-        {/* <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <NavigationMenuLink>Link</NavigationMenuLink>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu> */}
-
-        {children}
-      </Providers>
+      <body className={inter.className}>{children}</body>
+      {/* <Providers>{children}</Providers> */}
     </html>
   );
 }
