@@ -2,21 +2,15 @@
 import { useEffect, useState } from "react";
 import { SessionProvider } from "next-auth/react";
 
-type Props = {
-  children?: React.ReactNode;
-};
+// type Props = {
+//   children?: React.ReactNode;
+//   sessions?: SessionProvider;
+// };
 
-export const Providers = ({ children }: Props) => {
-  const [isClient, setIsClient] = useState(false); // to identify if the component is mounted
-
-  useEffect(() => {
-    // code here will only run on the client
-    setIsClient(true); // set the flag to true once the component has mounted
-  }, []);
-
-  if (!isClient) {
-    return null; // or a loading spinner or some initial content
-  }
-
-  return <SessionProvider basePath="/api/auth">{children}</SessionProvider>;
+export const Providers = ({ children, session }: any) => {
+  return (
+    <SessionProvider session={session} basePath="/api/auth">
+      {children}
+    </SessionProvider>
+  );
 };

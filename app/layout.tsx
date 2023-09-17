@@ -2,16 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Providers } from "./provider";
 import { Inter } from "next/font/google";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from "@/components/ui/navigation-menu";
+import NavBar from "@/components/component/navbar/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,12 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <div>Hello</div>
+      <Providers>
+        <body className={inter.className}>
+          <NavBar />
           {children}
-        </Providers>
-      </body>
+        </body>
+      </Providers>
     </html>
   );
 }
