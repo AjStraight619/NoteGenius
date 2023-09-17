@@ -4,6 +4,7 @@ import { type User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { FaFolder } from "react-icons/fa";
+import AddFolder from "@/components/component/addfolder/addfolder";
 
 const getFolders = async () => {
   const session = await getServerSession(authOptions);
@@ -19,6 +20,9 @@ const getFolders = async () => {
         where: {
           userId: userId,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
       return folders;
     }
@@ -31,6 +35,9 @@ const FolderPage = async () => {
   return (
     <div className="m-4">
       <div>Folder Page</div>
+      <div className="fixed top-32 right-16 z-50">
+        <AddFolder /> {/* Add the AddFolder component here */}
+      </div>
       <div>These are the folders:</div>
       <div className="flex flex-wrap gap-4 mt-4">
         {folders ? (

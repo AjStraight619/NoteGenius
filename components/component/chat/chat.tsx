@@ -14,7 +14,7 @@ type Message = {
 };
 
 export default function Chat() {
-  const { data } = useSession();
+  const { data: session } = useSession();
   const [prompt, setPrompt] = useState<string>("");
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
 
@@ -62,7 +62,7 @@ export default function Chat() {
             .filter((msg) => msg.role !== "system")
             .map((msg, idx) => (
               <li key={idx} className="py-4">
-                {msg.role === "user" ? "User: " : "NoteGenius: "}
+                {msg.role === "user" ? session?.user?.name : "NoteGenius: "}
                 <span className="whitespace-pre-line"> {msg.content}</span>
               </li>
             ))}

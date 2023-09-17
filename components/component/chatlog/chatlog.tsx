@@ -21,7 +21,7 @@ export default function ChatLog() {
     // Define an async function
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/chatlogs", {});
+        const response = await fetch("/api/get-chatlogs", {});
 
         // Check if the request was successful
         if (response.ok) {
