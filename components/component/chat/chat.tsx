@@ -4,6 +4,8 @@ import { useChat } from "ai/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import type { User } from "@prisma/client";
 
 type Message = {
   id: string;
@@ -12,8 +14,8 @@ type Message = {
 };
 
 export default function Chat() {
+  const { data } = useSession();
   const [prompt, setPrompt] = useState<string>("");
-
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
 
   const defaultPrompts = [
@@ -54,7 +56,7 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col h-[90vh] w-full ">
-      <div className="flex-1 overflow-y-auto p-4 border rounded w-full no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-4  w-full no-scrollbar">
         <ul className="divide-y">
           {messages
             .filter((msg) => msg.role !== "system")

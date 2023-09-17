@@ -1,11 +1,18 @@
 import Chat from "@/components/component/chat/chat";
-
+import ChatLog from "@/components/component/chatlog/chatlog";
 export const runtime = "edge";
 export default function ChatPage() {
   return (
-    <main className="container max-w-4xl mx-auto outline-3 h-[80vh] flex flex-col justify-between">
-      <h1 className="text-center my-4 text-2xl">NoteGenius</h1>
-      <Chat />
+    <main className="flex flex-col h-screen">
+      <h1 className="text-center text-2xl py-4">NoteGenius</h1>
+      <div className="flex flex-row flex-grow overflow-hidden">
+        <div className="w-[30%] min-w-[100px] max-h-full overflow-y-auto">
+          <ChatLog />
+        </div>
+        <div className="flex-grow max-h-full overflow-y-auto">
+          <Chat />
+        </div>
+      </div>
     </main>
   );
 }

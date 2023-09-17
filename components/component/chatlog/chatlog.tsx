@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { type Chat } from "@prisma/client";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
 interface ChatLog {
@@ -15,10 +14,8 @@ interface ChatLog {
 }
 
 export default function ChatLog() {
-  const session = useSession();
   const [chatLogs, setChatLogs] = useState<ChatLog[]>([]);
   const [isOpen, setIsOpen] = useState(false); // Manage whether the sidebar is open or closed
-  console.log(session);
 
   useEffect(() => {
     // Define an async function
@@ -57,22 +54,26 @@ export default function ChatLog() {
       </button>
 
       <div
-        className={`fixed top-16 left-4 w-64 bg-white p-4 overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`fixed top-16 left-4 w-64 h-[100vh] bg-white p-4 overflow-hidden transition-all duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } z-40`}
       >
         <h1 className="text-lg font-semibold mb-4">Chat Logs</h1>
-        <ul>
-          {chatLogs.map((chatLog, index) => (
-            <li key={index} className="p-4 border-b border-gray-200">
-              <h2 className="text-md font-medium">{chatLog.title}</h2>
-              <p className="text-sm text-gray-600">
-                Message: {chatLog.content} <br />
-                Timestamp: {chatLog.createdAt}
-              </p>
-            </li>
-          ))}
-        </ul>
+
+        {/* Wrap your list with the ScrollArea */}
+        <ScrollArea className="h-full w-full overflow-y-hidden">
+          <ul>
+            {chatLogs.map((chatLog, index) => (
+              <li key={index} className="p-4 border-b border-gray-200">
+                <h2 className="text-md font-medium">{chatLog.title}</h2>
+                <p className="text-sm text-gray-600">
+                  Message: {chatLog.content} <br />
+                  Timestamp: {chatLog.createdAt}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </ScrollArea>
       </div>
     </div>
   );

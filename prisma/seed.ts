@@ -56,6 +56,32 @@ async function main() {
     )
   );
 
+  for (let i = 0; i < 10; i++) {
+    const folderTitle = "Folder " + i.toString();
+
+    // Create a folder and store the returned folder object
+    const folder = await prisma.folder.create({
+      data: {
+        name: folderTitle,
+        userId: alice.id,
+      },
+    });
+
+    // Create 5 notes for each folder
+    for (let j = 0; j < 5; j++) {
+      const noteTitle = "Note " + j.toString();
+
+      await prisma.note.create({
+        data: {
+          title: noteTitle,
+          // Add content here if you wish
+          // content: "Some content",
+          folderId: folder.id, // Associate note with folder
+        },
+      });
+    }
+  }
+
   // ... (your other seed data like folders, notes, etc.)
 }
 
