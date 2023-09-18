@@ -1,5 +1,5 @@
 // custom hook for POST request for adding folder or notes
-export const useApi = async (name: string, itemType: "folder" | "note") => {
+export const callApi = async (name: string, itemType: "folder" | "note") => {
   const apiUrl = itemType === "folder" ? "/api/folders" : "/api/notes";
 
   try {

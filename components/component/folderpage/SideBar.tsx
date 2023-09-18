@@ -8,7 +8,7 @@ import { FaFolderPlus } from "react-icons/fa";
 import dynamic from "next/dynamic";
 import useFilteredData from "@/hooks/useFilteredData";
 import { FolderSidebarProps } from "@/types/folderTypes";
-import { useApi } from "@/hooks/useApi";
+import { callApi } from "@/lib/callApi";
 import { useRouter } from "next/navigation";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 
@@ -40,7 +40,7 @@ export default function FolderSidebar({
   };
 
   const handleSubmit = async (folderName: string) => {
-    await useApi(folderName, "folder");
+    await callApi(folderName, "folder");
     router.refresh();
   };
 
