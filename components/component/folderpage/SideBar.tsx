@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import useFilteredData from "@/hooks/useFilteredData";
 import { FolderSidebarProps } from "@/types/folderTypes";
+import useApi from "@/hooks/useApi";
 
 type PopoverProps = any;
 const DynamicPopover = dynamic<PopoverProps>(
@@ -46,7 +47,7 @@ export default function FolderSidebar({
   };
 
   const handleAddFolder = (folderName: string) => {
-    console.log("Adding folder:", folderName); // Added something meaningful
+    useApi(folderName, "folder");
   };
 
   return (

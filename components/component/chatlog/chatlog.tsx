@@ -29,7 +29,6 @@ export default function ChatLog() {
           console.log("response ok");
 
           setChatLogs(data.chatLogs);
-          console.log(data.chatLogs);
         } else {
           console.error("Failed to fetch chat logs");
         }

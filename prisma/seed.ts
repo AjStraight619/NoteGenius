@@ -10,6 +10,7 @@ async function main() {
   await prisma.refinedNote.deleteMany({});
   await prisma.note.deleteMany({});
   await prisma.folder.deleteMany({});
+  await prisma.tag.deleteMany({});
   await prisma.user.deleteMany({});
 
   // Create a hashed password
@@ -26,48 +27,32 @@ async function main() {
     },
   });
 
-  // Create a chat for Alice
-  await Promise.all(
-    [
-      "Sample Chat",
-      "Chat about Dogs",
-      "News Discussion",
-      "Project Updates",
-      "Random Chat",
-      "Weekend Plans",
-    ].map((title) =>
-      prisma.chat.create({
+  // Create some tags
+  const tags = await Promise.all(
+    ["Work", "Personal", "Project", "Shopping"].map((tagName) =>
+      prisma.tag.create({
         data: {
-          title: title,
-          content: `This is a ${title.toLowerCase()}`,
-          userId: alice.id,
-          chatMessages: {
-            create: [
-              {
-                content: `Hello, this is the first message in the ${title}.`,
-              },
-              {
-                content: `And this is the second message in the ${title}.`,
-              },
-            ],
-          },
+          name: tagName,
         },
       })
     )
   );
 
+  // Create a folder and associate with tags
   for (let i = 0; i < 10; i++) {
     const folderTitle = "Folder " + i.toString();
 
-    // Create a folder and store the returned folder object
     const folder = await prisma.folder.create({
       data: {
         name: folderTitle,
         userId: alice.id,
+        tags: {
+          connect: tags.map((tag) => ({ id: tag.id })),
+        },
       },
     });
 
-    // Create 5 notes for each folder
+    // Create 5 notes for each folder and associate with tags
     for (let j = 0; j < 5; j++) {
       const noteTitle = "Note " + j.toString();
 
@@ -75,13 +60,14 @@ async function main() {
         data: {
           name: noteTitle,
           content: "This is content of note " + noteTitle,
-          folderId: folder.id, // Associate note with folder
+          folderId: folder.id,
+          tags: {
+            connect: tags.map((tag) => ({ id: tag.id })),
+          },
         },
       });
     }
   }
-
-  // ... (your other seed data like folders, notes, etc.)
 }
 
 main()

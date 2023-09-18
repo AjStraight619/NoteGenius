@@ -37,6 +37,6 @@ export const excludeRefined = (items: Note[]): Note[] => {
   return items.filter((item) => !item.isRefined);
 };
 
-export const excludeNotRefined = (items: Note[]): Note[] => {
+export const includeOnlyRefined = (items: Note[]): Note[] => {
   return items.filter((item) => item.isRefined);
 };
