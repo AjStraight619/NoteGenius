@@ -2,51 +2,51 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { FaSearch } from "react-icons/fa";
-import FolderPageClient from "./FolderPageClient";
+import { FaFolderPlus } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+import useFilteredData from "@/hooks/useFilteredData";
+import { Folder, FolderSidebarProps } from "@/types/folderTypes";
 
-interface FolderSidebarProps {
-  folders?: Folder[] | null;
-  updateFolders: (newFolders: Folder[]) => void; // Define the prop type for the function
-}
+type PopoverProps = any;
+const DynamicPopover = dynamic<PopoverProps>(
+  async () => {
+    const { Popover } = await import("@/components/ui/popover");
+    return { default: Popover };
+  },
+  { ssr: false }
+);
 
-type Folder = {
-  id: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  // Note: the relationships like `user`, `notes`, and `refinedNotes` are omitted for simplicity
-};
+// Side bar on FolderPageClient
 
 export default function FolderSidebar({
   folders,
   updateFolders,
 }: FolderSidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredFolders, setFilteredFolders] = useState(folders);
+  const [newFolderName, setNewFolderName] = useState("");
   const folderRefs = useRef({});
-  console.log(filteredFolders);
 
-  useEffect(() => {
-    if (searchTerm === "") {
-      setFilteredFolders(folders);
-      return;
-    }
-
-    const newFilteredFolders = folders?.filter((folder) =>
-      folder.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredFolders(newFilteredFolders);
-  }, [searchTerm, folders]);
+  // custom hook for searching for specific folder
+  useFilteredData(folders, updateFolders, searchTerm);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleAddFolder(newFolderName);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewFolderName(e.target.value);
+  };
+
+  const handleAddFolder = (folderName: string) => {
+    console.log("Adding folder:", folderName); // Added something meaningful
   };
 
   return (
@@ -65,8 +65,29 @@ export default function FolderSidebar({
       <hr className="my-4" />
       {/* Add Folder and Create Note Buttons */}
       <div>
-        <button className="w-full p-2 mb-2">Add Folder</button>
-        <button className="w-full p-2 mb-2">Create Note</button>
+        <DynamicPopover>
+          <PopoverTrigger>
+            <Button>Add Folder</Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="relative">
+              <Input
+                value={newFolderName}
+                onChange={handleChange}
+                className="pr-10 w-full"
+                placeholder="Name for folder..."
+              />
+              <button
+                className="absolute right-0 top-0 bottom-0 px-2 py-1 cursor-pointer"
+                onClick={handleSubmit}
+              >
+                <FaFolderPlus />
+              </button>
+            </div>
+          </PopoverContent>
+        </DynamicPopover>
+        {/* <button className="w-full p-2 mb-2">Add Folder</button>
+        <button className="w-full p-2 mb-2">Create Note</button> */}
       </div>
       <hr className="my-4" />
       {/* Sort By */}

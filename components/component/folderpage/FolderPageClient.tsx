@@ -1,13 +1,16 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { FaFolder } from "react-icons/fa";
 import FolderSideBar from "./SideBar";
+import { Folder, FolderPageClientProps } from "@/types/folderTypes";
 
-export default function FolderPageClient({ foldersToDisplay }: any) {
+export default function FolderPageClient({
+  foldersToDisplay,
+}: FolderPageClientProps) {
   const [folders, setFolders] = useState(foldersToDisplay);
 
-  const updateFolders = (newFolders: any) => {
+  const updateFolders = (newFolders: Folder[]) => {
     setFolders(newFolders);
   };
 
@@ -15,26 +18,42 @@ export default function FolderPageClient({ foldersToDisplay }: any) {
     <div className="flex justify-between mt-16">
       {/* Main Content */}
       <div className="w-3/4">
-        <div className="flex flex-wrap gap-4 mt-4 items-start justify-start">
+        <div className="flex flex-wrap mt-4">
           {folders ? (
-            folders.map((folder: any) => (
+            folders.map((folder: Folder) => (
               <div
                 key={folder.id}
-                className="p-2 min-w-[50%] md:min-w-0 md:w-auto"
+                className="p-2 flex flex-col items-center w-full sm:w-1/2 md:w-1/4 lg:w-1/5"
               >
-                <Link href={`/folders/notes/${folder.id}`}>
-                  <FaFolder size={32} />
-                  <div>{folder.name}</div>
-                </Link>
+                <div className="flex flex-col items-center">
+                  <FaFolder size={64} />
+                  <div
+                    className="w-20 text-center break-words"
+                    style={{
+                      whiteSpace: "normal",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: "2",
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
+                    {folder.name}
+                  </div>
+                </div>
               </div>
             ))
           ) : (
             <div>No folders available</div>
           )}
-          <div>
-            <FolderSideBar folders={folders} updateFolders={updateFolders} />
-          </div>
         </div>
+      </div>
+      {/* Sidebar */}
+      <div className="w-1/4">
+        <FolderSideBar
+          folders={foldersToDisplay}
+          updateFolders={updateFolders}
+        />
       </div>
     </div>
   );
