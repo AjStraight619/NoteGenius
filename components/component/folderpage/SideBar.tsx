@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import {
@@ -8,6 +8,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { FaSearch } from "react-icons/fa";
+import FolderPageClient from "./FolderPageClient";
+
+interface FolderSidebarProps {
+  folders?: Folder[] | null;
+  updateFolders: (newFolders: Folder[]) => void; // Define the prop type for the function
+}
 
 type Folder = {
   id: string;
@@ -20,20 +26,28 @@ type Folder = {
 
 export default function FolderSidebar({
   folders,
-}: {
-  folders?: Folder[] | null;
-}) {
-  const [sortBy, setSortBy] = useState("Name");
-  const [sortedFolders, setSortedFolders] = useState<Folder[]>([]);
+  updateFolders,
+}: FolderSidebarProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredFolders, setFilteredFolders] = useState(folders);
+  const folderRefs = useRef({});
+  console.log(filteredFolders);
 
   useEffect(() => {
-    let sortedArray = folders ? [...folders] : [];
-    if (sortBy === "Name") {
-      sortedArray.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy === "Date") {
+    if (searchTerm === "") {
+      setFilteredFolders(folders);
+      return;
     }
-    setSortedFolders(sortedArray);
-  }, [sortBy, folders]);
+
+    const newFilteredFolders = folders?.filter((folder) =>
+      folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredFolders(newFilteredFolders);
+  }, [searchTerm, folders]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <div className="w-64 border-l border-gray-300 p-4 fixed top-0 right-0 h-screen mt-16">
@@ -42,7 +56,11 @@ export default function FolderSidebar({
       {/* Search Bar with Icon */}
       <div className="relative">
         <FaSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
-        <Input placeholder="Search..." className="pl-10" />
+        <Input
+          placeholder="Search..."
+          className="pl-10"
+          onChange={handleSearchChange}
+        />
       </div>
       <hr className="my-4" />
       {/* Add Folder and Create Note Buttons */}
@@ -54,10 +72,10 @@ export default function FolderSidebar({
       {/* Sort By */}
       <div>
         <label>Sort by: </label>
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        {/* <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="Name">Name</option>
           <option value="Date">Date</option>
-        </select>
+        </select> */}
       </div>
       <hr className="my-4" />
       {/* Bulk Actions */}
@@ -91,10 +109,6 @@ export default function FolderSidebar({
         <p>Total Notes: 100</p>
       </div>
       {/* Account Settings, Logout */}
-      <div>
-        <button className="w-full p-2 mb-2">Account Settings</button>
-        <button className="w-full p-2">Logout</button>
-      </div>
     </div>
   );
 }
