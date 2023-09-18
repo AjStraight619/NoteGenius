@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -8,7 +8,7 @@ import { FaFolderPlus } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import useFilteredData from "@/hooks/useFilteredData";
-import { Folder, FolderSidebarProps } from "@/types/folderTypes";
+import { FolderSidebarProps } from "@/types/folderTypes";
 
 type PopoverProps = any;
 const DynamicPopover = dynamic<PopoverProps>(

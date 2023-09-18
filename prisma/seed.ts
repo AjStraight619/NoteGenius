@@ -73,9 +73,8 @@ async function main() {
 
       await prisma.note.create({
         data: {
-          title: noteTitle,
-          // Add content here if you wish
-          // content: "Some content",
+          name: noteTitle,
+          content: "This is content of note " + noteTitle,
           folderId: folder.id, // Associate note with folder
         },
       });
