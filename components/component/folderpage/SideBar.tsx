@@ -5,11 +5,12 @@ import Link from "next/link";
 import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { FaSearch } from "react-icons/fa";
 import { FaFolderPlus } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import useFilteredData from "@/hooks/useFilteredData";
 import { FolderSidebarProps } from "@/types/folderTypes";
-import useApi from "@/hooks/useApi";
+import { useApi } from "@/hooks/useApi";
+import { useRouter } from "next/navigation";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 
 type PopoverProps = any;
 const DynamicPopover = dynamic<PopoverProps>(
@@ -29,6 +30,7 @@ export default function FolderSidebar({
   const [searchTerm, setSearchTerm] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
   const folderRefs = useRef({});
+  const router = useRouter();
 
   // custom hook for searching for specific folder
   useFilteredData(folders, updateFolders, searchTerm);
@@ -37,17 +39,13 @@ export default function FolderSidebar({
     setSearchTerm(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleAddFolder(newFolderName);
+  const handleSubmit = async (folderName: string) => {
+    await useApi(folderName, "folder");
+    router.refresh();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewFolderName(e.target.value);
-  };
-
-  const handleAddFolder = (folderName: string) => {
-    useApi(folderName, "folder");
   };
 
   return (
@@ -67,9 +65,7 @@ export default function FolderSidebar({
       {/* Add Folder and Create Note Buttons */}
       <div>
         <DynamicPopover>
-          <PopoverTrigger>
-            <Button>Add Folder</Button>
-          </PopoverTrigger>
+          <PopoverTrigger>Add Folder</PopoverTrigger>
           <PopoverContent>
             <div className="relative">
               <Input
@@ -78,12 +74,14 @@ export default function FolderSidebar({
                 className="pr-10 w-full"
                 placeholder="Name for folder..."
               />
-              <button
-                className="absolute right-0 top-0 bottom-0 px-2 py-1 cursor-pointer"
-                onClick={handleSubmit}
-              >
-                <FaFolderPlus />
-              </button>
+              <PopoverPrimitive.Close>
+                <button
+                  className="absolute right-0 top-0 bottom-0 px-2 py-1 cursor-pointer"
+                  onClick={() => handleSubmit(newFolderName)}
+                >
+                  <FaFolderPlus className="text-xl -mt-5" />
+                </button>
+              </PopoverPrimitive.Close>
             </div>
           </PopoverContent>
         </DynamicPopover>
