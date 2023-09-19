@@ -23,8 +23,9 @@ export default function RootLayout({
       <Providers>
         <body className={inter.className}>
           {/* <NavBar /> */}
-          <Theme appearance="dark" color="Indigo">
+          <Theme appearance="dark" accentColor="blue">
             {children}
+            <ThemePanel />
           </Theme>
         </body>
       </Providers>

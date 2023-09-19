@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
+import { LogOutButton, LogInButton} from "@/components/component/auth/auth";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -22,19 +23,24 @@ export default async function Home() {
                 <span className="mx-2 text-2xl font-bold">
                   {session?.user?.name}
                 </span>
-                <Link href="/logout">
+                {/* <Link href="/logout">
                   <span className="mx-2 p-2 bg-red-500 text-white rounded inline-block text-2xl font-bold">
                     Logout
                   </span>
-                </Link>
+                </Link> */}
+                <LogOutButton />
               </>
             ) : (
               <>
-                <Link href="/login">
+                {/* <Link href="/api/auth/signin">
                   <span className="mx-2 p-2 bg-red-500 text-white rounded inline-block text-2xl font-bold">
                     Sign In
                   </span>
-                </Link>
+                </Link> */}
+                <LogInButton />
+                <Link href="/register">
+              <span className="mx-2 p-2 text-2xl font-bold">Sign up</span>
+            </Link>
               </>
             )}
           </div>

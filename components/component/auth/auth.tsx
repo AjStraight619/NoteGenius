@@ -1,12 +1,30 @@
 "use client";
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 export const LogInButton = () => {
-  return <button onClick={() => signIn()}>Log In</button>;
+  return (
+    <span 
+      className="mx-2 p-2 text-2xl font-bold cursor-pointer hover:bg-gray-800"
+      onClick={() => signIn()}
+    >
+      Log In
+    </span>
+  );
 };
 
 export const LogOutButton = () => {
-  console.log("Log Out");
-  return <button onClick={() => signOut()}>Log Out</button>;
+  return (
+    <span 
+      className="mx-2 p-2 text-2xl font-bold cursor-pointer hover:bg-gray-800"
+      onClick={() => signOut()}
+    >
+      Log Out
+    </span>
+  );
 };
+
+
+
+
+

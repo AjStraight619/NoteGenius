@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import * as Form from "@radix-ui/react-form";
+import { Button, TextField, TextFieldInput } from "@radix-ui/themes";
 
 export const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -38,12 +39,13 @@ export const RegisterForm = () => {
       <Form.Field name="email" className="flex flex-col">
         <Form.Label className="FormLabel">Email</Form.Label>
         <Form.Control asChild>
-          <input
+          <TextFieldInput
             className="Input"
             type="email"
             required
             value={email}
             onChange={(e: any) => setEmail(e.target.value)}
+            placeholder="Enter your email..."
           />
         </Form.Control>
         <Form.Message match="valueMissing">
@@ -57,12 +59,13 @@ export const RegisterForm = () => {
       <Form.Field name="password" className="flex flex-col">
         <Form.Label className="FormLabel">Password</Form.Label>
         <Form.Control asChild>
-          <input
+          <TextFieldInput
             className="Input"
             type="password"
             required
             value={password}
             onChange={(e: any) => setPassword(e.target.value)}
+            placeholder="Create a password..."
           />
         </Form.Control>
         <Form.Message match="valueMissing">
@@ -70,11 +73,10 @@ export const RegisterForm = () => {
         </Form.Message>
         {error && <div>{error}</div>}
       </Form.Field>
-
       <Form.Submit asChild>
-        <button className="Button w-full" style={{ marginTop: 10 }}>
-          Register
-        </button>
+        <Button >
+          Sign up
+        </Button>
       </Form.Submit>
     </Form.Root>
   );
