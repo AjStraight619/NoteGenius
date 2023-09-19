@@ -10,6 +10,7 @@ export default function FolderPageClient({
   foldersToDisplay,
 }: FolderPageClientProps) {
   const [folders, setFolders] = useState(foldersToDisplay);
+  console.log(folders);
 
   const updateFolders = (newFolders: Folder[]) => {
     setFolders(newFolders);

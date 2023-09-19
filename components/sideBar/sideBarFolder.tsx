@@ -11,6 +11,7 @@ import {
 } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Popover from "@radix-ui/react-popover";
+import * as Dialog from "@radix-ui/react-dialog";
 import {
   PaperPlaneIcon,
   ExitIcon,
@@ -25,13 +26,18 @@ import { useRouter } from "next/navigation";
 import { FaFolderPlus } from "react-icons/fa";
 import { sortbyForFolder } from "@/lib/sortBy";
 import { Folder } from "@/types/folderTypes";
-import { deepEqual } from "assert";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
 
-  console.log("Entered SideBar: ", folders);
+  const openIsFolderModal = () => {
+    setIsFolderModalOpen(true);
+  };
+  const closeIsFolderModal = () => {
+    setIsFolderModalOpen(false);
+  };
 
   const router = useRouter();
   console.log({ folders, updateFolders, searchQuery });
@@ -44,19 +50,19 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
     console.log("Serch query: " + e.target.value);
   };
 
-  // const handleSubmit = async (folderName: string) => {
-  //   await callApi(folderName, "folder");
-  //   router.refresh();
-  // };
+  const handleSubmit = async (folderName: string) => {
+    await callApi(folderName, "folder");
+    router.refresh();
+  };
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNewFolderName(e.target.value);
-  // };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewFolderName(e.target.value);
+  };
 
-  // const handleSort = (method: any) => {
-  //   const sorted = method.value(folders);
-  //   updateFolders(sorted);
-  // };
+  const handleSort = (method: any) => {
+    const sorted = method.value(folders);
+    updateFolders(sorted);
+  };
 
   return (
     <Box
@@ -80,15 +86,14 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
             className="bg-gray-700 text-white rounded"
           />
         </TextField.Root>
-        {/* View Chats Button and Plus Icon */}
         <Flex className="justify-center items-center">
-          {/* Add Folder Button */}
           <Popover.Root>
             <Popover.Trigger asChild>
               <Flex className="justify-center items-center">
                 <IconButton
                   className="hover:bg-gray-700"
                   style={{ backgroundColor: "#2C2F33" }}
+                  onClick={openIsFolderModal}
                 >
                   <FaFolderPlus
                     style={{
@@ -126,19 +131,17 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content>
-              {/* {sortbyForFolder.map((method, index) => (
+              {sortbyForFolder.map((method, index) => (
                 <DropdownMenu.Item
                   onSelect={() => handleSort(method.value)}
                   key={index}
                 >
                   {method.name}
                 </DropdownMenu.Item>
-              ))} */}
+              ))}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-        {/* Other Icons */}
-        {/* ... other icons like PaperPlane, Exit etc. ... */}
         <Box className="flex-grow"></Box>
         <IconButton
           className="hover:bg-gray-700"
