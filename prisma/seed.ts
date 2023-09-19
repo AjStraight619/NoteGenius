@@ -68,6 +68,32 @@ async function main() {
       });
     }
   }
+
+  // Create some chats for Alice
+  for (let i = 0; i < 5; i++) {
+    const chatTitle = "Chat " + i.toString();
+    const chatContent = "This is content of chat " + chatTitle;
+
+    const newChat = await prisma.chat.create({
+      data: {
+        title: chatTitle,
+        content: chatContent,
+        userId: alice.id,
+      },
+    });
+
+    // Create some chat messages for each chat
+    for (let j = 0; j < 10; j++) {
+      const messageContent = "Message " + j.toString();
+
+      await prisma.chatMessage.create({
+        data: {
+          content: messageContent,
+          chatId: newChat.id,
+        },
+      });
+    }
+  }
 }
 
 main()

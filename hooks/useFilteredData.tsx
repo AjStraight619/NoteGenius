@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { Folder } from "@/types/folderTypes";
 import { Note } from "@/types/noteTypes";
+import { Chat } from "@prisma/client";
 
 export default function useFilteredData(
-  initialData: Folder[] | Note[] | null | undefined,
+  initialData: Folder[] | Note[] | Chat[] | null | undefined,
   updateDataInParent: any,
   searchTerm: string
 ) {

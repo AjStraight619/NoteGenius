@@ -1,19 +1,15 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import { Alert } from "@/components/ui/alert";
+import * as Form from "@radix-ui/react-form";
 
 export const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    // checkPassword();
 
     try {
       const res = await fetch("/api/register", {
@@ -26,8 +22,8 @@ export const RegisterForm = () => {
           "Content-Type": "application/json",
         },
       });
+
       if (res.ok) {
-        // redirect
         signIn(undefined, { callbackUrl: "http://localhost:3000/" });
       }
     } catch (error: any) {
@@ -35,42 +31,51 @@ export const RegisterForm = () => {
       alert("Your password is too short");
       console.log(error);
     }
-    console.log("Register!");
-  };
-
-  const checkPassword = () => {
-    if (password.length < 8) {
-    }
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-12 w-full sm:w-[400px]">
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          required
-          value={email}
-          onChange={(e: any) => setEmail(e.target.value)}
-          id="email"
-          type="email"
-        />
-      </div>
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          required
-          value={password}
-          onChange={(e: any) => setPassword(e.target.value)}
-          id="password"
-          type="password"
-        />
-      </div>
-      {error && <Alert>{error}</Alert>}
-      <div className="w-full">
-        <Button className="w-full" size="lg">
+    <Form.Root onSubmit={onSubmit} className="space-y-4 w-full sm:w-[400px]">
+      <Form.Field name="email" className="flex flex-col">
+        <Form.Label className="FormLabel">Email</Form.Label>
+        <Form.Control asChild>
+          <input
+            className="Input"
+            type="email"
+            required
+            value={email}
+            onChange={(e: any) => setEmail(e.target.value)}
+          />
+        </Form.Control>
+        <Form.Message match="valueMissing">
+          Please enter your email
+        </Form.Message>
+        <Form.Message match="typeMismatch">
+          Please provide a valid email
+        </Form.Message>
+      </Form.Field>
+
+      <Form.Field name="password" className="flex flex-col">
+        <Form.Label className="FormLabel">Password</Form.Label>
+        <Form.Control asChild>
+          <input
+            className="Input"
+            type="password"
+            required
+            value={password}
+            onChange={(e: any) => setPassword(e.target.value)}
+          />
+        </Form.Control>
+        <Form.Message match="valueMissing">
+          Please enter a password
+        </Form.Message>
+        {error && <div>{error}</div>}
+      </Form.Field>
+
+      <Form.Submit asChild>
+        <button className="Button w-full" style={{ marginTop: 10 }}>
           Register
-        </Button>
-      </div>
-    </form>
+        </button>
+      </Form.Submit>
+    </Form.Root>
   );
 };

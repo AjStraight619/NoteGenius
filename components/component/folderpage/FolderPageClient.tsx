@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FaFolder } from "react-icons/fa";
 import FolderSideBar from "./SideBar";
 import { Folder, FolderPageClientProps } from "@/types/folderTypes";
+import Sidebar from "@/components/sideBar/sideBarFolder";
+import useFilteredData from "@/hooks/useFilteredData";
 
 export default function FolderPageClient({
   foldersToDisplay,
@@ -50,10 +52,7 @@ export default function FolderPageClient({
       </div>
       {/* Sidebar */}
       <div className="w-1/4">
-        <FolderSideBar
-          folders={foldersToDisplay}
-          updateFolders={updateFolders}
-        />
+        <Sidebar folders={foldersToDisplay} updateFolders={updateFolders} />
       </div>
     </div>
   );
