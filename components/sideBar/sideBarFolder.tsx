@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Flex,
@@ -24,34 +24,39 @@ import { callApi } from "@/lib/callApi";
 import { useRouter } from "next/navigation";
 import { FaFolderPlus } from "react-icons/fa";
 import { sortbyForFolder } from "@/lib/sortBy";
-import { signIn, signOut } from "next-auth/react";
+import { Folder } from "@/types/folderTypes";
+import { deepEqual } from "assert";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
 
-  const router = useRouter();
+  console.log("Entered SideBar: ", folders);
 
+  const router = useRouter();
+  console.log({ folders, updateFolders, searchQuery });
   // custom hook for searching for specific folder
   useFilteredData(folders, updateFolders, searchQuery);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Debug line
     setSearchQuery(e.target.value);
+    console.log("Serch query: " + e.target.value);
   };
 
-  const handleSubmit = async (folderName: string) => {
-    await callApi(folderName, "folder");
-    router.refresh();
-  };
+  // const handleSubmit = async (folderName: string) => {
+  //   await callApi(folderName, "folder");
+  //   router.refresh();
+  // };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewFolderName(e.target.value);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setNewFolderName(e.target.value);
+  // };
 
-  const handleSort = (method: any) => {
-    const sorted = method.value(folders);
-    updateFolders(sorted);
-  };
+  // const handleSort = (method: any) => {
+  //   const sorted = method.value(folders);
+  //   updateFolders(sorted);
+  // };
 
   return (
     <Box
@@ -71,8 +76,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
           </TextField.Slot>
           <TextField.Input
             placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="bg-gray-700 text-white rounded"
           />
         </TextField.Root>
@@ -122,14 +126,14 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <DropdownMenu.Content>
-              {sortbyForFolder.map((method, index) => (
+              {/* {sortbyForFolder.map((method, index) => (
                 <DropdownMenu.Item
                   onSelect={() => handleSort(method.value)}
                   key={index}
                 >
                   {method.name}
                 </DropdownMenu.Item>
-              ))}
+              ))} */}
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
@@ -151,12 +155,6 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
           <FaCog style={{ width: "24px", height: "24px", color: "white" }} />
         </IconButton>
       </Flex>
-      <div>
-        <button onClick={() => signIn()}> Sign In</button>
-      </div>
-      <div>
-        <button onClick={() => signOut()}> Sign Out</button>
-      </div>
     </Box>
   );
 };

@@ -1,11 +1,10 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { FaFolder } from "react-icons/fa";
-import FolderSideBar from "./SideBar";
 import { Folder, FolderPageClientProps } from "@/types/folderTypes";
 import Sidebar from "@/components/sideBar/sideBarFolder";
-import useFilteredData from "@/hooks/useFilteredData";
+
+import { Card, Box, Flex, Container, HoverCard } from "@radix-ui/themes";
 
 export default function FolderPageClient({
   foldersToDisplay,
@@ -17,20 +16,20 @@ export default function FolderPageClient({
   };
 
   return (
-    <div className="flex justify-between mt-16">
-      {/* Main Content */}
-      <div className="w-3/4">
-        <div className="flex flex-wrap mt-4">
-          {folders ? (
-            folders.map((folder: Folder) => (
-              <div
-                key={folder.id}
-                className="p-2 flex flex-col items-center w-full sm:w-1/2 md:w-1/4 lg:w-1/5"
-              >
-                <div className="flex flex-col items-center">
+    <Container size="2">
+      <Flex className="justify-between mt-16">
+        {/* Main Content */}
+        <Box className="w-3/4">
+          <Flex className="flex-wrap gap-8 mt-4">
+            {folders ? (
+              folders.map((folder) => (
+                <Card
+                  key={folder.id}
+                  className="p-4 flex flex-col items-center rounded bg-gray-800 text-white transition-all duration-300 ease-in-out cursor-pointer hover:bg-opacity-70 hover:bg-white hover:shadow-lg hover:scale-105"
+                >
                   <FaFolder size={64} />
-                  <div
-                    className="w-20 text-center break-words"
+                  <Box
+                    className="w-20 text-center mt-2"
                     style={{
                       whiteSpace: "normal",
                       overflow: "hidden",
@@ -41,19 +40,21 @@ export default function FolderPageClient({
                     }}
                   >
                     {folder.name}
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div>No folders available</div>
-          )}
-        </div>
-      </div>
-      {/* Sidebar */}
-      <div className="w-1/4">
-        <Sidebar folders={foldersToDisplay} updateFolders={updateFolders} />
-      </div>
-    </div>
+                  </Box>
+                </Card>
+              ))
+            ) : (
+              <Box className="col-span-full text-center text-gray-400">
+                No folders available
+              </Box>
+            )}
+          </Flex>
+        </Box>
+        {/* Sidebar */}
+        <Box className="w-1/4 bg-gray-900 text-white p-4">
+          <Sidebar folders={folders} updateFolders={updateFolders} />
+        </Box>
+      </Flex>
+    </Container>
   );
 }

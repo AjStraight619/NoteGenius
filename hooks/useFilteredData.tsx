@@ -1,30 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Folder } from "@/types/folderTypes";
 import { Note } from "@/types/noteTypes";
-import { Chat } from "@prisma/client";
 
 export default function useFilteredData(
-  initialData: Folder[] | Note[] | Chat[] | null | undefined,
+  initialData: Folder[] | Note[] | null | undefined,
   updateDataInParent: any,
   searchTerm: string
 ) {
+  // Keep a reference to initial data
+  const initialDataRef = useRef(initialData);
+
   useEffect(() => {
+    if (!initialDataRef.current) {
+      console.log("Initial data is not available");
+      return;
+    }
+
     if (searchTerm === "") {
-      updateDataInParent(initialData);
+      console.log("No search term");
+      updateDataInParent(initialDataRef.current);
       return;
     }
 
-    if (!initialData || initialData.length === 0) {
-      updateDataInParent(null);
-      return;
-    }
-
-    const newFilteredData = initialData.filter(
+    const filteredData = initialDataRef.current.filter(
       (item: any) =>
         item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    updateDataInParent(newFilteredData);
-  }, [searchTerm, initialData, updateDataInParent]);
+    updateDataInParent(filteredData);
+  }, [searchTerm]); // Removed initialData and updateDataInParent from dependencies
 }
