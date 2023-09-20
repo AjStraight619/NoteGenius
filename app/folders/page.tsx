@@ -1,6 +1,6 @@
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
-import { type User } from "@prisma/client";
+import { type User, Folder } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import FolderPageClient from "@/components/component/folderpage/FolderPageClient";
 

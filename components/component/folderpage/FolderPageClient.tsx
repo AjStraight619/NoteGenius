@@ -4,7 +4,7 @@ import { FaFolder } from "react-icons/fa";
 import { Folder, FolderPageClientProps } from "@/types/folderTypes";
 import Sidebar from "@/components/sideBar/sideBarFolder";
 
-import { Card, Box, Flex, Container, HoverCard } from "@radix-ui/themes";
+import { Card, Box, Flex, Container, Section } from "@radix-ui/themes";
 
 export default function FolderPageClient({
   foldersToDisplay,
@@ -17,10 +17,10 @@ export default function FolderPageClient({
   };
 
   return (
-    <Container size="2">
-      <Flex className="justify-between mt-16">
+    <Section size="3" mx={"6"}>
+      <Flex className="justify-between flex-wrap">
         {/* Main Content */}
-        <Box className="w-3/4">
+        <Box className="md:w-3/4 w-full">
           <Flex className="flex-wrap gap-8 mt-4">
             {folders ? (
               folders.map((folder) => (
@@ -52,10 +52,10 @@ export default function FolderPageClient({
           </Flex>
         </Box>
         {/* Sidebar */}
-        <Box className="w-1/4 bg-gray-900 text-white p-4">
+        <Box className="md:w-1/4 w-full bg-gray-900 text-white p-4">
           <Sidebar folders={folders} updateFolders={updateFolders} />
         </Box>
       </Flex>
-    </Container>
+    </Section>
   );
 }

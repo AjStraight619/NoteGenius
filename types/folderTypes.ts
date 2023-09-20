@@ -15,6 +15,10 @@ export type FolderSidebarProps = {
   updateFolders: (newFolders: Folder[]) => void;
 };
 
+export type AddFolderProps = {
+  folders?: Folder[] | null;
+};
+
 export type FolderPageClientProps = {
   foldersToDisplay: Folder[] | null;
 };

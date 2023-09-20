@@ -1,53 +1,31 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import {
-  Box,
-  Flex,
-  IconButton,
-  Button,
-  TextField,
-  Tooltip,
-} from "@radix-ui/themes";
+import { useState } from "react";
+import { Box, Flex, IconButton, TextField } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import * as Popover from "@radix-ui/react-popover";
-import * as Dialog from "@radix-ui/react-dialog";
-import {
-  PaperPlaneIcon,
-  ExitIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { FaCog, FaSortAmountDown } from "react-icons/fa";
 import { FolderSidebarProps } from "@/types/folderTypes";
 import useFilteredData from "@/hooks/useFilteredData";
 import { callApi } from "@/lib/callApi";
 import { useRouter } from "next/navigation";
-import { FaFolderPlus } from "react-icons/fa";
+
 import { sortbyForFolder } from "@/lib/sortBy";
 import { Folder } from "@/types/folderTypes";
+import AddFolder from "../component/sidebar-buttons/AddFolder";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
 
-  const openIsFolderModal = () => {
-    setIsFolderModalOpen(true);
-  };
-  const closeIsFolderModal = () => {
-    setIsFolderModalOpen(false);
-  };
-
   const router = useRouter();
-  console.log({ folders, updateFolders, searchQuery });
-  // custom hook for searching for specific folder
+
+  // custom hook for searching for specific folder only calls when search query changes
   useFilteredData(folders, updateFolders, searchQuery);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Debug line
     setSearchQuery(e.target.value);
-    console.log("Serch query: " + e.target.value);
   };
 
   const handleSubmit = async (folderName: string) => {
@@ -67,7 +45,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   return (
     <Box
       className="fixed left-0 top-0 h-full transition-all ease-in-out duration-300"
-      style={{ width: "200px", backgroundColor: "#2C2F33" }}
+      style={{ width: "150px", backgroundColor: "#2C2F33" }}
     >
       <Flex
         direction="column"
@@ -86,7 +64,9 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
             className="bg-gray-700 text-white rounded"
           />
         </TextField.Root>
-        <Flex className="justify-center items-center">
+        {/* Add folder modal */}
+        <AddFolder folders={folders} />
+        {/* <Flex className="justify-center items-center">
           <Popover.Root>
             <Popover.Trigger asChild>
               <Flex className="justify-center items-center">
@@ -116,7 +96,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
               </Popover.Content>
             </Popover.Portal>
           </Popover.Root>
-        </Flex>
+        </Flex> */}
         {/* Sorting Dropdown */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>

@@ -2,44 +2,68 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { LogOutButton, LogInButton } from "@/components/component/auth/auth";
+import {
+  Section,
+  Container,
+  Flex,
+  Heading,
+  Box,
+  Button,
+} from "@radix-ui/themes";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Navigation */}
       <nav className="bg-gray-900 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="text-2xl font-bold">Note Genius</div>
-          <div>
-            <Link href="/folders">
-              <span className="mx-2 p-2 text-2xl font-bold">Folders</span>
-            </Link>
-            <Link href="/chat">
-              <span className="mx-2 p-2 text-2xl font-bold">Chat</span>
-            </Link>
-            {session ? (
-              <>
+        <Container size="2">
+          <Flex justify="between" align="center">
+            <Flex gap="4" align="center">
+              <Heading size="2" className="text-white"></Heading>
+              {session ? (
                 <span className="mx-2 text-2xl font-bold">
                   {session?.user?.name}
                 </span>
-
-                <LogOutButton />
-              </>
-            ) : (
-              <>
-                <LogInButton />
-                <Link href="/register">
-                  <span className="mx-2 p-2 text-2xl font-bold">Sign up</span>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+              ) : null}
+            </Flex>
+            {session ? <LogOutButton /> : <LogInButton />}
+          </Flex>
+        </Container>
       </nav>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <div>{JSON.stringify(session)}</div>
+
+      {/* Main Content */}
+      <main className="flex-grow">
+        <Section size="3" mx="6">
+          <Container size="2">
+            <Flex direction="column" align="center" gap="7">
+              <Heading size="2" className="text-white">
+                Welcome to NoteGenius
+              </Heading>
+              <Box className="text-gray-400 text-center">
+                The advanced note-organizing platform powered by AI
+                technologies.
+              </Box>
+              <Box className="mt-8">
+                <Flex gap="4">
+                  <Link href="/folders">
+                    <Button>Go to Folders</Button>
+                  </Link>
+                  <Link href="/chat">
+                    <Button>Go to Chat</Button>
+                  </Link>
+                </Flex>
+              </Box>
+            </Flex>
+          </Container>
+        </Section>
       </main>
+
+      {/* Debug: Display session info */}
+      <Box className="text-gray-400 text-center mb-8">
+        {JSON.stringify(session)}
+      </Box>
     </div>
   );
 }
