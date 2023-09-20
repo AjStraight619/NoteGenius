@@ -53,6 +53,7 @@ model Note {
   updatedAt   DateTime      @updatedAt
   folderId    String
   folder      Folder        @relation(fields: [folderId], references: [id])
+  files       File[]
   isStarred   Boolean?      @default(false)
   viewCount   Int?          @default(0)
   dueDate     DateTime?
@@ -60,6 +61,19 @@ model Note {
   RefinedNote RefinedNote[]
 
   @@index([folderId])
+}
+
+model File {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  path      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  noteId    String
+  note      Note     @relation(fields: [noteId], references: [id])
+
+  @@index([noteId])
 }
 
 model RefinedNote {
@@ -101,4 +115,12 @@ model ChatMessage {
   chat      Chat     @relation(fields: [chatId], references: [id])
 
   @@index([chatId])
+}
+
+enum FileType {
+  PDF
+  IMAGE_JPEG
+  IMAGE_PNG
+  TEXT
+  // Add other types as needed
 }

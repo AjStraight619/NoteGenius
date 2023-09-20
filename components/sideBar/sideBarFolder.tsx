@@ -13,11 +13,13 @@ import { useRouter } from "next/navigation";
 import { sortbyForFolder } from "@/lib/sortBy";
 import { Folder } from "@/types/folderTypes";
 import AddFolder from "../component/sidebar-buttons/AddFolder";
+import UploadButton from "../component/upload/uploadButton";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newFolderName, setNewFolderName] = useState("");
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  console.log("Folders in SideBar", folders);
 
   const router = useRouter();
 
@@ -66,38 +68,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
         </TextField.Root>
         {/* Add folder modal */}
         <AddFolder folders={folders} />
-        {/* <Flex className="justify-center items-center">
-          <Popover.Root>
-            <Popover.Trigger asChild>
-              <Flex className="justify-center items-center">
-                <IconButton
-                  className="hover:bg-gray-700"
-                  style={{ backgroundColor: "#2C2F33" }}
-                  onClick={openIsFolderModal}
-                >
-                  <FaFolderPlus
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      color: "white",
-                    }}
-                  />
-                </IconButton>
-              </Flex>
-            </Popover.Trigger>
-            <Popover.Portal>
-              <Popover.Content
-                style={{ backgroundColor: "#2C2F33", padding: "16px" }}
-              >
-                <TextField.Root className="w-full">
-                  <TextField.Input placeholder="New Folder Name" />
-                </TextField.Root>
-                <Button>Submit</Button>
-              </Popover.Content>
-            </Popover.Portal>
-          </Popover.Root>
-        </Flex> */}
-        {/* Sorting Dropdown */}
+        <UploadButton folders={folders} />
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <IconButton
