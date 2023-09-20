@@ -92,6 +92,7 @@ const AddFolder = ({ folders }: AddFolderProps) => {
             <Flex gap="2" mt="2">
               {Object.keys(selected).map((key) => (
                 <Badge
+                  key={key} // Add this line
                   className="cursor-pointer"
                   color={selected[key] ? "gray" : getColor(key)}
                   onClick={() => toggleSelect(key)}
