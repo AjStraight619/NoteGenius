@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
-import { LogOutButton, LogInButton } from "@/components/component/auth/auth";
+import {
+  LogOutButton,
+  LogInButton,
+  RegisterButton,
+} from "@/components/component/auth/auth";
 import {
   Section,
   Container,
@@ -28,8 +32,16 @@ export default async function Home() {
                 </span>
               ) : null}
             </Flex>
-            {session ? <LogOutButton /> : <LogInButton />}
           </Flex>
+        </Container>
+        <Container position="absolute" top="0" right="0" size="1" pt={"2"}>
+          {session ? (
+            <LogOutButton />
+          ) : (
+            <Flex>
+              <LogInButton /> <RegisterButton />
+            </Flex>
+          )}
         </Container>
       </nav>
 

@@ -6,10 +6,6 @@ import { getServerSession } from "next-auth";
 import { type User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-// get chat messsages if there is a session and user exists
-
-//TODO: Can't fetch in this file for some reason but can in folders?
-
 const getChats = async () => {
   const session = await getServerSession(authOptions);
 
@@ -36,7 +32,7 @@ const getChats = async () => {
 
 const ChatPage = async () => {
   const chats = await getChats();
-  console.log("Here are the chats: ", chats);
+
   return <Chat chats={chats} />;
 };
 

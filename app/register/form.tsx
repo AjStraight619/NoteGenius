@@ -5,6 +5,7 @@ import * as Form from "@radix-ui/react-form";
 import { Button, TextField, TextFieldInput } from "@radix-ui/themes";
 
 export const RegisterForm = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -16,6 +17,7 @@ export const RegisterForm = () => {
       const res = await fetch("/api/register", {
         method: "POST",
         body: JSON.stringify({
+          name,
           email,
           password,
         }),
@@ -36,6 +38,18 @@ export const RegisterForm = () => {
 
   return (
     <Form.Root onSubmit={onSubmit} className="space-y-4 w-full sm:w-[400px]">
+      <Form.Field name="email" className="flex flex-col">
+        <Form.Label className="FormLabel">Name</Form.Label>
+        <Form.Control asChild>
+          <TextFieldInput
+            className="Input"
+            type="name"
+            value={name}
+            onChange={(e: any) => setName(e.target.value)}
+            placeholder="Enter your name..."
+          />
+        </Form.Control>
+      </Form.Field>
       <Form.Field name="email" className="flex flex-col">
         <Form.Label className="FormLabel">Email</Form.Label>
         <Form.Control asChild>
@@ -74,9 +88,7 @@ export const RegisterForm = () => {
         {error && <div>{error}</div>}
       </Form.Field>
       <Form.Submit asChild>
-        <Button >
-          Sign up
-        </Button>
+        <Button>Sign up</Button>
       </Form.Submit>
     </Form.Root>
   );

@@ -10,15 +10,16 @@ generator client {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  password     String
-  name         String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  folders      Folder[]
-  chats        Chat[]
-  refinedNotes RefinedNote[]
+  id                 String               @id @default(uuid())
+  email              String               @unique
+  password           String
+  name               String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  folders            Folder[]
+  chats              Chat[]
+  refinedNotes       RefinedNote[]
+  PasswordResetToken PasswordResetToken[]
 }
 
 model Tag {
@@ -39,6 +40,7 @@ model Folder {
   isStarred    Boolean?      @default(false)
   tags         Tag[]         @relation("FolderToTag")
   refinedNotes RefinedNote[]
+  File         File[]
 
   @@unique([name, userId])
   @@index([userId])
@@ -70,10 +72,13 @@ model File {
   path      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  noteId    String
-  note      Note     @relation(fields: [noteId], references: [id])
+  noteId    String? // Make it optional if a file doesn't have to belong to a note
+  note      Note?    @relation(fields: [noteId], references: [id])
+  folderId  String? // Make it optional if a file doesn't have to belong to a folder
+  folder    Folder?  @relation(fields: [folderId], references: [id])
 
   @@index([noteId])
+  @@index([folderId])
 }
 
 model RefinedNote {
@@ -115,6 +120,18 @@ model ChatMessage {
   chat      Chat     @relation(fields: [chatId], references: [id])
 
   @@index([chatId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  createdAt DateTime  @default(now())
+  resetAt   DateTime?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@index([userId])
 }
 
 enum FileType {
