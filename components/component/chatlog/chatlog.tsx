@@ -37,9 +37,8 @@ export default function ChatLog() {
       }
     };
 
-    // Call the async function
     fetchData();
-  }, []); // Empty dependency array means this useEffect runs once when the component mounts
+  }, []);
 
   return (
     <div className="relative mt-12">

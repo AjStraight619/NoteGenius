@@ -38,6 +38,7 @@ const AddFolder = ({ folders }: AddFolderProps) => {
     Other: false,
   });
   const [newBadgeName, setNewBadgeName] = useState("");
+  const [folderName, setFolderName] = useState("");
 
   const toggleSelect = (name: string) => {
     if (name in selected) {
@@ -55,6 +56,30 @@ const AddFolder = ({ folders }: AddFolderProps) => {
         [newBadgeName]: false,
       }));
       setNewBadgeName("");
+    }
+  };
+
+  const checkIsValidName = (name: string) => {
+    const existingFolder = folders?.find(
+      (folder) => folder.name.toLowerCase() === name.toLowerCase()
+    );
+    return existingFolder === undefined;
+  };
+
+  const handleCreateFolder = async () => {
+    // Client-side validation
+    if (!checkIsValidName(folderName)) {
+      // Show an error message that a folder with the same name already exists
+      console.log("Folder name already exists!");
+      return;
+    }
+
+    // Proceed to hit the API to add the new folder
+    try {
+      // API call logic here
+      // ...
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
   };
 
@@ -124,48 +149,3 @@ const AddFolder = ({ folders }: AddFolderProps) => {
 };
 
 export default AddFolder;
-
-//   <Dialog.Root>
-//   <Dialog.Trigger>
-//     <Button>Edit profile</Button>
-//   </Dialog.Trigger>
-
-//   <Dialog.Content style={{ maxWidth: 450 }}>
-//     <Dialog.Title>Edit profile</Dialog.Title>
-//     <Dialog.Description size="2" mb="4">
-//       Make changes to your profile.
-//     </Dialog.Description>
-
-//     <Flex direction="column" gap="3">
-//       <label>
-//         <Text as="div" size="2" mb="1" weight="bold">
-//           Name
-//         </Text>
-//         <TextField.Input
-//           defaultValue="Freja Johnsen"
-//           placeholder="Enter your full name"
-//         />
-//       </label>
-//       <label>
-//         <Text as="div" size="2" mb="1" weight="bold">
-//           Email
-//         </Text>
-//         <TextField.Input
-//           defaultValue="freja@example.com"
-//           placeholder="Enter your email"
-//         />
-//       </label>
-//     </Flex>
-
-//     <Flex gap="3" mt="4" justify="end">
-//       <Dialog.Close>
-//         <Button variant="soft" color="gray">
-//           Cancel
-//         </Button>
-//       </Dialog.Close>
-//       <Dialog.Close>
-//         <Button>Save</Button>
-//       </Dialog.Close>
-//     </Flex>
-//   </Dialog.Content>
-// </Dialog.Root>

@@ -62,7 +62,6 @@ export default function FolderPageClient({
           style={{ zIndex: 0 }}
         >
           {" "}
-          {/* Try setting a lower z-index */}
           <Sidebar folders={folders} updateFolders={updateFolders} />
         </Box>
       </Flex>

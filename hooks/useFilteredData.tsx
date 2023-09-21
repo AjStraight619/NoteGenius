@@ -17,7 +17,7 @@ export default function useFilteredData(
     }
 
     if (searchTerm === "") {
-      console.log("No search term");
+      console.log("updateDataInParent is: ", updateDataInParent);
       updateDataInParent(initialDataRef.current);
       return;
     }

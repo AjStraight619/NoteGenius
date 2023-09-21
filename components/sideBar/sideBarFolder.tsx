@@ -9,11 +9,10 @@ import { FolderSidebarProps } from "@/types/folderTypes";
 import useFilteredData from "@/hooks/useFilteredData";
 import { callApi } from "@/lib/callApi";
 import { useRouter } from "next/navigation";
-
 import { sortbyForFolder } from "@/lib/sortBy";
-import { Folder } from "@/types/folderTypes";
 import AddFolder from "../component/sidebar-buttons/AddFolder";
-import UploadButton from "../component/upload/uploadButton";
+import UploadButton from "../component/sidebar-buttons/uploadButton";
+import SearchFolders from "../component/search/SearchFolders";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +23,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   const router = useRouter();
 
   // custom hook for searching for specific folder only calls when search query changes
-  useFilteredData(folders, updateFolders, searchQuery);
+  // useFilteredData(folders, updateFolders, searchQuery);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -35,9 +34,9 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
     router.refresh();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewFolderName(e.target.value);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setNewFolderName(e.target.value);
+  // };
 
   const handleSort = (method: any) => {
     const sorted = method.value(folders);
@@ -56,16 +55,7 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
         style={{ alignItems: "center" }}
       >
         {/* Search Input */}
-        <TextField.Root className="w-full">
-          <TextField.Slot className="text-white">
-            <MagnifyingGlassIcon height="16" width="16" />
-          </TextField.Slot>
-          <TextField.Input
-            placeholder="Search..."
-            onChange={handleSearchChange}
-            className="bg-gray-700 text-white rounded"
-          />
-        </TextField.Root>
+        <SearchFolders folders={folders} updateFolders={updateFolders} />
         {/* Add folder modal */}
         <AddFolder folders={folders} />
         <UploadButton folders={folders} />
