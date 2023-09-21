@@ -8,7 +8,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { resetPassword } from "./_action";
 
-export default function ({ params }: { params: { token: string } }) {
+export default function ResetPassword({
+  params,
+}: {
+  params: { token: string };
+}) {
   const [error, setError] = useState<string>("");
 
   async function handleSubmit(data: FormData) {
