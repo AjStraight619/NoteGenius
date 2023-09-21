@@ -3,7 +3,6 @@ import { useState } from "react";
 import { TextField } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import useFilteredData from "@/hooks/useFilteredData";
-// import { FolderSidebarProps } from "@/types/folderTypes";
 
 export default function SearchFolders({ folders, updateFolders }: any) {
   const [searchQuery, setSearchQuery] = useState("");
