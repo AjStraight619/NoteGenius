@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       name: name,
     },
   });
+
   return new NextResponse(
     JSON.stringify({ success: true, message: "Folder successfully created" }),
     {

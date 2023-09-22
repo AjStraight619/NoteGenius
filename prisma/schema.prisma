@@ -20,6 +20,7 @@ model User {
   chats              Chat[]
   refinedNotes       RefinedNote[]
   PasswordResetToken PasswordResetToken[]
+  files              File[]
 }
 
 model Tag {
@@ -69,14 +70,17 @@ model File {
   id        String   @id @default(uuid())
   name      String
   type      String
-  path      String
+  content   Bytes
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  noteId    String? // Make it optional if a file doesn't have to belong to a note
+  noteId    String?
   note      Note?    @relation(fields: [noteId], references: [id])
-  folderId  String? // Make it optional if a file doesn't have to belong to a folder
+  folderId  String?
   folder    Folder?  @relation(fields: [folderId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 
+  @@index([userId]) // <- Add this line to create an index on userId
   @@index([noteId])
   @@index([folderId])
 }
