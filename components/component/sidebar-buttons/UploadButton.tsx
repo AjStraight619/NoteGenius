@@ -13,7 +13,7 @@ import { Folder } from "@/types/folderTypes";
 
 // Triggering github to recognize I changed the name of this file to start with an uppercase...
 // I guess git or github does not recognize changing casing of filenames... lets try again...
-// getting internal server error
+// getting internal server error on vercel
 
 export default function UploadButton({ folders }: any) {
   const [file, setFile] = useState<File | null>(null);

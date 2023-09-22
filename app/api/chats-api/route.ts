@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { authOptions } from "@/utils/authOptions";
 import { type User } from "@prisma/client";
 
@@ -20,7 +20,11 @@ export async function GET() {
           userId: userId,
         },
       });
-      return NextResponse.json({ chatLogs });
+      return new NextResponse(JSON.stringify({ chatLogs }));
     }
   }
+
+  return new NextResponse(JSON.stringify({ error: "unknown error" }), {
+    status: 500,
+  });
 }
