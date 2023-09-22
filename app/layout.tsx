@@ -25,7 +25,6 @@ export default function RootLayout({
           {/* <NavBar /> */}
           <Theme appearance="dark" accentColor="blue">
             {children}
-            
           </Theme>
         </body>
       </Providers>

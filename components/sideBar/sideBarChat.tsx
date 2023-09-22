@@ -16,7 +16,7 @@ const Sidebar = () => {
   return (
     <Box
       className="fixed left-0 top-0 h-full transition-all ease-in-out duration-300"
-      style={{ width: "200px", backgroundColor: "#2C2F33" }}
+      style={{ width: "150px", backgroundColor: "#2C2F33" }}
     >
       <Flex
         direction="column"

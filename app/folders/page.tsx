@@ -1,6 +1,6 @@
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
-import { type User, Folder } from "@prisma/client";
+import { User, Folder } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import FolderPageClient from "@/components/component/folderpage/FolderPageClient";
 
@@ -18,6 +18,9 @@ const getFolders = async () => {
         where: {
           userId: userId,
         },
+        include: {
+          tags: true,
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -32,7 +35,7 @@ const getFolders = async () => {
 // and passing it down to client-side components for further interactivity and state management.
 const FolderPage = async () => {
   // TODO: Fix typing issue
-  let folders: any | null = await getFolders();
+  let folders: Folder[] | null = await getFolders();
 
   return <FolderPageClient foldersToDisplay={folders} />;
 };

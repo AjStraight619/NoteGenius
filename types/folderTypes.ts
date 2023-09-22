@@ -1,24 +1,22 @@
 import { Tag } from "@prisma/client";
+import { Folder } from "@prisma/client";
 
-export type Folder = {
+export type FolderSidebarProps = {
+  folders?: Folder[] | null;
+  updateFolders?: any;
+};
+
+export type IndividualFolder = {
   id: string;
   name: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
-  // Note: the relationships like `user`, `notes`, and `refinedNotes` are omitted for simplicity
-  tags: Tag[];
+  isStarred: boolean | null;
+  tags?: Tag[];
 };
 
-export type FolderSidebarProps = {
-  folders?: Folder[] | null;
-  updateFolders: (newFolders: Folder[]) => void;
-};
-
-export type AddFolderProps = {
-  folders?: Folder[] | null;
-};
-
-export type FolderPageClientProps = {
-  foldersToDisplay: Folder[] | null;
+export type SplitScreenProps = {
+  folders: Folder[] | null;
+  updateFolders: any;
 };

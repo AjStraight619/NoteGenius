@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Folder } from "@/types/folderTypes";
+import { Folder } from "@prisma/client";
 import { Note } from "@/types/noteTypes";
 
 export default function useFilteredData(

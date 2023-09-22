@@ -10,7 +10,7 @@ import {
   Badge,
 } from "@radix-ui/themes";
 import { FaFolderPlus } from "react-icons/fa";
-import { AddFolderProps } from "@/types/folderTypes";
+import { FolderSidebarProps } from "@/types/folderTypes";
 
 const getColor = (key: string) => {
   switch (key) {
@@ -27,7 +27,7 @@ const getColor = (key: string) => {
   }
 };
 
-const AddFolder = ({ folders }: AddFolderProps) => {
+const AddFolder = ({ folders }: FolderSidebarProps) => {
   const [selected, setSelected] = useState<Record<string, boolean>>({
     Math: false,
     Reading: false,
@@ -83,14 +83,12 @@ const AddFolder = ({ folders }: AddFolderProps) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
-        <IconButton
-          className="hover:bg-gray-700"
-          style={{ backgroundColor: "#2C2F33" }}
-        >
+        <IconButton style={{ backgroundColor: "#2C2F33" }}>
           <FaFolderPlus
+            className="text-white w-6 h-6 hover:text-white"
             style={{
-              width: "24px",
-              height: "24px",
+              width: "32px",
+              height: "32px",
               color: "white",
             }}
           />

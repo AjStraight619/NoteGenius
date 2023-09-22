@@ -9,13 +9,14 @@ import {
   Flex,
 } from "@radix-ui/themes";
 import { UploadIcon } from "@radix-ui/react-icons";
-import { Folder } from "@/types/folderTypes";
+import { FolderSidebarProps } from "@/types/folderTypes";
+import { IndividualFolder } from "@/types/folderTypes";
 
 // Triggering github to recognize I changed the name of this file to start with an uppercase...
 // I guess git or github does not recognize changing casing of filenames... lets try again...
 // getting internal server error on vercel
 
-export default function UploadButton({ folders }: any) {
+export default function UploadButton({ folders }: FolderSidebarProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -105,10 +106,9 @@ export default function UploadButton({ folders }: any) {
 
       <IconButton
         onClick={handleUploadButtonClick}
-        className="hover:bg-gray-700"
         style={{ backgroundColor: "#2C2F33" }}
       >
-        <UploadIcon style={{ width: "24px", height: "24px", color: "white" }} />
+        <UploadIcon style={{ width: "32px", height: "32px", color: "white" }} />
       </IconButton>
 
       <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
@@ -124,7 +124,7 @@ export default function UploadButton({ folders }: any) {
             >
               <ul>
                 {folders ? (
-                  folders.map((folder: Folder) => (
+                  folders.map((folder: IndividualFolder) => (
                     <li
                       key={folder.id}
                       onClick={() => handleFolderClick(folder.id)}

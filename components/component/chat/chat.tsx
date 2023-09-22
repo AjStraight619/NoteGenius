@@ -133,7 +133,15 @@ export default function Chat({ chats }: { chats: any }) {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
               />
-              <IconButton className="absolute right-2 bottom-2" type="submit">
+              <IconButton
+                variant="surface"
+                type="submit"
+                style={{
+                  position: "absolute",
+                  right: "10px", // adjust as needed
+                  bottom: "10px", // adjust as needed
+                }}
+              >
                 <PaperPlaneIcon />
               </IconButton>
             </form>

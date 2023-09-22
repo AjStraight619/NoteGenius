@@ -1,83 +1,91 @@
 "use client";
-
-import { Box, Flex, IconButton, TextField } from "@radix-ui/themes";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-import { FaCog, FaSortAmountDown } from "react-icons/fa";
-import { FolderSidebarProps } from "@/types/folderTypes";
-
-import { callApi } from "@/lib/callApi";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Box, Flex, IconButton } from "@radix-ui/themes";
+import { FaCog, FaBars } from "react-icons/fa";
 
 import AddFolder from "../component/sidebar-buttons/AddFolder";
 import UploadButton from "../component/sidebar-buttons/UploadButton";
 import SearchFolders from "../component/search/SearchFolders";
 import SortingButton from "../component/sidebar-buttons/SortingButton";
 
+import { Folder } from "@prisma/client";
+type FolderSidebarProps = {
+  folders?: Folder[] | null;
+  updateFolders?: any;
+};
+
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [newFolderName, setNewFolderName] = useState("");
-  // const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
-  console.log("Folders in SideBar", folders);
-
-  const router = useRouter();
-
-  // custom hook for searching for specific folder only calls when search query changes
-  // useFilteredData(folders, updateFolders, searchQuery);
-
-  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchQuery(e.target.value);
-  // };
-
-  const handleSubmit = async (folderName: string) => {
-    await callApi(folderName, "folder");
-    router.refresh();
-  };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNewFolderName(e.target.value);
-  // };
-
-  const handleSort = (method: any) => {
-    const sorted = method.value(folders);
-    updateFolders(sorted);
-  };
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   return (
-    <Box
-      className="fixed left-0 top-0 h-full transition-all ease-in-out duration-300"
-      style={{ width: "150px", backgroundColor: "#2C2F33" }}
-    >
-      <Flex
-        direction="column"
-        className="p-4"
-        gap="8"
-        style={{ alignItems: "center" }}
+    <>
+      {/* The fixed position container for the toggle button */}
+      <div
+        className="fixed top-4 z-50 transition-transform duration-300"
+        style={{
+          left: isSidebarOpen ? "60px" : "36px", // Adjust these values for the exact position
+          transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
+        }}
       >
-        {/* Search Input */}
-        <SearchFolders folders={folders} updateFolders={updateFolders} />
-        {/* Add folder modal */}
-        <AddFolder folders={folders} />
-        <UploadButton folders={folders} />
-        <SortingButton folders={folders} updateFolders={updateFolders} />
-        <DropdownMenu.Root>Hello</DropdownMenu.Root>
-        <Box className="flex-grow"></Box>
         <IconButton
-          className="hover:bg-gray-700"
-          style={{ backgroundColor: "#2C2F33" }}
+          style={{ backgroundColor: "transparent" }}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <FaCog style={{ width: "24px", height: "24px", color: "white" }} />
+          <FaBars style={{ width: "32px", height: "32px", color: "white" }} />
         </IconButton>
-        <Box className="flex-grow"></Box> {/* Spacer */}
-        {/* Settings Icon */}
-        <IconButton
-          className="hover:bg-gray-700"
-          style={{ backgroundColor: "#2C2F33" }}
+      </div>
+
+      {/* Sidebar */}
+      <Box
+        className="fixed left-0 top-0 h-full flex flex-col justify-between transition-all ease-in-out duration-300 overflow-hidden"
+        style={{
+          width: isSidebarOpen ? "150px" : "0px",
+          backgroundColor: "#2C2F33",
+          transition: "width 0.3s",
+        }}
+      >
+        <Flex
+          direction="column"
+          className="p-4"
+          gap="9"
+          style={{ alignItems: "center" }}
         >
-          <FaCog style={{ width: "24px", height: "24px", color: "white" }} />
-        </IconButton>
-      </Flex>
-    </Box>
+          {isSidebarOpen && (
+            <>
+              <div className="mb-4 mt-24">
+                <SearchFolders
+                  folders={folders}
+                  updateFolders={updateFolders}
+                />
+              </div>
+              <div className="mb-4">
+                <AddFolder folders={folders} />
+              </div>
+              <div className="mb-4">
+                <UploadButton folders={folders} />
+              </div>
+              <div className="mb-4">
+                <SortingButton
+                  folders={folders}
+                  updateFolders={updateFolders}
+                />
+              </div>
+            </>
+          )}
+        </Flex>
+
+        {isSidebarOpen && (
+          <IconButton
+            style={{
+              backgroundColor: "#2C2F33",
+              alignSelf: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <FaCog style={{ width: "32px", height: "32px", color: "white" }} />
+          </IconButton>
+        )}
+      </Box>
+    </>
   );
 };
 

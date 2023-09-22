@@ -11,25 +11,24 @@ async function main() {
   await prisma.note.deleteMany({});
   await prisma.folder.deleteMany({});
   await prisma.tag.deleteMany({});
+  await prisma.passwordResetToken.deleteMany({}); // Assuming there's a PasswordResetToken model.
   await prisma.user.deleteMany({});
 
-  // Create a hashed password
-  const password = await hash("alice", 10);
+  // Create a hashed password for Alex
+  const alexPassword = await hash("Alex", 10);
 
-  // Upsert user
-  const alice = await prisma.user.upsert({
-    where: { email: "alice@prisma.io" },
-    update: {},
-    create: {
-      email: "alice@prisma.io",
-      password,
-      name: "Alice",
+  // Create a new user named "Alex" with password "Alex"
+  const alex = await prisma.user.create({
+    data: {
+      email: "alex@prisma.io",
+      password: alexPassword,
+      name: "Alex",
     },
   });
 
-  // Create some tags
+  // Create the tags: Math, Reading, Science
   const tags = await Promise.all(
-    ["Work", "Personal", "Project", "Shopping"].map((tagName) =>
+    ["Math", "Reading", "Science"].map((tagName) =>
       prisma.tag.create({
         data: {
           name: tagName,
@@ -38,35 +37,19 @@ async function main() {
     )
   );
 
-  // Create a folder and associate with tags
-  for (let i = 0; i < 10; i++) {
-    const folderTitle = "Folder " + i.toString();
+  // Create folders named A, C, E, ... (skipping every other letter)
+  for (let i = 65; i <= 90; i += 2) {
+    const folderTitle = "Folder " + String.fromCharCode(i);
 
-    const folder = await prisma.folder.create({
+    await prisma.folder.create({
       data: {
         name: folderTitle,
-        userId: alice.id,
+        userId: alex.id,
         tags: {
           connect: tags.map((tag) => ({ id: tag.id })),
         },
       },
     });
-
-    // Create 5 notes for each folder and associate with tags
-    for (let j = 0; j < 5; j++) {
-      const noteTitle = "Note " + j.toString();
-
-      await prisma.note.create({
-        data: {
-          name: noteTitle,
-          content: "This is content of note " + noteTitle,
-          folderId: folder.id,
-          tags: {
-            connect: tags.map((tag) => ({ id: tag.id })),
-          },
-        },
-      });
-    }
   }
 
   // Create some chats for Alice
@@ -78,7 +61,7 @@ async function main() {
       data: {
         title: chatTitle,
         content: chatContent,
-        userId: alice.id,
+        userId: alex.id,
       },
     });
 

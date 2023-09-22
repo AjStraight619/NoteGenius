@@ -1,12 +1,18 @@
 import { SortableItem } from "@/types/otherTypes";
 import type { Note, RefinedNote, Tag } from "@prisma/client";
-import { Folder } from "@/types/folderTypes";
+import { Folder } from "@prisma/client";
 
 export const sortByAz = (items: SortableItem[]): SortableItem[] => {
+  if (!Array.isArray(items)) {
+    throw new Error("Expected an array of items to sort!");
+  }
   return items.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export const sortByZa = (items: SortableItem[]): SortableItem[] => {
+  if (!Array.isArray(items)) {
+    throw new Error("Expected an array of items to sort!");
+  }
   return items.sort((a, b) => b.name.localeCompare(a.name));
 };
 
