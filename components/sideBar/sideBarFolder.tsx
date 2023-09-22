@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Box, Flex, IconButton, TextField } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
@@ -61,18 +60,6 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
         <AddFolder folders={folders} />
         <UploadButton folders={folders} />
         <SortingButton folders={folders} updateFolders={updateFolders} />
-        {/* <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <IconButton
-              className="hover:bg-gray-700"
-              style={{ backgroundColor: "#2C2F33" }}
-            >
-              <FaSortAmountDown
-                style={{ width: "24px", height: "24px", color: "white" }}
-              />
-            </IconButton>
-          </DropdownMenu.Trigger>
-        </DropdownMenu.Root> */}
         <DropdownMenu.Root>Hello</DropdownMenu.Root>
         <Box className="flex-grow"></Box>
         <IconButton
