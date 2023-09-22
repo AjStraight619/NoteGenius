@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import {
-  TextArea,
   Button,
   Dialog,
   TextField,
@@ -9,10 +8,8 @@ import {
   Flex,
   Text,
   Badge,
-  Container,
 } from "@radix-ui/themes";
 import { FaFolderPlus } from "react-icons/fa";
-import { type Folder } from "@prisma/client";
 import { AddFolderProps } from "@/types/folderTypes";
 
 const getColor = (key: string) => {

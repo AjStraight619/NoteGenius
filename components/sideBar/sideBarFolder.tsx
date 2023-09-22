@@ -3,21 +3,22 @@
 import { useState } from "react";
 import { Box, Flex, IconButton, TextField } from "@radix-ui/themes";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+
 import { FaCog, FaSortAmountDown } from "react-icons/fa";
 import { FolderSidebarProps } from "@/types/folderTypes";
-import useFilteredData from "@/hooks/useFilteredData";
+
 import { callApi } from "@/lib/callApi";
 import { useRouter } from "next/navigation";
-import { sortbyForFolder } from "@/lib/sortBy";
+
 import AddFolder from "../component/sidebar-buttons/AddFolder";
-import UploadButton from "../component/sidebar-buttons/uploadButton";
+import UploadButton from "../component/sidebar-buttons/UploadButton";
 import SearchFolders from "../component/search/SearchFolders";
+import SortingButton from "../component/sidebar-buttons/SortingButton";
 
 const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [newFolderName, setNewFolderName] = useState("");
-  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [newFolderName, setNewFolderName] = useState("");
+  // const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
   console.log("Folders in SideBar", folders);
 
   const router = useRouter();
@@ -25,9 +26,9 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
   // custom hook for searching for specific folder only calls when search query changes
   // useFilteredData(folders, updateFolders, searchQuery);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchQuery(e.target.value);
+  // };
 
   const handleSubmit = async (folderName: string) => {
     await callApi(folderName, "folder");
@@ -59,7 +60,8 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
         {/* Add folder modal */}
         <AddFolder folders={folders} />
         <UploadButton folders={folders} />
-        <DropdownMenu.Root>
+        <SortingButton folders={folders} updateFolders={updateFolders} />
+        {/* <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <IconButton
               className="hover:bg-gray-700"
@@ -70,19 +72,8 @@ const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
               />
             </IconButton>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content>
-              {sortbyForFolder.map((method, index) => (
-                <DropdownMenu.Item
-                  onSelect={() => handleSort(method.value)}
-                  key={index}
-                >
-                  {method.name}
-                </DropdownMenu.Item>
-              ))}
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
+        </DropdownMenu.Root> */}
+        <DropdownMenu.Root>Hello</DropdownMenu.Root>
         <Box className="flex-grow"></Box>
         <IconButton
           className="hover:bg-gray-700"

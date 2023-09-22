@@ -2,11 +2,11 @@ import { SortableItem } from "@/types/otherTypes";
 import type { Note, RefinedNote, Tag } from "@prisma/client";
 import { Folder } from "@/types/folderTypes";
 
-export const sortByAZ = (items: SortableItem[]): SortableItem[] => {
+export const sortByAz = (items: SortableItem[]): SortableItem[] => {
   return items.sort((a, b) => a.name.localeCompare(b.name));
 };
 
-export const sortByZA = (items: SortableItem[]): SortableItem[] => {
+export const sortByZa = (items: SortableItem[]): SortableItem[] => {
   return items.sort((a, b) => b.name.localeCompare(a.name));
 };
 
@@ -48,6 +48,8 @@ export const sortByNotRefined = (items: Note[]): Note[] => {
 //   });
 // };
 
+// export const sortByData = (folders: Folder[], data:
+
 export const excludeRefined = (items: Note[]): Note[] => {
   return items.filter((item) => !item.isRefined);
 };
@@ -56,7 +58,10 @@ export const includeOnlyRefined = (items: Note[]): Note[] => {
   return items.filter((item) => item.isRefined);
 };
 
-export const sortbyForFolder = [
-  { name: "Sort from A-Z", value: sortByAZ },
-  { name: "Sort from Z-A", value: sortByZA },
-];
+export const sortByFirstCreated = (items: SortableItem[]): SortableItem[] => {
+  return items.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+};
+
+export const sortByLastCreated = (items: SortableItem[]): SortableItem[] => {
+  return items.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+};
