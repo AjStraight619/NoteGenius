@@ -12,6 +12,7 @@ import { UploadIcon } from "@radix-ui/react-icons";
 import { Folder } from "@/types/folderTypes";
 
 // Triggering github to recognize I changed the name of this file to start with an uppercase...
+// I guess git or github does not recognize changing casing of filenames... lets try again...
 
 export default function UploadButton({ folders }: any) {
   const [file, setFile] = useState<File | null>(null);
