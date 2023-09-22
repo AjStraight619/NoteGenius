@@ -11,6 +11,8 @@ import {
 import { UploadIcon } from "@radix-ui/react-icons";
 import { Folder } from "@/types/folderTypes";
 
+// Triggering github to recognize I changed the name of this file to start with an uppercase...
+
 export default function UploadButton({ folders }: any) {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
