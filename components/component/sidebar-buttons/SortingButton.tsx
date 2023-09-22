@@ -4,6 +4,9 @@ import { ArrowRightIcon, ArrowLeftIcon } from "@radix-ui/react-icons";
 import { FaSort } from "react-icons/fa";
 import { sortByAz, sortByZa } from "@/lib/sortBy";
 import { FolderSidebarProps } from "@/types/folderTypes";
+import { Folder } from "@prisma/client";
+
+type FolderArrayNullable = Folder[] | null | undefined;
 
 export default function sortingButton({
   folders,
@@ -38,8 +41,15 @@ export default function sortingButton({
     },
   ];
 
-  const handleSort = (foldersToSort: any, sortFunction: any) => {
-    const sortedFolders = sortFunction(foldersToSort);
+  const handleSort = (
+    foldersToSort: FolderArrayNullable,
+    sortFunction: any
+  ) => {
+    if (!foldersToSort) return [];
+    console.log("foldersToSort", foldersToSort);
+    const foldersCopy = [...foldersToSort];
+    const sortedFolders = sortFunction(foldersCopy);
+    console.log("sortedFolders", sortedFolders);
     updateFolders(sortedFolders);
     return sortedFolders;
   };
