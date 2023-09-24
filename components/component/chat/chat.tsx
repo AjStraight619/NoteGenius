@@ -15,7 +15,7 @@ import {
   TextArea,
 } from "@radix-ui/themes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
-import Sidebar from "@/components/sideBar/sideBarChat";
+
 import { Chat, ChatMessage } from "@prisma/client";
 
 type Message = {
@@ -76,7 +76,7 @@ export default function Chat({ chats }: { chats: any }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       {/* Header Container */}
-      <Sidebar />
+
       <Box style={{ borderRadius: "var(--radius-3)" }}>
         <Container size="1">
           <Flex direction="column">
