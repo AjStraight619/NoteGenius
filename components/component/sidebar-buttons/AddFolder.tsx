@@ -10,6 +10,7 @@ import {
   Badge,
 } from "@radix-ui/themes";
 import { FaFolderPlus } from "react-icons/fa";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { FolderSidebarProps } from "@/types/folderTypes";
 
 const getColor = (key: string) => {
@@ -95,7 +96,12 @@ const AddFolder = ({ folders }: FolderSidebarProps) => {
         </IconButton>
       </Dialog.Trigger>
 
-      <Dialog.Content style={{ maxWidth: 450 }}>
+      <Dialog.Content style={{ maxWidth: 450, position: "relative" }}>
+        <Dialog.Close>
+          <button style={{ position: "absolute", top: "10px", right: "10px" }}>
+            <Cross2Icon className="hover:text-gray-2-translucent" />
+          </button>
+        </Dialog.Close>
         <Dialog.Title mt="4">New Folder</Dialog.Title>
 
         <Flex direction="column" gap="3">
@@ -112,7 +118,7 @@ const AddFolder = ({ folders }: FolderSidebarProps) => {
             <Flex gap="2" mt="2">
               {Object.keys(selected).map((key) => (
                 <Badge
-                  key={key} // Add this line
+                  key={key}
                   className="cursor-pointer"
                   color={selected[key] ? "gray" : getColor(key)}
                   onClick={() => toggleSelect(key)}

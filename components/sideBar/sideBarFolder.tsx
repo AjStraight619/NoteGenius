@@ -9,12 +9,13 @@ import SearchFolders from "../component/search/SearchFolders";
 import SortingButton from "../component/sidebar-buttons/SortingButton";
 
 import { Folder } from "@prisma/client";
-type FolderSidebarProps = {
+type SidebarProps = {
   folders?: Folder[] | null;
   updateFolders?: any;
+  children?: React.ReactNode;
 };
 
-const Sidebar = ({ folders, updateFolders }: FolderSidebarProps) => {
+const Sidebar = ({ folders, updateFolders, children }: SidebarProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   return (
     <>

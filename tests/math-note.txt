@@ -1,0 +1,53 @@
+---
+Math Notes - Algebra Session
+---
+
+Date: 09/23/2023
+Instructor: Dr. Jane Smith
+
+Topics Covered:
+- Quadratic Equations
+- Polynomial Functions
+- Linear Equations
+
+---
+
+1. Quadratic Equations:
+
+The general form of a quadratic equation:
+ax^2 + bx + c = 0
+
+Solution using the quadratic formula:
+x = [-b ± sqrt(b^2 - 4ac)] / 2a
+
+Example:
+Given the equation 2x^2 - 3x - 5 = 0,
+Find the value of x.
+
+2. Polynomial Functions:
+
+General form of a polynomial of degree n:
+P(x) = an*x^n + an-1*x^(n-1) + ... + a2*x^2 + a1*x + a0
+
+For n = 2, it becomes a quadratic equation.
+
+3. Linear Equations:
+
+The general form:
+y = mx + b
+
+Where m is the slope and b is the y-intercept.
+
+Example:
+For the equation y = 2x + 1,
+The slope, m = 2 and y-intercept, b = 1.
+
+---
+
+Homework:
+- Solve 5 quadratic equations from the textbook.
+- Plot 3 linear equations on graph paper.
+
+---
+
+End of notes.
