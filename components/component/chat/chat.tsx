@@ -74,56 +74,33 @@ export default function Chat({ chats }: { chats: any }) {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {/* Header Container */}
+    <main className="flex flex-col h-screen p-4">
+      {/* Header */}
+      <Heading className="mb-4 self-center">Note Genius</Heading>
 
-      <Box style={{ borderRadius: "var(--radius-3)" }}>
-        <Container size="1">
-          <Flex direction="column">
-            <Heading>Note Genius</Heading>
-          </Flex>
-        </Container>
+      {/* Chat Box */}
+      <Box className="flex-grow  p-4 overflow-hidden rounded-lg">
+        <ScrollArea type="always" scrollbars="vertical">
+          <Box className="w-full lg:w-3/4 mx-auto p-4">
+            <ul className="divide-y">
+              {messages
+                .filter((msg) => msg.role !== "system")
+                .map((msg, idx) => (
+                  <li key={idx} className="py-4">
+                    {msg.role === "user"
+                      ? session?.user?.name + ": "
+                      : "NoteGenius: "}
+                    <span className="whitespace-pre-line">{msg.content}</span>
+                  </li>
+                ))}
+            </ul>
+          </Box>
+        </ScrollArea>
       </Box>
 
-      {/* Text Stream Container */}
-      <Box
-        className="flex-grow w-full lg:w-[75%]"
-        style={{ borderRadius: "var(--radius-3)" }}
-      >
-        <Container size="3" className="py-7">
-          <Flex direction="column">
-            <ScrollArea
-              type="always"
-              scrollbars="vertical"
-              style={{ height: "50vh" }}
-            >
-              <Box p="2" pr="8">
-                <ul className="divide-y">
-                  {messages
-                    .filter((msg) => msg.role !== "system")
-                    .map((msg, idx) => (
-                      <li key={idx} className="py-4">
-                        {msg.role === "user"
-                          ? session?.user?.name + ": "
-                          : "NoteGenius: "}
-                        <span className="whitespace-pre-line">
-                          {msg.content}
-                        </span>
-                      </li>
-                    ))}
-                </ul>
-              </Box>
-            </ScrollArea>
-          </Flex>
-        </Container>
-      </Box>
-
-      {/* Message Input Container */}
-      <Box
-        className="w-full lg:w-[75%] mt-auto"
-        style={{ borderRadius: "var(--radius-3)" }}
-      >
-        <Container size="3" className="py-7">
+      {/* Message Input */}
+      <Box className="mt-4">
+        <Container size="4">
           <Flex direction="column">
             <form className="relative w-full" onSubmit={(e) => handleSubmit(e)}>
               <TextArea
@@ -138,8 +115,8 @@ export default function Chat({ chats }: { chats: any }) {
                 type="submit"
                 style={{
                   position: "absolute",
-                  right: "10px", // adjust as needed
-                  bottom: "10px", // adjust as needed
+                  right: "15px",
+                  bottom: "10px",
                 }}
               >
                 <PaperPlaneIcon />

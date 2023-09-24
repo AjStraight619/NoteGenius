@@ -43,10 +43,11 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
           />
 
           <IconButton
+            variant="surface"
             style={{
               position: "absolute",
               bottom: "10px",
-              right: "10px",
+              right: "15px",
             }}
           >
             <DownloadIcon />

@@ -6,6 +6,8 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
+  // const requestBody = await req.json();
+  // console.log(requestBody);
   const { prompt } = await req.json();
   const response = await openai.chat.completions.create({
     model: "gpt-4",

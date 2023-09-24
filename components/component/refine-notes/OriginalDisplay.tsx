@@ -21,6 +21,8 @@ type OriginalContentDisplayProps = {
   onRefineClick: () => void;
   isLoading: boolean;
   setSelectedFile: React.Dispatch<React.SetStateAction<FileProps | null>>;
+  extraMessage: string;
+  setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
@@ -28,15 +30,17 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   selectedFile,
   onRefineClick,
   isLoading,
+  extraMessage,
+  setExtraMessage,
 }) => {
   const handleRefineClick = () => {
     // TODO: Handle possible edge cases and errors...
     onRefineClick();
   };
-
   const handleDialogClose = () => {
     setSelectedFile(null);
   };
+
   return (
     <Box style={{ width: "50%", borderRight: "1px solid gray" }}>
       {selectedFile && (
@@ -54,10 +58,11 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
           <Dialog.Root>
             <Dialog.Trigger>
               <Button
+                variant="surface"
                 style={{
                   position: "absolute",
                   bottom: "10px",
-                  right: "10px",
+                  right: "15px",
                 }}
               >
                 Refine
@@ -79,10 +84,12 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
               </Dialog.Description>
               <Flex direction="column" gap="3">
                 <label>
-                  <TextArea placeholder="Give a description on how you want to refine your note"></TextArea>
+                  <TextArea
+                    value={extraMessage}
+                    onChange={(e) => setExtraMessage(e.target.value)}
+                    placeholder="Give a description on how you want to refine your note..."
+                  ></TextArea>
                 </label>
-                <label>Label 2</label>
-                <label>Label 3</label>
               </Flex>
 
               <label>
@@ -98,10 +105,11 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
           </Dialog.Root>
 
           <IconButton
+            variant="surface"
             style={{ backgroundColor: "transparent" }}
-            className="absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px]"
+            className="absolute top-[10px] right-[15px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px]"
           >
-            <Cross2Icon className="hover:text-gray-2-translucent" />
+            <Cross2Icon />
           </IconButton>
         </ScrollArea>
       )}
