@@ -95,7 +95,11 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
               <label>
                 <Flex justify="center">
                   <Dialog.Close>
-                    <Button onClick={handleRefineClick} disabled={isLoading}>
+                    <Button
+                      mt={"3"}
+                      onClick={handleRefineClick}
+                      disabled={isLoading}
+                    >
                       Refine Note
                     </Button>
                   </Dialog.Close>

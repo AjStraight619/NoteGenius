@@ -32,25 +32,25 @@ const RefinePage: React.FC = () => {
   } = useCompletion({
     api: "/api/refine",
 
-    // onResponse: (res: any) => {
-    //   console.log("API responded with: ", res);
+    onResponse: (res: any) => {
+      console.log("API responded with: ", res);
 
-    //   if (res && res.error) {
-    //     // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
-    //     console.error("Error in response:", res.error.message);
+      if (res && res.error) {
+        // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
+        console.error("Error in response:", res.error.message);
 
-    //     // Convert API error message to a user-friendly message if needed
-    //     const userFriendlyMessage = getFriendlyErrorMessage(res.error.message);
-    //     setErrorMessage(userFriendlyMessage);
-    //   }
-    // },
-    // onError: (err) => {
-    //   // Handle technical errors here
-    //   console.error("Technical error occurred:", err.message);
-    //   setErrorMessage(
-    //     "An unexpected error occurred. Please check your connection and try again."
-    //   );
-    // },
+        // Convert API error message to a user-friendly message if needed
+        const userFriendlyMessage = getFriendlyErrorMessage(res.error.message);
+        setErrorMessage(userFriendlyMessage);
+      }
+    },
+    onError: (err) => {
+      // Handle technical errors here
+      console.error("Technical error occurred:", err.message);
+      setErrorMessage(
+        "An unexpected error occurred. Please check your connection and try again."
+      );
+    },
   });
 
   useEffect(() => {
