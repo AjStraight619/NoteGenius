@@ -21,29 +21,77 @@ const RefineButtonGroup: React.FC<{
   const [files, setFiles] = useState<FileProps[]>([]);
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target?.result as string);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles: FileProps[] = [];
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        const reader = new FileReader();
+        if (isDuplicateFile(file, files)) continue;
 
-        reader.onload = (event) => {
-          if (isDuplicateFile(file, files)) return;
-          selectedFiles.push({
-            id: uuidv4(), // Generate a unique ID
-            file: file,
-            name: file.name,
-            content: event.target?.result as string,
-          });
+        let content = "";
+        if (isPDF(file)) {
+          console.log("content in handleFileChange", content);
+          content = await extractTextFromPdf(file);
+        } else {
+          content = await readFileContent(file);
+        }
 
-          if (selectedFiles.length === e.target.files?.length) {
-            setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-          }
-        };
-        reader.readAsText(file);
+        selectedFiles.push({
+          id: uuidv4(),
+          file: file,
+          name: file.name,
+          content: content,
+        });
       }
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     }
+  };
+
+  const extractTextFromPdf = async (file: File): Promise<string> => {
+    console.log(file); // Log the file object
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    // Log the content of the FormData to ensure the file has been appended correctly
+    console.log([...formData.entries()]);
+
+    const res = await fetch("/api/extract", {
+      method: "POST",
+      headers: { content: "multipart/form-data" },
+      body: formData,
+    });
+
+    // Check and log the raw response
+    console.log("Raw Response:", res);
+
+    if (!res.ok) {
+      console.error("Server returned an error:", res.status, res.statusText);
+      throw new Error(res.statusText);
+    }
+
+    const data = await res.json();
+    console.log(data);
+
+    return "";
+  };
+
+  const isPDF = (file: File): boolean => {
+    return file.type === "application/pdf";
   };
 
   const isDuplicateFile = (
@@ -73,6 +121,7 @@ const RefineButtonGroup: React.FC<{
     }
     setIsDialogOpen(open);
     if (!open && selectedFileId) {
+      console.log(selectedFile?.file.type);
       // Find the selected file from the files array and set it in the parent component
       const file = files.find((file) => file.id === selectedFileId);
       setSelectedFile(file || null);

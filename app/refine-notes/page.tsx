@@ -61,6 +61,11 @@ const RefinePage: React.FC = () => {
   }, [completion, isLoading]);
 
   const handleRefineClick = () => {
+    if (selectedFile?.file.type === "application/pdf") {
+      console.log("calling handlePdfExtraction");
+    }
+
+    console.log(selectedFile?.file.type);
     if (selectedFile && hiddenTextareaRef.current) {
       setInput(selectedFile.content);
       complete(selectedFile.content, {});

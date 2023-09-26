@@ -35,6 +35,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
 }) => {
   const handleRefineClick = () => {
     // TODO: Handle possible edge cases and errors...
+    console.log(selectedFile?.file.type);
     onRefineClick();
   };
   const handleDialogClose = () => {
