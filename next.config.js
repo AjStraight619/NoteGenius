@@ -2,7 +2,7 @@
 const nextConfig = {
     experimental: {
         serverActions: true,
-        serverComponentsExternalPackages: ['pdf-parse']
+        serverComponentsExternalPackages: ['pdf2json']
     }
 }
 

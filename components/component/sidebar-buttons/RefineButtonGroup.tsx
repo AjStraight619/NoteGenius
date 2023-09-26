@@ -61,33 +61,56 @@ const RefineButtonGroup: React.FC<{
   };
 
   const extractTextFromPdf = async (file: File): Promise<string> => {
-    console.log(file); // Log the file object
+    console.log("Uploaded file:", file);
 
     const formData = new FormData();
-
     formData.append("file", file);
 
     // Log the content of the FormData to ensure the file has been appended correctly
-    console.log([...formData.entries()]);
+    console.log("FormData contents:", [...formData.entries()]);
 
-    const res = await fetch("/api/extract", {
-      method: "POST",
-      headers: { content: "multipart/form-data" },
-      body: formData,
-    });
-
-    // Check and log the raw response
-    console.log("Raw Response:", res);
-
-    if (!res.ok) {
-      console.error("Server returned an error:", res.status, res.statusText);
-      throw new Error(res.statusText);
+    let res: Response;
+    try {
+      res = await fetch("/api/extract", {
+        method: "POST",
+        body: formData,
+      });
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      throw error;
     }
 
-    const data = await res.json();
-    console.log(data);
+    // Check and log the raw response
+    console.log("Fetch Response:", res);
 
-    return "";
+    if (!res.ok) {
+      const errorText = await res.text(); // Get more detailed error info
+      console.error(
+        "Server returned an error:",
+        res.status,
+        res.statusText,
+        errorText
+      );
+      throw new Error(`Server Error: ${res.statusText} - ${errorText}`);
+    }
+
+    const textResponse = await res.text();
+    console.log("Raw Text Response:", textResponse);
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(textResponse);
+    } catch (error) {
+      console.error("Error parsing response as JSON:", error);
+      throw new Error("Failed to parse server response");
+    }
+
+    console.log("Parsed Data:", parsedData);
+
+    // Depending on the structure of your data, access the parsedText accordingly
+    const parsedText = parsedData?.parsedText || "";
+
+    return parsedText;
   };
 
   const isPDF = (file: File): boolean => {

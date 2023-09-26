@@ -1,37 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import PDFParser from "pdf2json";
 
-export async function POST(request: NextRequest) {
-  const formData = await request.formData();
+export async function POST(req: NextRequest) {
+  const pdfParser = new (PDFParser as any)(null, 1);
+  const formData = await req.formData();
   const file: File | null = formData.get("file") as unknown as File;
 
   if (!file) {
-    return NextResponse.json({ success: false, error: "No file provided." });
+    return NextResponse.json({ success: false, message: "No file specified" });
   }
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const pdfParser = new PDFParser();
-
-  // Promisify the parsing process
-  const parsePDF = (pdfBuffer: Buffer): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      pdfParser.on("pdfParser_dataError", (errData: any) =>
-        reject(errData.parserError)
-      );
-      pdfParser.on("pdfParser_dataReady", (pdfData) => resolve(pdfData));
-
-      pdfParser.parseBuffer(pdfBuffer);
+  const parsedText = await new Promise<string>((resolve, reject) => {
+    pdfParser.on("pdfParser_dataError", (errData: any) => {
+      console.error(errData.parserError);
+      reject(new Error("PDF parsing error"));
     });
-  };
 
-  try {
-    const pdfData = await parsePDF(buffer);
-    return NextResponse.json({ success: true, data: pdfData });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: "Failed to parse PDF." });
-  }
+    pdfParser.on("pdfParser_dataReady", () => {
+      const textContent = (pdfParser as any).getRawTextContent();
+      resolve(textContent);
+    });
+
+    // Trigger parsing with buffer
+    pdfParser.parseBuffer(buffer);
+  });
+
+  return NextResponse.json({ success: true, parsedText });
 }
 
 // console.log(request);
