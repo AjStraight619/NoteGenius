@@ -5,6 +5,7 @@ import { FaFolder } from "react-icons/fa";
 import { Folder } from "@prisma/client";
 import Sidebar from "@/components/sideBar/sideBarFolder";
 import SplitScreen from "./split-screen/SplitScreen"; // Import the SplitScreen component
+import Error from "next/error";
 
 import { Card, Box, Flex, Container, Section } from "@radix-ui/themes";
 import MyDropzone from "../upload/upload";

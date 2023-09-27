@@ -76,11 +76,6 @@ export default async function Home() {
           </div>
         </Section>
       </main>
-
-      {/* Debug: Display session info */}
-      <Box className="text-gray-400 text-center mb-8">
-        {JSON.stringify(session)}
-      </Box>
     </div>
   );
 }

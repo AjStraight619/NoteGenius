@@ -6,11 +6,12 @@ import { getServerSession } from "next-auth";
 import { type User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
+import { redirect } from "next/navigation";
 const getChats = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    return null;
+    redirect("/api/auth/signin");
   } else {
     const user = session.user as User;
 

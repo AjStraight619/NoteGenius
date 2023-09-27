@@ -6,6 +6,8 @@ import RefineContentDisplay from "@/components/component/refine-notes/RefineDisp
 import Sidebar from "@/components/sideBar/SideBarGloabal";
 import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButtonGroup";
 import { Flex } from "@radix-ui/themes";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export type FileProps = {
   id: string;
@@ -15,6 +17,10 @@ export type FileProps = {
 };
 
 const RefinePage: React.FC = () => {
+  const { data: session, status } = useSession();
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const [selectedFile, setSelectedFile] = useState<FileProps | null>(null);
   const [refinedContent, setRefinedContent] = useState<string | null>(null);
