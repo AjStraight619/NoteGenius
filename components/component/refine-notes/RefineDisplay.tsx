@@ -8,6 +8,7 @@ import {
   IconButton,
 } from "@radix-ui/themes";
 import { DownloadIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
 type RefineContentDisplayProps = {
   refinedContent: string | null;
@@ -18,7 +19,44 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   refinedContent,
   isLoading,
 }) => {
-  console.log("Refined Content: ", refinedContent);
+  const handleDownload = async (
+    filename: string,
+    content: string,
+    convertToPDF: string
+  ) => {
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("filename", filename);
+    formData.append("ConvertToPDF", convertToPDF);
+
+    try {
+      const res = await fetch("/api/download", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        console.error("Error fetching from API:", res.statusText);
+        // TODO: Consider displaying an error message to the user or taking other appropriate action
+        return;
+      }
+
+      // If the API call was successful, trigger a file download
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${filename}.pdf`; // Ensure the filename ends with .pdf
+      link.click();
+
+      URL.revokeObjectURL(blobUrl); // Clean up the blob URL
+    } catch (error) {
+      console.error("Error during the download process:", error);
+      // TODO: Handle errors - e.g., display an error message to the user
+    }
+  };
+
   return (
     <Box style={{ width: "50%", position: "relative" }}>
       {isLoading && (
@@ -43,6 +81,7 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
           />
 
           <IconButton
+            onClick={() => handleDownload("Test", refinedContent, "true")}
             variant="surface"
             style={{
               position: "absolute",

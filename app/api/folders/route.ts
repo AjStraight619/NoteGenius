@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authenticateRequest } from "@/utils/authenticateRequest";
 
-export async function POST(request: NextRequest) {
-  const user = await authenticateRequest(request);
+export async function POST(req: NextRequest) {
+  const user = await authenticateRequest(req);
   if (!user) {
     return new NextResponse(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
     });
   }
-  const requestBody = await request.json();
+  const requestBody = await req.json();
   console.log(requestBody);
   const { name } = requestBody;
 

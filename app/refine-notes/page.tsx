@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useCompletion } from "ai/react";
 import OriginalContentDisplay from "@/components/component/refine-notes/OriginalDisplay";
 import RefineContentDisplay from "@/components/component/refine-notes/RefineDisplay";
@@ -37,6 +37,7 @@ const RefinePage: React.FC = () => {
     handleSubmit,
   } = useCompletion({
     api: "/api/refine",
+    initialInput: extraMessage,
 
     onResponse: (res: any) => {
       console.log("API responded with: ", res);
