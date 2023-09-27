@@ -58,7 +58,7 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   };
 
   return (
-    <Box style={{ width: "50%", position: "relative" }}>
+    <Box className="lg:w-1/2 w-full">
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center space-x-2 z-10">
           <div className="h-1 w-1 bg-black rounded-full animate-bounce"></div>
