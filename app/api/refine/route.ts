@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             Refined Notes:\n`,
       },
     ],
-    max_tokens: 1000,
+    max_tokens: 4000,
     temperature: 0,
     top_p: 1,
     frequency_penalty: 1,

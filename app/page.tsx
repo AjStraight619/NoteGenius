@@ -69,6 +69,11 @@ export default async function Home() {
               </Box>
             </Flex>
           </Container>
+          <div className="flex items-center justify-center mt-5">
+            <Link href="/refine-notes">
+              <Button size={"3"}>Refine a Note!</Button>
+            </Link>
+          </div>
         </Section>
       </main>
 

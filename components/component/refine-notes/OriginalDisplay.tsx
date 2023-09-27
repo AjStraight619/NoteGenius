@@ -43,7 +43,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   };
 
   return (
-    <Box style={{ width: "50%", borderRight: "1px solid gray" }}>
+    <Box className="lg:w-1/2 w-full border-r border-gray-300">
       {selectedFile && (
         <ScrollArea
           type="always"
