@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Box,
-  TextArea,
-  ScrollArea,
-  Button,
-  IconButton,
-} from "@radix-ui/themes";
+import { Box, TextArea, ScrollArea, IconButton } from "@radix-ui/themes";
 import { DownloadIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
@@ -19,6 +13,33 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   refinedContent,
   isLoading,
 }) => {
+  const handleParse = async (
+    filename: string,
+    content: string,
+    convertToPDF: string
+  ) => {
+    const formData = new FormData();
+    formData.append("content", content);
+    formData.append("filename", filename);
+    formData.append("ConvertToPDF", convertToPDF);
+
+    try {
+      const res = await fetch("/api/wolfram-alpha", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        console.log(res);
+      }
+
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleDownload = async (
     filename: string,
     content: string,
@@ -58,9 +79,12 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   };
 
   return (
-    <Box className="lg:w-1/2 w-full">
+    <Box
+      className="lg:w-1/2 flex items-center justify-center"
+      style={{ height: "100vh" }}
+    >
       {isLoading && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center space-x-2 z-10">
+        <div className="flex items-center space-x-2 z-10">
           <div className="h-1 w-1 bg-black rounded-full animate-bounce"></div>
           <div className="h-1 w-1 bg-black rounded-full animate-bounce delay-200"></div>
           <div className="h-1 w-1 bg-black rounded-full animate-bounce delay-400"></div>
@@ -72,14 +96,13 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
         <ScrollArea
           type="always"
           scrollbars="vertical"
-          style={{ height: "100vh", position: "relative" }}
+          style={{ height: "100vh", position: "relative", width: "100%" }}
         >
           <TextArea
             value={refinedContent}
             readOnly
             style={{ width: "100%", height: "100vh" }}
           />
-
           <IconButton
             onClick={() => handleDownload("Test", refinedContent, "true")}
             variant="surface"

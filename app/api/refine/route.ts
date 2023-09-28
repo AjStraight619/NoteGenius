@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     messages: [
       {
         role: "system",
-        content: `Answer the following questions: ${initialInput}
+        content: `Give answers and descriptions to the following questions: ${initialInput}
          Notes:
             ${prompt}
                     
