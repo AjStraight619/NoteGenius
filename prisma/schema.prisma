@@ -134,5 +134,4 @@ enum FileType {
   IMAGE_JPEG
   IMAGE_PNG
   TEXT
-  // Add other types as needed
 }
