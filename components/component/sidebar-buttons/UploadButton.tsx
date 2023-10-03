@@ -12,10 +12,6 @@ import { UploadIcon } from "@radix-ui/react-icons";
 import { FolderSidebarProps } from "@/types/folderTypes";
 import { IndividualFolder } from "@/types/folderTypes";
 
-// Triggering github to recognize I changed the name of this file to start with an uppercase...
-// I guess git or github does not recognize changing casing of filenames... lets try again...
-// getting internal server error on vercel
-
 export default function UploadButton({ folders }: FolderSidebarProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);

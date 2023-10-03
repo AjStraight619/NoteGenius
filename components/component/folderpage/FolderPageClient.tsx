@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { Folder } from "@prisma/client";
 import Sidebar from "@/components/sideBar/sideBarFolder";
-import Error from "next/error";
 
 import { Card, Box, Flex, Container, Section } from "@radix-ui/themes";
 import MyDropzone from "../upload/upload";
@@ -14,14 +13,9 @@ export default function FolderPageClient({
   foldersToDisplay: Folder[] | null;
 }) {
   const [folders, setFolders] = useState(foldersToDisplay);
-  const [isSplitView, setIsSplitView] = useState(false);
 
   const updateFolders = (newFolders: Folder[]) => {
     setFolders(newFolders);
-  };
-
-  const toggleSplitView = () => {
-    setIsSplitView(!isSplitView);
   };
 
   return (

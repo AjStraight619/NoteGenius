@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { IconButton, Box, Flex, Dialog, Button } from "@radix-ui/themes";
 import { UploadIcon, StackIcon, Cross2Icon } from "@radix-ui/react-icons";
+import StackButton from "./StackButton";
 
 export type FileProps = {
   id: string;
@@ -175,7 +176,7 @@ const RefineButtonGroup: React.FC<{
             className="hover:shadow-lg appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] cursor-pointer"
           />
         </IconButton>
-        <Box position={"relative"}>
+        {/* <Box position={"relative"}>
           <IconButton
             onClick={handleStackButtonClick}
             style={{ backgroundColor: "transparent" }}
@@ -185,7 +186,12 @@ const RefineButtonGroup: React.FC<{
             />
           </IconButton>
           <Box position={"absolute"}>{files.length}</Box>
-        </Box>
+        </Box> */}
+        <StackButton
+          onClick={handleStackButtonClick}
+          fileCount={files.length}
+          files={files}
+        />
       </Flex>
 
       <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
