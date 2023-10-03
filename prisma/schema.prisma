@@ -18,16 +18,12 @@ model User {
   updatedAt          DateTime             @updatedAt
   folders            Folder[]
   chats              Chat[]
-  refinedNotes       RefinedNote[]
+  refinedFiles       RefinedFile[]
   PasswordResetToken PasswordResetToken[]
   files              File[]
-}
+  chatLogs           ChatLog[]
 
-model Tag {
-  id      String   @id @default(uuid())
-  name    String   @unique
-  folders Folder[] @relation("FolderToTag")
-  notes   Note[]   @relation("NoteToTag")
+  @@index([email])
 }
 
 model Folder {
@@ -37,55 +33,16 @@ model Folder {
   updatedAt    DateTime      @updatedAt
   userId       String
   user         User          @relation(fields: [userId], references: [id])
-  notes        Note[]
+  files        File[]
   isStarred    Boolean?      @default(false)
   tags         Tag[]         @relation("FolderToTag")
-  refinedNotes RefinedNote[]
-  File         File[]
+  refinedFiles RefinedFile[]
 
   @@unique([name, userId])
   @@index([userId])
 }
 
-model Note {
-  id          String        @id @default(uuid())
-  name        String
-  content     String?
-  isRefined   Boolean       @default(false)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  folderId    String
-  folder      Folder        @relation(fields: [folderId], references: [id])
-  files       File[]
-  isStarred   Boolean?      @default(false)
-  viewCount   Int?          @default(0)
-  dueDate     DateTime?
-  tags        Tag[]         @relation("NoteToTag")
-  RefinedNote RefinedNote[]
-
-  @@index([folderId])
-}
-
-model File {
-  id        String   @id @default(uuid())
-  name      String
-  type      String
-  content   Bytes
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  noteId    String?
-  note      Note?    @relation(fields: [noteId], references: [id])
-  folderId  String?
-  folder    Folder?  @relation(fields: [folderId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId]) // <- Add this line to create an index on userId
-  @@index([noteId])
-  @@index([folderId])
-}
-
-model RefinedNote {
+model RefinedFile {
   id        String   @id @default(uuid())
   original  String
   refined   String?
@@ -95,12 +52,36 @@ model RefinedNote {
   folder    Folder   @relation(fields: [folderId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  noteId    String
-  note      Note     @relation(fields: [noteId], references: [id])
+  fileId    String   @unique
+  file      File     @relation(fields: [fileId], references: [id])
 
-  @@index([folderId, userId, noteId])
-  @@index([userId, noteId])
-  @@index([noteId])
+  @@index([folderId, userId, fileId])
+  @@index([userId, fileId])
+}
+
+model Tag {
+  id      String   @id @default(uuid())
+  name    String   @unique
+  files   File[]   @relation("FileToTag")
+  folders Folder[] @relation("FolderToTag")
+}
+
+model File {
+  id          String       @id @default(uuid())
+  name        String
+  type        String
+  s3Path      String // The S3 path or URL where the file is stored
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  folderId    String?
+  folder      Folder?      @relation(fields: [folderId], references: [id])
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  refinedFile RefinedFile?
+  tags        Tag[]        @relation("FileToTag")
+
+  @@index([userId])
+  @@index([folderId])
 }
 
 model Chat {
@@ -126,14 +107,24 @@ model ChatMessage {
   @@index([chatId])
 }
 
+model ChatLog {
+  id        String   @id @default(uuid())
+  content   String   @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
 model PasswordResetToken {
   id        String    @id @default(uuid())
   token     String    @unique
   createdAt DateTime  @default(now())
   resetAt   DateTime?
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
 
   @@index([userId])
 }
@@ -143,5 +134,4 @@ enum FileType {
   IMAGE_JPEG
   IMAGE_PNG
   TEXT
-  // Add other types as needed
 }
