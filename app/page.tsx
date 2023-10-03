@@ -14,68 +14,90 @@ import {
   Box,
   Button,
 } from "@radix-ui/themes";
+import "./home-styles.css";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="home-gradient flex flex-col min-h-screen bg-gray-900 text-white">
       {/* Navigation */}
-      <nav className="bg-gray-900 text-white p-4">
+      <nav className="p-4 border-b border-gray-800">
         <Container size="2">
           <Flex justify="between" align="center">
-            <Flex gap="4" align="center">
-              <Heading size="2" className="text-white"></Heading>
+            <Heading size="2">NoteGenius</Heading>
+
+            <Flex align="center" gap="4">
               {session ? (
-                <span className="mx-2 text-2xl font-bold">
-                  {session?.user?.name}
-                </span>
-              ) : null}
+                <>
+                  <span className="mx-2 text-2xl font-bold">
+                    {session?.user?.name}
+                  </span>
+                  <LogOutButton />
+                </>
+              ) : (
+                <>
+                  <LogInButton />
+                  <RegisterButton />
+                </>
+              )}
             </Flex>
           </Flex>
-        </Container>
-        <Container position="absolute" top="0" right="0" size="1" pt={"2"}>
-          {session ? (
-            <LogOutButton />
-          ) : (
-            <Flex>
-              <LogInButton /> <RegisterButton />
-            </Flex>
-          )}
         </Container>
       </nav>
 
       {/* Main Content */}
-      <main className="flex-grow">
-        <Section size="3" mx="6">
+      <main className="flex-grow p-8">
+        <Section size="3">
           <Container size="2">
             <Flex direction="column" align="center" gap="7">
-              <Heading size="2" className="text-white">
-                Welcome to NoteGenius
-              </Heading>
+              <Heading size="2">Welcome to NoteGenius</Heading>
               <Box className="text-gray-400 text-center">
                 The advanced note-organizing platform powered by AI
                 technologies.
               </Box>
-              <Box className="mt-8">
-                <Flex gap="4">
-                  <Link href="/folders">
-                    <Button>Go to Folders</Button>
-                  </Link>
-                  <Link href="/chat">
-                    <Button>Go to Chat</Button>
-                  </Link>
-                </Flex>
-              </Box>
+              <Flex gap="4" className="mt-8">
+                <Link href="/folders" passHref>
+                  <Button>Go to Folders</Button>
+                </Link>
+                <Link href="/chat" passHref>
+                  <Button>Go to Chat</Button>
+                </Link>
+              </Flex>
             </Flex>
           </Container>
-          <div className="flex items-center justify-center mt-5">
-            <Link href="/refine-notes">
-              <Button size={"3"}>Refine a Note!</Button>
-            </Link>
-          </div>
+        </Section>
+        <Section size="3" className="mt-5 flex justify-center">
+          <Link href="/refine-notes" passHref>
+            <Button size="3">Refine a Note!</Button>
+          </Link>
         </Section>
       </main>
+
+      {/* Footer */}
+      <footer className="p-4 border-t border-gray-800">
+        <Container size="2">
+          <Flex justify="between" align="center">
+            <Box>© 2023 NoteGenius</Box>
+            <Flex gap="4">
+              <Link
+                href="/privacy"
+                className="text-gray-400 hover:text-white"
+                passHref
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-gray-400 hover:text-white"
+                passHref
+              >
+                Terms
+              </Link>
+            </Flex>
+          </Flex>
+        </Container>
+      </footer>
     </div>
   );
 }

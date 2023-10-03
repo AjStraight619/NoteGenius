@@ -1,0 +1,4 @@
+.home-gradient {
+    background: linear-gradient(to bottom right, #000000, #434343);
+    min-height: 100vh;
+  }
