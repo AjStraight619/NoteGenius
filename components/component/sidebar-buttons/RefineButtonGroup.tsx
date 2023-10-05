@@ -2,8 +2,8 @@
 
 import React, { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { IconButton, Box, Flex, Dialog, Button } from "@radix-ui/themes";
-import { UploadIcon, StackIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { IconButton, Box, Flex, Dialog, Button, Grid } from "@radix-ui/themes";
+import { UploadIcon, Cross2Icon } from "@radix-ui/react-icons";
 import StackButton from "./StackButton";
 
 export type FileProps = {
@@ -176,17 +176,7 @@ const RefineButtonGroup: React.FC<{
             className="hover:shadow-lg appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] cursor-pointer"
           />
         </IconButton>
-        {/* <Box position={"relative"}>
-          <IconButton
-            onClick={handleStackButtonClick}
-            style={{ backgroundColor: "transparent" }}
-          >
-            <StackIcon
-              style={{ width: "32px", height: "32px", color: "white" }}
-            />
-          </IconButton>
-          <Box position={"absolute"}>{files.length}</Box>
-        </Box> */}
+
         <StackButton
           onClick={handleStackButtonClick}
           fileCount={files.length}
@@ -195,33 +185,61 @@ const RefineButtonGroup: React.FC<{
       </Flex>
 
       <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
-        <Dialog.Content style={{ maxWidth: 450, position: "relative" }}>
+        <Dialog.Content className="max-w-10xl max-h-7xl mx-auto my-6 p-6 overflow-y-auto rounded-lg bg-white shadow-lg">
           <Dialog.Close>
-            <button
-              style={{ position: "absolute", top: "10px", right: "10px" }}
-            >
+            <button className="absolute top-3 right-3">
               <Cross2Icon className="hover:text-gray-2-translucent" />
             </button>
           </Dialog.Close>
-          <Dialog.Title>Choose a file to refine</Dialog.Title>
-          {files.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setSelectedFileId(item.id)}
-              style={{
-                padding: "5px",
-                cursor: "pointer",
-                borderRadius: "3px",
-                backgroundColor:
-                  selectedFileId === item.id ? "gray" : "transparent",
-              }}
+          <Dialog.Title className="text-center p-5">
+            Choose a file to refine
+          </Dialog.Title>
+          <Grid className="grid-cols-3 gap-6">
+            {files.map((item) => (
+              <Box
+                key={item.id}
+                className={`relative w-48 h-80 p-4 cursor-pointer rounded shadow-md border ${
+                  selectedFileId === item.id
+                    ? "border-blue-500 bg-gray-400"
+                    : "bg-gray-200"
+                }`}
+              >
+                <div className="absolute top-1 right-1">
+                  <Cross2Icon
+                    className="hover:text-gray-600 cursor-pointer"
+                    onClick={() => {
+                      setFiles((prevFiles) =>
+                        prevFiles.filter((f) => f.id !== item.id)
+                      );
+                    }}
+                  />
+                </div>
+                <div className="text-center truncate">{item.file.name}</div>
+                <div className="mt-2 text-sm text-gray-600">
+                  {item.content.substring(0, 100) +
+                    (item.content.length > 100 ? "..." : "")}
+                </div>
+              </Box>
+            ))}
+          </Grid>
+          <div className="mt-6">
+            <label
+              htmlFor="refineInput"
+              className="block text-sm font-medium text-gray-700"
             >
-              {item.file.name}
-            </div>
-          ))}
+              How would you like to refine the note?
+            </label>
+            <input
+              type="text"
+              name="refineInput"
+              id="refineInput"
+              placeholder="Enter refinement instructions..."
+              className="mt-2 p-2 w-full border rounded-md"
+            />
+          </div>
           {files.length > 0 && (
-            <label>
-              <Flex justify="center">
+            <label className="mt-4">
+              <Flex justify="center" className="p-5">
                 <Dialog.Close>
                   <Button>Refine</Button>
                 </Dialog.Close>
