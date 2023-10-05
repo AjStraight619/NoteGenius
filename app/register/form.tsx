@@ -7,11 +7,6 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 export const RegisterForm = () => {
-  // If the user has a session, redirect them to the home page
-  const session = useSession();
-  if (session) {
-    redirect("/");
-  }
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
