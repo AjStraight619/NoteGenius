@@ -1,6 +1,4 @@
-"use client";
 import React, { useState } from "react";
-declare var ImageCapture: any;
 
 type TextAnnotation = {
   description: string;
@@ -9,38 +7,38 @@ type TextAnnotation = {
 export default function ImageUpload() {
   const [detections, setDetections] = useState<TextAnnotation[] | null>(null);
 
-  async function handleCaptureAndProcessImage() {
-    try {
-      // Capture image
-      const constraints = { video: true };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      const track = stream.getVideoTracks()[0];
-      const imageCapture = new ImageCapture(track);
-      const photo = await imageCapture.takePhoto();
-      track.stop();
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const image = files[0];
+      console.log("Uploading image:", image.name);
 
-      // Upload image to server
       const formData = new FormData();
-      formData.append("image", photo);
-      const response = await fetch("/api/google", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await response.json();
+      formData.append("image", image);
 
-      // Update UI with detected text
-      const detectedText = data || "No text detected";
-      setDetections(detectedText);
-    } catch (error) {
-      console.error("Error:", error);
+      try {
+        const response = await fetch("/api/google", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        setDetections(data);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
-  }
+  };
 
   return (
     <div>
-      <button onClick={handleCaptureAndProcessImage}>
-        Capture and Process Image
-      </button>
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleImageChange}
+      />
       {detections && (
         <div className="flex items-center">
           <h3>Detected Text:</h3>
