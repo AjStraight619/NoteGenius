@@ -1,13 +1,15 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
+import useHandleRefine from "@/hooks/useHandleRefine";
 import { useCompletion } from "ai/react";
 import OriginalContentDisplay from "@/components/component/refine-notes/OriginalDisplay";
 import RefineContentDisplay from "@/components/component/refine-notes/RefineDisplay";
-import Sidebar from "@/components/sideBar/SideBarGloabal";
-import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButtonGroup";
+import Sidebar from "@/components/sideBar/SideBarGlobal";
+import RefineButtonGroup from "@/components/component/sidebar/RefineButtonGroup";
 import { Flex } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import Queue from "queue";
 
 export type FileProps = {
   id: string;
@@ -22,11 +24,12 @@ const RefinePage: React.FC = () => {
     redirect("/api/auth/signin");
   }
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedFile, setSelectedFile] = useState<FileProps | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileProps[] | null>(null);
   const [refinedContent, setRefinedContent] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [extraMessage, setExtraMessage] = useState("");
+  console.log(extraMessage);
 
   const {
     complete,
@@ -67,15 +70,24 @@ const RefinePage: React.FC = () => {
     }
   }, [completion, isLoading]);
 
-  const handleRefineClick = () => {
-    if (selectedFile?.file.type === "application/pdf") {
+  const initiateRefining = async (content: string) => {
+    if (
+      selectedFile &&
+      selectedFile.length > 0 &&
+      selectedFile[0].file.type === "application/pdf"
+    ) {
       console.log("calling handlePdfExtraction");
     }
 
-    console.log(selectedFile?.file.type);
-    if (selectedFile && hiddenTextareaRef.current) {
-      setInput(selectedFile.content);
-      complete(selectedFile.content, {});
+    if (selectedFile && selectedFile.length > 0 && hiddenTextareaRef.current) {
+      const apiData = {
+        prompt: content,
+        initialInput: extraMessage,
+      };
+
+      complete(content, {
+        body: { initialInput: extraMessage },
+      });
 
       const fakeEvent = new Event(
         "submit"
@@ -83,6 +95,12 @@ const RefinePage: React.FC = () => {
       handleSubmit(fakeEvent);
     }
   };
+  // custom hook for handling multiple files at once. (Currently max of 6 files)
+  const { shouldRefine, setShouldRefine } = useHandleRefine(
+    selectedFile,
+    isLoading,
+    initiateRefining // This function initiates refining and is defined in RefinePage.
+  );
 
   const toggleSideBar = () => {
     setIsSideBarOpen((prev) => !prev);
@@ -100,6 +118,8 @@ const RefinePage: React.FC = () => {
         <RefineButtonGroup
           selectedFile={selectedFile}
           setSelectedFile={setSelectedFile}
+          setExtraMessage={setExtraMessage}
+          extraMessage={extraMessage}
         />
       </Sidebar>
       <Flex
@@ -111,12 +131,8 @@ const RefinePage: React.FC = () => {
         }}
       >
         <OriginalContentDisplay
-          setExtraMessage={setExtraMessage}
-          extraMessage={extraMessage}
-          setSelectedFile={setSelectedFile}
           selectedFile={selectedFile}
-          onRefineClick={handleRefineClick}
-          isLoading={isLoading}
+          setShouldRefine={setShouldRefine}
         />
         <RefineContentDisplay
           refinedContent={refinedContent}

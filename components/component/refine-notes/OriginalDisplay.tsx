@@ -17,46 +17,45 @@ export type FileProps = {
   name: string;
 };
 type OriginalContentDisplayProps = {
-  selectedFile: FileProps | null;
-  onRefineClick: () => void;
-  isLoading: boolean;
-  setSelectedFile: React.Dispatch<React.SetStateAction<FileProps | null>>;
-  extraMessage: string;
-  setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
+  selectedFile: FileProps[] | null;
+
+  setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
-  setSelectedFile,
   selectedFile,
-  onRefineClick,
-  isLoading,
-  extraMessage,
-  setExtraMessage,
+  setShouldRefine,
 }) => {
-  const handleRefineClick = () => {
-    // TODO: Handle possible edge cases and errors...
-    console.log(selectedFile?.file.type);
-    onRefineClick();
-  };
-  const handleDialogClose = () => {
-    setSelectedFile(null);
+  const handleRefineButtonClick = () => {
+    setShouldRefine(true);
   };
 
   return (
     <Box className="lg:w-1/2 w-full border-r border-gray-300">
-      {selectedFile && (
+      {selectedFile && selectedFile.length > 0 && (
         <ScrollArea
           type="always"
           scrollbars="vertical"
           style={{ height: "100vh", position: "relative" }}
         >
           <TextArea
-            value={selectedFile.content}
+            value={selectedFile[0].content}
             readOnly
             style={{ width: "100%", height: "100vh" }}
           />
+          <Button
+            onClick={handleRefineButtonClick}
+            variant="surface"
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              right: "15px",
+            }}
+          >
+            Refine
+          </Button>
 
-          <Dialog.Root>
+          {/* <Dialog.Root>
             <Dialog.Trigger>
               <Button
                 variant="surface"
@@ -98,7 +97,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
                   <Dialog.Close>
                     <Button
                       mt={"3"}
-                      onClick={handleRefineClick}
+                      onClick={handleRefineButtonClick}
                       disabled={isLoading}
                     >
                       Refine Note
@@ -107,7 +106,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
                 </Flex>
               </label>
             </Dialog.Content>
-          </Dialog.Root>
+          </Dialog.Root> */}
 
           <IconButton
             variant="surface"

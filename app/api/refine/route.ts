@@ -7,13 +7,18 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   const { prompt, initialInput } = await req.json();
+  console.log("This is the prompt: " + prompt);
+  console.log("This is the extra message: " + initialInput);
+
   const response = await openai.chat.completions.create({
     model: "gpt-4",
 
     messages: [
       {
         role: "system",
-        content: `Give answers and descriptions to the following questions: ${initialInput}
+        content: `The user may or may not want to give extra instructions on how they want their note to be refined: ${initialInput} if they do not want to give extra instructions on how they want their note to be refined
+        do your best to refine the note yourself.
+        
          Notes:
             ${prompt}
                     

@@ -2,8 +2,16 @@
 
 import React, { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { IconButton, Box, Flex, Dialog, Button, Grid } from "@radix-ui/themes";
-import { UploadIcon, Cross2Icon } from "@radix-ui/react-icons";
+import {
+  IconButton,
+  Box,
+  Flex,
+  Dialog,
+  Button,
+  ScrollArea,
+  TextArea,
+} from "@radix-ui/themes";
+import { UploadIcon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import StackButton from "./StackButton";
 
 export type FileProps = {
@@ -14,14 +22,15 @@ export type FileProps = {
 };
 
 const RefineButtonGroup: React.FC<{
-  selectedFile: FileProps | null;
-  setSelectedFile: React.Dispatch<React.SetStateAction<FileProps | null>>;
-}> = ({ selectedFile, setSelectedFile }) => {
+  selectedFile: FileProps[] | null;
+  setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
+  extraMessage: string;
+  setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
+}> = ({ selectedFile, setSelectedFile, setExtraMessage, extraMessage }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileProps[]>([]);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
-
+  const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
   const readFileContent = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -144,11 +153,12 @@ const RefineButtonGroup: React.FC<{
       }
     }
     setIsDialogOpen(open);
-    if (!open && selectedFileId) {
-      console.log(selectedFile?.file.type);
-      // Find the selected file from the files array and set it in the parent component
-      const file = files.find((file) => file.id === selectedFileId);
-      setSelectedFile(file || null);
+    if (!open && selectedFileIds) {
+      // Filter the selected files from the files array
+      const selectedFiles = files.filter((file) =>
+        selectedFileIds.includes(file.id)
+      );
+      setSelectedFile(selectedFiles || []);
     }
   };
 
@@ -183,71 +193,92 @@ const RefineButtonGroup: React.FC<{
           files={files}
         />
       </Flex>
-
-      <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
-        <Dialog.Content className="max-w-10xl max-h-7xl mx-auto my-6 p-6 overflow-y-auto rounded-lg bg-white shadow-lg">
-          <Dialog.Close>
-            <button className="absolute top-3 right-3">
-              <Cross2Icon className="hover:text-gray-2-translucent" />
-            </button>
-          </Dialog.Close>
-          <Dialog.Title className="text-center p-5">
-            Choose a file to refine
-          </Dialog.Title>
-          <Grid className="grid-cols-3 gap-6">
-            {files.map((item) => (
-              <Box
-                key={item.id}
-                className={`relative w-48 h-80 p-4 cursor-pointer rounded shadow-md border ${
-                  selectedFileId === item.id
-                    ? "border-blue-500 bg-gray-400"
-                    : "bg-gray-200"
-                }`}
-              >
-                <div className="absolute top-1 right-1">
-                  <Cross2Icon
-                    className="hover:text-gray-600 cursor-pointer"
-                    onClick={() => {
-                      setFiles((prevFiles) =>
-                        prevFiles.filter((f) => f.id !== item.id)
-                      );
-                    }}
-                  />
-                </div>
-                <div className="text-center truncate">{item.file.name}</div>
-                <div className="mt-2 text-sm text-gray-600">
-                  {item.content.substring(0, 100) +
-                    (item.content.length > 100 ? "..." : "")}
-                </div>
-              </Box>
-            ))}
-          </Grid>
-          <div className="mt-6">
-            <label
-              htmlFor="refineInput"
-              className="block text-sm font-medium text-gray-700"
+      <div className="overflow-hidden">
+        <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
+          <ScrollArea type={"always"} scrollbars="vertical">
+            <Dialog.Content
+              size={"4"}
+              className="w-full max-h-7xl  my-6 p-6  rounded-lg bg-white shadow-lg overflow-y-hidden"
             >
-              How would you like to refine the note?
-            </label>
-            <input
-              type="text"
-              name="refineInput"
-              id="refineInput"
-              placeholder="Enter refinement instructions..."
-              className="mt-2 p-2 w-full border rounded-md"
-            />
-          </div>
-          {files.length > 0 && (
-            <label className="mt-4">
-              <Flex justify="center" className="p-5">
-                <Dialog.Close>
-                  <Button>Refine</Button>
-                </Dialog.Close>
-              </Flex>
-            </label>
-          )}
-        </Dialog.Content>
-      </Dialog.Root>
+              <Dialog.Close>
+                <button className="absolute top-3 right-3">
+                  <Cross2Icon className="hover:text-gray-2-translucent" />
+                </button>
+              </Dialog.Close>
+              <Dialog.Title className="text-center p-5">
+                Choose which files you want to refine
+              </Dialog.Title>
+              <div className="grid grid-cols-2 gap-6">
+                {files.map((item) => (
+                  <Box
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedFileIds((prevSelectedFileIds) => {
+                        if (prevSelectedFileIds.includes(item.id)) {
+                          return prevSelectedFileIds.filter(
+                            (id) => id !== item.id
+                          );
+                        } else {
+                          return [...prevSelectedFileIds, item.id];
+                        }
+                      });
+                    }}
+                    className={`relative w-48 h-80 p-4 cursor-pointer rounded shadow-md border ${
+                      selectedFileIds.includes(item.id)
+                        ? "border-blue-500 bg-gray-400"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    {selectedFileIds.includes(item.id) && (
+                      <div className="absolute top-1 left-1">
+                        <CheckIcon color="green" />
+                      </div>
+                    )}
+
+                    <div className="absolute top-1 right-1">
+                      <Cross2Icon
+                        className="hover:text-gray-600 cursor-pointer"
+                        onClick={() => {
+                          setFiles((prevFiles) =>
+                            prevFiles.filter((f) => f.id !== item.id)
+                          );
+                        }}
+                      />
+                    </div>
+                    <div className="text-center truncate">{item.file.name}</div>
+                    <div className="mt-2 text-sm text-gray-600">
+                      {item.content.substring(0, 100) +
+                        (item.content.length > 100 ? "..." : "")}
+                    </div>
+                  </Box>
+                ))}
+              </div>
+              <div className="mt-6">
+                <label
+                  htmlFor="refineInput"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  How would you like to refine the note?
+                </label>
+                <TextArea
+                  value={extraMessage}
+                  onChange={(e) => setExtraMessage(e.target.value)}
+                  placeholder="Give a description on how you want to refine your note..."
+                ></TextArea>
+              </div>
+              {files.length > 0 && (
+                <label className="mt-4">
+                  <Flex justify="center" className="p-5">
+                    <Dialog.Close>
+                      <Button>Refine</Button>
+                    </Dialog.Close>
+                  </Flex>
+                </label>
+              )}
+            </Dialog.Content>
+          </ScrollArea>
+        </Dialog.Root>
+      </div>
     </>
   );
 };
