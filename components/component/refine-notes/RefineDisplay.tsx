@@ -2,7 +2,6 @@
 
 import { Box, TextArea, ScrollArea, IconButton } from "@radix-ui/themes";
 import { DownloadIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
 
 type RefineContentDisplayProps = {
   refinedContent: string | null;
@@ -13,6 +12,7 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   refinedContent,
   isLoading,
 }) => {
+  console.log(refinedContent);
   const handleParse = async (
     filename: string,
     content: string,

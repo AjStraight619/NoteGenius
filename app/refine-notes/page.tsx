@@ -19,10 +19,6 @@ export type FileProps = {
 };
 
 const RefinePage: React.FC = () => {
-  const { data: session, status } = useSession();
-  if (!session) {
-    redirect("/api/auth/signin");
-  }
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const [selectedFile, setSelectedFile] = useState<FileProps[] | null>(null);
   const [refinedContent, setRefinedContent] = useState<string | null>(null);
@@ -31,37 +27,33 @@ const RefinePage: React.FC = () => {
   const [extraMessage, setExtraMessage] = useState("");
   console.log(extraMessage);
 
-  const {
-    complete,
-    setInput,
-    completion,
-    isLoading,
-    handleInputChange,
-    handleSubmit,
-  } = useCompletion({
-    api: "/api/refine",
-    initialInput: extraMessage,
+  const { complete, completion, isLoading, handleInputChange, handleSubmit } =
+    useCompletion({
+      api: "/api/refine",
+      initialInput: extraMessage,
 
-    onResponse: (res: any) => {
-      console.log("API responded with: ", res);
+      onResponse: (res: any) => {
+        console.log("API responded with: ", res);
 
-      if (res && res.error) {
-        // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
-        console.error("Error in response:", res.error.message);
+        if (res && res.error) {
+          // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
+          console.error("Error in response:", res.error.message);
 
-        // Convert API error message to a user-friendly message if needed
-        const userFriendlyMessage = getFriendlyErrorMessage(res.error.message);
-        setErrorMessage(userFriendlyMessage);
-      }
-    },
-    onError: (err) => {
-      // Handle technical errors here
-      console.error("Technical error occurred:", err.message);
-      setErrorMessage(
-        "An unexpected error occurred. Please check your connection and try again."
-      );
-    },
-  });
+          // Convert API error message to a user-friendly message if needed
+          const userFriendlyMessage = getFriendlyErrorMessage(
+            res.error.message
+          );
+          setErrorMessage(userFriendlyMessage);
+        }
+      },
+      onError: (err) => {
+        // Handle technical errors here
+        console.error("Technical error occurred:", err.message);
+        setErrorMessage(
+          "An unexpected error occurred. Please check your connection and try again."
+        );
+      },
+    });
 
   useEffect(() => {
     if (!isLoading && completion) {
@@ -80,11 +72,6 @@ const RefinePage: React.FC = () => {
     }
 
     if (selectedFile && selectedFile.length > 0 && hiddenTextareaRef.current) {
-      const apiData = {
-        prompt: content,
-        initialInput: extraMessage,
-      };
-
       complete(content, {
         body: { initialInput: extraMessage },
       });
@@ -93,9 +80,22 @@ const RefinePage: React.FC = () => {
         "submit"
       ) as unknown as React.FormEvent<HTMLFormElement>;
       handleSubmit(fakeEvent);
+
+      // If there are more files left to refine, trigger the next refinement
+      if (selectedFile.length > 1) {
+        setShouldRefine(true);
+      }
     }
   };
+
   // custom hook for handling multiple files at once. (Currently max of 6 files)
+  console.log("These are the selected files: ", selectedFile);
+  if (selectedFile) {
+    console.log(
+      "Here is how many files are in the array: ",
+      selectedFile.length
+    );
+  }
   const { shouldRefine, setShouldRefine } = useHandleRefine(
     selectedFile,
     isLoading,

@@ -18,7 +18,6 @@ export type FileProps = {
 };
 type OriginalContentDisplayProps = {
   selectedFile: FileProps[] | null;
-
   setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
 };
 

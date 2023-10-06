@@ -7,22 +7,23 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   const { prompt, initialInput } = await req.json();
-  console.log("This is the prompt: " + prompt);
-  console.log("This is the extra message: " + initialInput);
 
   const response = await openai.chat.completions.create({
     model: "gpt-4",
-
     messages: [
       {
         role: "system",
-        content: `The user may or may not want to give extra instructions on how they want their note to be refined: ${initialInput} if they do not want to give extra instructions on how they want their note to be refined
-        do your best to refine the note yourself.
+        content: `You will receive either a note that needs refinement or a question that requires an answer. The user might also provide additional instructions. Here's what you need to keep in mind:
+
+        1. If given a note, refine it based on the provided instructions. If no specific instructions are given, refine it to the best of your ability.
+        2. If presented with a question, provide a comprehensive answer. Use any extra instructions, if provided, to guide your response.
+
+        User's instructions (if any): ${initialInput}
         
-         Notes:
-            ${prompt}
-                    
-            Refined Notes:\n`,
+        User's input:
+        ${prompt}
+
+        Your response:\n`,
       },
     ],
     max_tokens: 7000,

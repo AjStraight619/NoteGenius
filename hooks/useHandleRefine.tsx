@@ -16,7 +16,6 @@ const useHandleRefine = (
       !shouldRefine ||
       !filesToRefine ||
       isLoading ||
-      filesToRefine.length === 0 ||
       filesToRefine.length >= 6
     ) {
       return;
@@ -26,7 +25,13 @@ const useHandleRefine = (
     handleRefineClick(currentFile.content);
 
     setFilesToRefine((prev) => (prev ? prev.slice(1) : null));
-    setShouldRefine(false); // Reset after refining
+
+    // Only reset shouldRefine if there are no more files to refine
+    if (filesToRefine.length > 1) {
+      setShouldRefine(true);
+    } else {
+      setShouldRefine(false);
+    }
   }, [filesToRefine, isLoading, handleRefineClick, shouldRefine]);
 
   useEffect(() => {
