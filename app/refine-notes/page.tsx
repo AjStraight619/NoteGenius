@@ -7,9 +7,6 @@ import RefineContentDisplay from "@/components/component/refine-notes/RefineDisp
 import Sidebar from "@/components/sideBar/SideBarGlobal";
 import RefineButtonGroup from "@/components/component/sidebar/RefineButtonGroup";
 import { Flex } from "@radix-ui/themes";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import Queue from "queue";
 
 export type FileProps = {
   id: string;

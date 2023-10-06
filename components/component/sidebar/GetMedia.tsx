@@ -1,15 +1,14 @@
-"use client";
+"client component";
 import React, { useState } from "react";
 declare var ImageCapture: any;
-
-type TextAnnotation = {
-  description: string;
-};
-
-export default function ImageUpload() {
-  const [detections, setDetections] = useState<TextAnnotation[] | null>(null);
+import { CameraIcon } from "@radix-ui/react-icons";
+import { IconButton } from "@radix-ui/themes";
+function CaptureAndProcessImageButton() {
+  const [processing, setProcessing] = useState(false);
+  const [text, setText] = useState<string | null>(null);
 
   async function handleCaptureAndProcessImage() {
+    setProcessing(true);
     try {
       // Capture image
       const constraints = { video: true };
@@ -29,28 +28,30 @@ export default function ImageUpload() {
       const data = await response.json();
 
       // Update UI with detected text
-      const detectedText = data || "No text detected";
-      setDetections(detectedText);
+      const detectedText = data[0]?.description || "No text detected";
+      setText(detectedText);
     } catch (error) {
       console.error("Error:", error);
+      setText("Error processing image");
+    } finally {
+      setProcessing(false);
     }
   }
 
   return (
     <div>
-      <button onClick={handleCaptureAndProcessImage}>
-        Capture and Process Image
-      </button>
-      {detections && (
-        <div className="flex items-center">
-          <h3>Detected Text:</h3>
-          <ul>
-            {detections.map((text, index) => (
-              <li key={index}>{text.description}</li>
-            ))}
-          </ul>
+      <IconButton onClick={handleCaptureAndProcessImage} disabled={processing}>
+        <CameraIcon />
+        {processing ? "Processing..." : "Capture and Process Image"}
+      </IconButton>
+      {text && (
+        <div>
+          <h2>Detected Text:</h2>
+          <p>{text}</p>
         </div>
       )}
     </div>
   );
 }
+
+export default CaptureAndProcessImageButton;

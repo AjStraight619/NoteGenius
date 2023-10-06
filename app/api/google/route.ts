@@ -1,15 +1,3 @@
-// export async function POST(req: NextRequest) {
-//   const client = new ImageAnnotatorClient({
-//     keyFilename: process.env.GCP_SERVICE_ACCOUNT_PATH,
-//   });
-
-//   const [result] = await client.textDetection();
-//   const detections = result.textAnnotations;
-//   console.log("Text:");
-//   detections?.forEach((text) => console.log(text.description));
-
-//   return NextResponse.json(detections);
-// }
 import { ImageAnnotatorClient } from "@google-cloud/vision";
 import { NextRequest, NextResponse } from "next/server";
 
