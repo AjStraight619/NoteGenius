@@ -78,7 +78,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/heic-convert": "^1.2.1",
     "@types/jest": "^29.5.5",
     "@types/node": "^20.6.2",
     "@types/pdf-parse": "^1.1.2",

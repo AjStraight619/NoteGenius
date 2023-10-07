@@ -17,11 +17,13 @@ export type FileProps = {
 type OriginalContentDisplayProps = {
   selectedFile: FileProps[] | null;
   setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
+  isProcessing: boolean;
 };
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   selectedFile,
   setShouldRefine,
+  isProcessing,
 }) => {
   const handleRefineButtonClick = () => {
     setShouldRefine(true);
@@ -29,6 +31,15 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
 
   return (
     <Box className="lg:w-1/2 w-full border-r border-gray-300">
+      {isProcessing && (
+        <div className="flex items-center space-x-2 z-10">
+          <div className="h-2 w-2 bg-black rounded-full bounce"></div>
+          <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-1"></div>
+          <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-2"></div>
+          <span>Processing image for content...</span>
+        </div>
+      )}
+
       {selectedFile && selectedFile.length > 0 && (
         <ScrollArea
           type="always"
@@ -48,62 +59,10 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
               bottom: "10px",
               right: "15px",
             }}
+            disabled={isProcessing}
           >
             Refine
           </Button>
-
-          {/* <Dialog.Root>
-            <Dialog.Trigger>
-              <Button
-                variant="surface"
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  right: "15px",
-                }}
-              >
-                Refine
-              </Button>
-            </Dialog.Trigger>
-
-            <Dialog.Content style={{ maxWidth: "600px", position: "relative" }}>
-              <Dialog.Close>
-                <button
-                  onClick={handleDialogClose}
-                  style={{ position: "absolute", top: "10px", right: "10px" }}
-                >
-                  <Cross2Icon className="hover:text-gray-2-translucent" />
-                </button>
-              </Dialog.Close>
-              <Dialog.Title>Refine</Dialog.Title>
-              <Dialog.Description>
-                Choose how you want to refine your note.
-              </Dialog.Description>
-              <Flex direction="column" gap="3">
-                <label>
-                  <TextArea
-                    value={extraMessage}
-                    onChange={(e) => setExtraMessage(e.target.value)}
-                    placeholder="Give a description on how you want to refine your note..."
-                  ></TextArea>
-                </label>
-              </Flex>
-
-              <label>
-                <Flex justify="center">
-                  <Dialog.Close>
-                    <Button
-                      mt={"3"}
-                      onClick={handleRefineButtonClick}
-                      disabled={isLoading}
-                    >
-                      Refine Note
-                    </Button>
-                  </Dialog.Close>
-                </Flex>
-              </label>
-            </Dialog.Content>
-          </Dialog.Root> */}
 
           <IconButton
             variant="surface"

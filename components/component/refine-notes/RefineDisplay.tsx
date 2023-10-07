@@ -84,9 +84,9 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
     >
       {isLoading && (
         <div className="flex items-center space-x-2 z-10">
-          <div className="h-1 w-1 bg-black rounded-full animate-bounce"></div>
-          <div className="h-1 w-1 bg-black rounded-full animate-bounce delay-200"></div>
-          <div className="h-1 w-1 bg-black rounded-full animate-bounce delay-400"></div>
+          <div className="h-1 w-1 bg-black rounded-full bounce"></div>
+          <div className="h-1 w-1 bg-black rounded-full bounce delay-200"></div>
+          <div className="h-1 w-1 bg-black rounded-full bounce delay-400"></div>
           <span>Note Genius is Refining your Note...</span>
         </div>
       )}

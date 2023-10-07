@@ -24,7 +24,7 @@ const RefinePage: React.FC = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [extraMessage, setExtraMessage] = useState("");
-  console.log(extraMessage);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const { complete, completion, isLoading, handleInputChange, handleSubmit } =
     useCompletion({
@@ -116,9 +116,13 @@ const RefinePage: React.FC = () => {
           setSelectedFile={setSelectedFile}
           setExtraMessage={setExtraMessage}
           extraMessage={extraMessage}
-          setRefinedContent={setRefinedContent}
+          setIsProcessing={setIsProcessing}
         />
-        <CaptureAndProcessImageButton setSelectedFile={setSelectedFile} />
+        <CaptureAndProcessImageButton
+          setSelectedFile={setSelectedFile}
+          setIsProcessing={setIsProcessing}
+          isProcessing={isProcessing}
+        />
       </Sidebar>
       <Flex
         className="flex-col-reverse md:flex-row overflow-y-auto h-full md:h-[100vh] hide-scrollbar"
@@ -131,6 +135,7 @@ const RefinePage: React.FC = () => {
         <OriginalContentDisplay
           selectedFile={selectedFile}
           setShouldRefine={setShouldRefine}
+          isProcessing={isProcessing}
         />
         <RefineContentDisplay
           refinedContent={refinedContent}

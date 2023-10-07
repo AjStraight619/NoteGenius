@@ -9,13 +9,17 @@ import "./styles.css";
 
 type ImageCapture = {
   setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
+  setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
+  isProcessing: boolean;
 };
 
-function CaptureAndProcessImageButton({ setSelectedFile }: ImageCapture) {
-  const [processing, setProcessing] = useState(false);
-
+function CaptureAndProcessImageButton({
+  setSelectedFile,
+  setIsProcessing,
+  isProcessing,
+}: ImageCapture) {
   async function handleCaptureAndProcessImage() {
-    setProcessing(true);
+    setIsProcessing(true);
     try {
       // Capture image
       const constraints = { video: true };
@@ -49,7 +53,7 @@ function CaptureAndProcessImageButton({ setSelectedFile }: ImageCapture) {
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setProcessing(false);
+      setIsProcessing(false);
     }
   }
 
@@ -58,10 +62,10 @@ function CaptureAndProcessImageButton({ setSelectedFile }: ImageCapture) {
       <IconButton
         style={{ backgroundColor: "transparent" }}
         className={`${
-          processing ? "opacity-50 cursor-not-allowed" : ""
+          isProcessing ? "opacity-50 cursor-not-allowed" : ""
         } hide-on-large`}
         onClick={handleCaptureAndProcessImage}
-        disabled={processing}
+        disabled={isProcessing}
       >
         <CameraIcon
           style={{

@@ -25,13 +25,8 @@ const RefineButtonGroup: React.FC<{
   setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
   extraMessage: string;
   setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
-  setRefinedContent: React.Dispatch<React.SetStateAction<string | null>>;
-}> = ({
-  setSelectedFile,
-  setExtraMessage,
-  extraMessage,
-  setRefinedContent,
-}) => {
+  setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ setSelectedFile, setExtraMessage, extraMessage, setIsProcessing }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileProps[]>([]);
@@ -57,19 +52,20 @@ const RefineButtonGroup: React.FC<{
         if (isDuplicateFile(file, files)) continue;
 
         let content = "";
+        let jpegFile;
         if (isPDF(file)) {
           content = await extractTextFromPdf(file);
         } else if (isHEIC(file)) {
-          const { detectedText, refinedNotes } = await processHEICImage(file);
-          content = detectedText;
-          setRefinedContent(refinedNotes);
+          const result = await processHEICImage(file);
+          content = result.detectedText;
+          jpegFile = result.jpegFile;
         } else {
           content = await readFileContent(file);
         }
 
         selectedFiles.push({
           id: uuidv4(),
-          file: file,
+          file: jpegFile || file, // Use the converted JPEG file if available
           name: file.name,
           content: content,
         });
@@ -80,11 +76,12 @@ const RefineButtonGroup: React.FC<{
 
   const processHEICImage = async (
     file: File
-  ): Promise<{ detectedText: string; refinedNotes: string }> => {
+  ): Promise<{ detectedText: string; jpegFile: File }> => {
+    setIsProcessing(true);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
 
-    const response = await fetch("/api/google-vision", {
+    const response = await fetch("/api/google-vision2", {
       method: "POST",
       body: formData,
     });
@@ -95,11 +92,21 @@ const RefineButtonGroup: React.FC<{
 
     const data = await response.json();
 
-    // Assuming the response structure is as per your server-side code
-    const detectedText = data[0]?.description || "No text detected";
-    const refinedNotes = data.gpt || {};
+    // Now data should have both detectedText and jpegUrl
+    const detectedText = data.detectedText || "No text detected";
 
-    return { detectedText, refinedNotes };
+    // Fetch the JPEG image from the URL
+    const jpegResponse = await fetch(data.jpegUrl);
+    const jpegBlob = await jpegResponse.blob();
+
+    // Create a File object from the JPEG blob
+    const jpegFile = new File([jpegBlob], file.name.replace(".heic", ".jpeg"), {
+      type: "image/jpeg",
+    });
+
+    setIsProcessing(false);
+
+    return { detectedText, jpegFile };
   };
 
   const extractTextFromPdf = async (file: File): Promise<string> => {
