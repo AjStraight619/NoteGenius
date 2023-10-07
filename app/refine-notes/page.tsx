@@ -19,6 +19,7 @@ export type FileProps = {
 const RefinePage: React.FC = () => {
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const [selectedFile, setSelectedFile] = useState<FileProps[] | null>(null);
+  const [textFromPicture, setTextFromPicture] = useState<string[] | null>(null);
   const [refinedContent, setRefinedContent] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,8 +32,6 @@ const RefinePage: React.FC = () => {
       initialInput: extraMessage,
 
       onResponse: (res: any) => {
-        console.log("API responded with: ", res);
-
         if (res && res.error) {
           // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
           console.error("Error in response:", res.error.message);
@@ -114,12 +113,12 @@ const RefinePage: React.FC = () => {
     <Flex style={{ height: "100vh", width: "100%" }} display={"flex"}>
       <Sidebar toggleSideBar={toggleSideBar} isSideBarOpen={isSideBarOpen}>
         <RefineButtonGroup
-          selectedFile={selectedFile}
           setSelectedFile={setSelectedFile}
           setExtraMessage={setExtraMessage}
           extraMessage={extraMessage}
+          setRefinedContent={setRefinedContent}
         />
-        <CaptureAndProcessImageButton />
+        <CaptureAndProcessImageButton setSelectedFile={setSelectedFile} />
       </Sidebar>
       <Flex
         className="flex-col-reverse md:flex-row overflow-y-auto h-full md:h-[100vh] hide-scrollbar"

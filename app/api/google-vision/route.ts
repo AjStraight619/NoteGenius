@@ -1,9 +1,12 @@
 import { ImageAnnotatorClient } from "@google-cloud/vision";
 import { NextRequest, NextResponse } from "next/server";
-import { Magick } from "node-magickwand";
-import { promises as fs } from "fs";
-import { tmpdir } from "os";
-import { join } from "path";
+var cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+});
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const client = new ImageAnnotatorClient({
@@ -23,39 +26,24 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    console.log("File recieved in req", file);
+
     const arrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(arrayBuffer);
 
-    // Write buffer to a temporary file
-    const tempFilePath = join(tmpdir(), file.name);
-    await fs.writeFile(tempFilePath, inputBuffer);
+    const result = await cloudinary.uploader.upload(
+      "data:image/jpeg;base64," + inputBuffer.toString("base64"),
+      {
+        format: "jpg",
+      }
+    );
 
-    const im = new Magick.Image();
-    await im.readAsync(tempFilePath);
+    console.log("result from cloudinary", result);
 
-    if (
-      file.type === "image/heic" ||
-      file.type === "image/heif" ||
-      file.name.toLowerCase().endsWith(".heic") ||
-      file.name.toLowerCase().endsWith(".heif")
-    ) {
-      await im.magickAsync("JPEG");
-    }
+    const jpegUrl = result.secure_url;
 
-    // Write the converted image to a temporary file
-    const tempOutputPath = join(tmpdir(), "output.jpg");
-    await im.writeAsync(tempOutputPath);
-
-    // Read the converted image back into a buffer
-    const buffer = await fs.readFile(tempOutputPath);
-
-    // Clean up the temporary files
-    await fs.unlink(tempFilePath);
-    await fs.unlink(tempOutputPath);
-
-    // Pass the buffer to Google Cloud Vision
-    const [result] = await client.textDetection(buffer);
-    const detections = result.textAnnotations;
+    const [visionResult] = await client.textDetection(jpegUrl);
+    const detections = visionResult.textAnnotations;
     const detectedText = detections?.[0]?.description || "";
 
     const gptResponse = await fetch("http://localhost:3000/api/refine", {
@@ -66,13 +54,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const refinedNotes = await gptResponse.json();
 
-    // Combine the responses or handle them as needed
     const combinedResponse = {
       vision: detections,
       gpt: refinedNotes,
     };
 
-    return NextResponse.json(refinedNotes);
+    return NextResponse.json(combinedResponse);
   } catch (error) {
     console.error(error);
     return new NextResponse(

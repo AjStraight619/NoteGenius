@@ -22,11 +22,16 @@ export type FileProps = {
 };
 
 const RefineButtonGroup: React.FC<{
-  selectedFile: FileProps[] | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
   extraMessage: string;
   setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ selectedFile, setSelectedFile, setExtraMessage, extraMessage }) => {
+  setRefinedContent: React.Dispatch<React.SetStateAction<string | null>>;
+}> = ({
+  setSelectedFile,
+  setExtraMessage,
+  extraMessage,
+  setRefinedContent,
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileProps[]>([]);
@@ -53,8 +58,11 @@ const RefineButtonGroup: React.FC<{
 
         let content = "";
         if (isPDF(file)) {
-          console.log("content in handleFileChange", content);
           content = await extractTextFromPdf(file);
+        } else if (isHEIC(file)) {
+          const { detectedText, refinedNotes } = await processHEICImage(file);
+          content = detectedText;
+          setRefinedContent(refinedNotes);
         } else {
           content = await readFileContent(file);
         }
@@ -68,6 +76,30 @@ const RefineButtonGroup: React.FC<{
       }
       setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     }
+  };
+
+  const processHEICImage = async (
+    file: File
+  ): Promise<{ detectedText: string; refinedNotes: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/google-vision", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to process HEIC image");
+    }
+
+    const data = await response.json();
+
+    // Assuming the response structure is as per your server-side code
+    const detectedText = data[0]?.description || "No text detected";
+    const refinedNotes = data.gpt || {};
+
+    return { detectedText, refinedNotes };
   };
 
   const extractTextFromPdf = async (file: File): Promise<string> => {
@@ -94,7 +126,7 @@ const RefineButtonGroup: React.FC<{
     console.log("Fetch Response:", res);
 
     if (!res.ok) {
-      const errorText = await res.text(); // Get more detailed error info
+      const errorText = await res.text();
       console.error(
         "Server returned an error:",
         res.status,
@@ -117,7 +149,6 @@ const RefineButtonGroup: React.FC<{
 
     console.log("Parsed Data:", parsedData);
 
-    // Depending on the structure of your data, access the parsedText accordingly
     const parsedText = parsedData?.parsedText || "";
 
     return parsedText;
@@ -125,6 +156,10 @@ const RefineButtonGroup: React.FC<{
 
   const isPDF = (file: File): boolean => {
     return file.type === "application/pdf";
+  };
+
+  const isHEIC = (file: File): boolean => {
+    return file.name.toLowerCase().endsWith(".heic");
   };
 
   const isDuplicateFile = (

@@ -6,7 +6,7 @@ export default function ImageUpload() {
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log("This is the file to upload: " + files);
+
     if (files && files.length > 0) {
       let image = files[0];
       console.log("Uploading image:", image.name);

@@ -12,7 +12,6 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   refinedContent,
   isLoading,
 }) => {
-  console.log(refinedContent);
   const handleParse = async (
     filename: string,
     content: string,

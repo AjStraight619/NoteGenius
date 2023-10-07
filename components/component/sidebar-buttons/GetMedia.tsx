@@ -3,11 +3,16 @@ import React, { useState } from "react";
 declare var ImageCapture: any;
 import { CameraIcon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
+import { FileProps } from "./RefineButtonGroup";
+import { v4 as uuidv4 } from "uuid";
 import "./styles.css";
 
-function CaptureAndProcessImageButton() {
+type ImageCapture = {
+  setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
+};
+
+function CaptureAndProcessImageButton({ setSelectedFile }: ImageCapture) {
   const [processing, setProcessing] = useState(false);
-  const [text, setText] = useState<string | null>(null);
 
   async function handleCaptureAndProcessImage() {
     setProcessing(true);
@@ -29,12 +34,20 @@ function CaptureAndProcessImageButton() {
       });
       const data = await response.json();
 
-      // Update UI with detected text
       const detectedText = data[0]?.description || "No text detected";
-      setText(detectedText);
+
+      const newFile = {
+        id: uuidv4(),
+        file: photo,
+        content: detectedText,
+        name: "image-text",
+      };
+
+      setSelectedFile((prevFiles) =>
+        prevFiles ? [...prevFiles, newFile] : [newFile]
+      );
     } catch (error) {
       console.error("Error:", error);
-      setText("Error processing image");
     } finally {
       setProcessing(false);
     }
