@@ -5,8 +5,6 @@ import {
   ScrollArea,
   TextArea,
   IconButton,
-  Flex,
-  Dialog,
 } from "@radix-ui/themes";
 
 import { Cross2Icon } from "@radix-ui/react-icons";

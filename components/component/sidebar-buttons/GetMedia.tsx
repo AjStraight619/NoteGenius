@@ -1,8 +1,10 @@
-"client component";
+"use client";
 import React, { useState } from "react";
 declare var ImageCapture: any;
 import { CameraIcon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
+import "./styles.css";
+
 function CaptureAndProcessImageButton() {
   const [processing, setProcessing] = useState(false);
   const [text, setText] = useState<string | null>(null);
@@ -21,7 +23,7 @@ function CaptureAndProcessImageButton() {
       // Upload image to server
       const formData = new FormData();
       formData.append("image", photo);
-      const response = await fetch("/api/google", {
+      const response = await fetch("/api/google-vision", {
         method: "POST",
         body: formData,
       });
@@ -40,16 +42,23 @@ function CaptureAndProcessImageButton() {
 
   return (
     <div>
-      <IconButton onClick={handleCaptureAndProcessImage} disabled={processing}>
-        <CameraIcon />
-        {processing ? "Processing..." : "Capture and Process Image"}
+      <IconButton
+        style={{ backgroundColor: "transparent" }}
+        className={`${
+          processing ? "opacity-50 cursor-not-allowed" : ""
+        } hide-on-large`}
+        onClick={handleCaptureAndProcessImage}
+        disabled={processing}
+      >
+        <CameraIcon
+          style={{
+            width: "32px",
+            height: "32px",
+            color: "white",
+          }}
+          className="hover:shadow-lg appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] cursor-pointer"
+        />
       </IconButton>
-      {text && (
-        <div>
-          <h2>Detected Text:</h2>
-          <p>{text}</p>
-        </div>
-      )}
     </div>
   );
 }

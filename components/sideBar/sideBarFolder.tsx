@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { FaCog, FaBars } from "react-icons/fa";
 
-import AddFolder from "../component/sidebar/AddFolder";
-import UploadButton from "../component/sidebar/UploadButton";
+import AddFolder from "../component/sidebar-buttons/AddFolder";
+import UploadButton from "../component/sidebar-buttons/UploadButton";
 import SearchFolders from "../component/search/SearchFolders";
-import SortingButton from "../component/sidebar/SortingButton";
+import SortingButton from "../component/sidebar-buttons/SortingButton";
 
 import { Folder } from "@prisma/client";
 type SidebarProps = {

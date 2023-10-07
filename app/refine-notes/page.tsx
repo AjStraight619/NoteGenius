@@ -5,8 +5,9 @@ import { useCompletion } from "ai/react";
 import OriginalContentDisplay from "@/components/component/refine-notes/OriginalDisplay";
 import RefineContentDisplay from "@/components/component/refine-notes/RefineDisplay";
 import Sidebar from "@/components/sideBar/SideBarGlobal";
-import RefineButtonGroup from "@/components/component/sidebar/RefineButtonGroup";
+import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButtonGroup";
 import { Flex } from "@radix-ui/themes";
+import CaptureAndProcessImageButton from "@/components/component/sidebar-buttons/GetMedia";
 
 export type FileProps = {
   id: string;
@@ -118,6 +119,7 @@ const RefinePage: React.FC = () => {
           setExtraMessage={setExtraMessage}
           extraMessage={extraMessage}
         />
+        <CaptureAndProcessImageButton />
       </Sidebar>
       <Flex
         className="flex-col-reverse md:flex-row overflow-y-auto h-full md:h-[100vh] hide-scrollbar"

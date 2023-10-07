@@ -1,92 +1,26 @@
-// "use client";
-// import React, { useState } from "react";
-
-// type TextAnnotation = {
-//   description: string;
-// };
-
-// export default function ImageUpload() {
-//   const [detections, setDetections] = useState<TextAnnotation[] | null>(null);
-
-//   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const files = e.target.files;
-//     if (files && files.length > 0) {
-//       const image = files[0];
-//       console.log("Uploading image:", image.name);
-
-//       const formData = new FormData();
-//       formData.append("image", image);
-
-//       try {
-//         const response = await fetch("/api/google", {
-//           method: "POST",
-//           body: formData,
-//         });
-
-//         const data = await response.json();
-
-//         setDetections(data);
-//       } catch (error) {
-//         console.error("Error uploading image:", error);
-//       }
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <input
-//         type="file"
-//         accept="image/*,.heic"
-//         capture="environment"
-//         onChange={handleImageChange}
-//       />
-//       {detections && (
-//         <div className="flex items-center">
-//           <h3>Detected Text:</h3>
-//           <ul>
-//             {detections.map((text, index) => (
-//               <li key={index}>{text.description}</li>
-//             ))}
-//           </ul>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
 "use client";
-import React, { useState } from "react";
-import heic2any from "heic2any";
+import { useState } from "react";
 
 export default function ImageUpload() {
   const [refinedText, setRefinedText] = useState<string | null>(null);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    console.log("This is the file to upload: " + files);
     if (files && files.length > 0) {
       let image = files[0];
       console.log("Uploading image:", image.name);
-
-      if (image.type === "image/heic" || image.type === "image/heif") {
-        try {
-          const convertedBlob = (await heic2any({ blob: image })) as Blob; // Cast the result to Blob
-          image = new File([convertedBlob], image.name, { type: "image/jpeg" });
-        } catch (error) {
-          console.error("Error converting HEIC image:", error);
-          return; // Exit the function on error
-        }
-      }
 
       const formData = new FormData();
       formData.append("image", image);
 
       try {
-        const response = await fetch("/api/google", {
+        const res = await fetch("/api/google-vision", {
           method: "POST",
           body: formData,
         });
 
-        const data = await response.text(); // assuming the response is plain text
+        const data = await res.text(); // assuming the response is plain text
         setRefinedText(data);
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -102,20 +36,16 @@ export default function ImageUpload() {
         capture="environment"
         onChange={handleImageChange}
       />
-      {refinedText && (
-        <div className="flex items-center">
-          <h3>Refined Text:</h3>
-          <p>{refinedText}</p>
-        </div>
-      )}
+      {refinedText &&
+        refinedText
+          .replace(/\\n/g, "\n")
+          .split("\n")
+          .map((line, index) => (
+            <div key={index}>
+              {line}
+              <br />
+            </div>
+          ))}
     </div>
   );
 }
-
-// import React from "react";
-
-// const page = () => {
-//   return <div>page</div>;
-// };
-
-// export default page;

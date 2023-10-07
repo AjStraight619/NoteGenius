@@ -2,7 +2,7 @@
 const nextConfig = {
     experimental: {
         serverActions: true,
-        serverComponentsExternalPackages: ['pdf2json']
+        serverComponentsExternalPackages: ['pdf2json', 'node-magickwand']
     }
 }
 
