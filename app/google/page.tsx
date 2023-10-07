@@ -56,6 +56,7 @@
 
 "use client";
 import React, { useState } from "react";
+import heic2any from "heic2any";
 
 export default function ImageUpload() {
   const [refinedText, setRefinedText] = useState<string | null>(null);
@@ -63,8 +64,18 @@ export default function ImageUpload() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      const image = files[0];
+      let image = files[0];
       console.log("Uploading image:", image.name);
+
+      if (image.type === "image/heic" || image.type === "image/heif") {
+        try {
+          const convertedBlob = (await heic2any({ blob: image })) as Blob; // Cast the result to Blob
+          image = new File([convertedBlob], image.name, { type: "image/jpeg" });
+        } catch (error) {
+          console.error("Error converting HEIC image:", error);
+          return; // Exit the function on error
+        }
+      }
 
       const formData = new FormData();
       formData.append("image", image);
@@ -76,7 +87,6 @@ export default function ImageUpload() {
         });
 
         const data = await response.text(); // assuming the response is plain text
-
         setRefinedText(data);
       } catch (error) {
         console.error("Error uploading image:", error);

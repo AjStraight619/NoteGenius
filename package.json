@@ -47,6 +47,7 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "formidable": "^3.5.1",
+    "heic2any": "^0.0.4",
     "lucide-react": "^0.277.0",
     "mailgun.js": "^9.3.0",
     "mathjs": "^11.11.1",
