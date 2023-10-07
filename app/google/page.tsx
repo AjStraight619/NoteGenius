@@ -36,7 +36,7 @@ export default function ImageUpload() {
     <div>
       <input
         type="file"
-        accept="image/*"
+        accept="image/*,.heic"
         capture="environment"
         onChange={handleImageChange}
       />
