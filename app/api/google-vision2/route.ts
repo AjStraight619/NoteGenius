@@ -31,7 +31,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // if file is heic convert it to jpeg before returning parsed text from google vision
 
-    if (file.name.toLowerCase().endsWith(".heic")) {
+    if (
+      file.name.toLowerCase().endsWith(".heic") ||
+      file.name.toLowerCase().endsWith(".heif")
+    ) {
       console.log("File is of type heic");
       const result = await cloudinary.uploader.upload(
         "data:image/jpeg;base64," + inputBuffer.toString("base64"),

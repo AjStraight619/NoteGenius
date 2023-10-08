@@ -190,7 +190,10 @@ const RefineButtonGroup: React.FC<{
   };
 
   const isHEIC = (file: File): boolean => {
-    return file.name.toLowerCase().endsWith(".heic");
+    return (
+      file.name.toLowerCase().endsWith(".heic") ||
+      file.name.toLowerCase().endsWith(".heif")
+    );
   };
 
   const isImageType = (file: File): boolean => {

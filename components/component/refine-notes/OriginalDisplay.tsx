@@ -39,11 +39,13 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
       style={{ height: "100vh", ...style }}
     >
       {isProcessing && (
-        <div className="flex items-center space-x-2 z-10">
-          <div className="h-2 w-2 bg-black rounded-full bounce"></div>
-          <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-1"></div>
-          <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-2"></div>
-          <span>Processing image for content...</span>
+        <div className="processing-container absolute inset-0 flex items-center justify-center z-10">
+          <div className="flex items-center space-x-2">
+            <div className="h-2 w-2 bg-black rounded-full bounce"></div>
+            <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-1"></div>
+            <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-2"></div>
+            <span>Processing image for content...</span>
+          </div>
         </div>
       )}
 
