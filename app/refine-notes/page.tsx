@@ -125,11 +125,11 @@ const RefinePage: React.FC = () => {
           setIsProcessing={setIsProcessing}
           setIsMathChecked={setIsMathChecked}
         />
-        <CaptureAndProcessImageButton
+        {/* <CaptureAndProcessImageButton
           setSelectedFile={setSelectedFile}
           setIsProcessing={setIsProcessing}
           isProcessing={isProcessing}
-        />
+        /> */}
 
         <SplitScreenButton
           isSplitScreen={isSplitScreen}
