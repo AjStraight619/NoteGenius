@@ -242,7 +242,7 @@ const RefineButtonGroup: React.FC<{
 
   return (
     <>
-      <Flex display={"flex"} direction={"column"} mt={"5"} gap={"8"}>
+      <Flex display={"flex"} direction={"column"} mt={"3"} gap={"8"}>
         <Box mb={"2"}>
           <input
             ref={fileInputRef}

@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         <Flex
           direction="column"
-          className="p-4 flex-grow items-center justify-between space-y-12"
+          className="p-4 flex-grow items-center justify-between space-y-8"
         >
           {isSideBarOpen && children}
         </Flex>
