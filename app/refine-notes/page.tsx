@@ -30,7 +30,7 @@ const RefinePage: React.FC = () => {
 
   const { complete, completion, isLoading, handleInputChange, handleSubmit } =
     useCompletion({
-      api: "/api/extract-equations",
+      api: "/api/refine",
       initialInput: extraMessage,
 
       onResponse: (res: any) => {
