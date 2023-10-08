@@ -6,11 +6,7 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const { prompt, initialInput } = await req.json();
-  console.log("in extract equations api route");
-  console.log(prompt);
-  console.log("in extract api with new hook");
-
+  const { prompt } = await req.json();
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo-16k-0613",
     messages: [
@@ -24,7 +20,7 @@ export async function POST(req: Request) {
           Your response:\n`,
       },
     ],
-    max_tokens: 300,
+    max_tokens: 200,
     temperature: 0,
     top_p: 1,
     frequency_penalty: 1,

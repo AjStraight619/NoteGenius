@@ -16,6 +16,7 @@ export type FileProps = {
 };
 type OriginalContentDisplayProps = {
   selectedFile: FileProps[] | null;
+  setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
   setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
   style?: React.CSSProperties;
@@ -26,6 +27,7 @@ type OriginalContentDisplayProps = {
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   selectedFile,
+  setSelectedFile,
   setShouldRefine,
   isProcessing,
   style,
@@ -37,14 +39,15 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
     setShouldRefine(true);
   };
 
-  console.log("This is the equations", equations);
+  const handleOriginalContentClose = () => {
+    setShouldRefine(false);
+    setSelectedFile(null);
+  };
 
   const formattedText =
     equations.length > 0
       ? equations[0].replace(/^"(.*)"$/, "$1").replace(/\\n/g, "\n\n")
       : displayText;
-
-  console.log("This is the formated text", formattedText);
 
   return (
     <Box
@@ -92,6 +95,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
             variant="surface"
             style={{
               position: "absolute",
+
               bottom: "10px",
               right: "15px",
             }}
@@ -101,6 +105,7 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
           </Button>
 
           <IconButton
+            onClick={handleOriginalContentClose}
             variant="surface"
             style={{ backgroundColor: "transparent" }}
             className="absolute top-[10px] right-[15px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px]"

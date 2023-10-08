@@ -206,6 +206,7 @@ const RefinePage: React.FC = () => {
       >
         <OriginalContentDisplay
           selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
           setShouldRefine={setShouldRefine}
           isProcessing={isProcessing}
           style={{ flex: isSplitScreen ? "1" : "0 0 0%" }}

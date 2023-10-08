@@ -113,7 +113,7 @@ const RefineButtonGroup: React.FC<{
     formData.append("image", file);
 
     try {
-      const response = await fetch("/api/google-vision2", {
+      const response = await fetch("/api/google-vision", {
         method: "POST",
         body: formData,
       });
@@ -148,7 +148,7 @@ const RefineButtonGroup: React.FC<{
 
     let res: Response;
     try {
-      res = await fetch("/api/extract", {
+      res = await fetch("/api/pdf-parse", {
         method: "POST",
         body: formData,
       });
@@ -226,24 +226,43 @@ const RefineButtonGroup: React.FC<{
     }
   };
 
-  const handleDialogClose = (open: boolean) => {
-    if (!open) {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+  const handleDialogClose = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-    setIsDialogOpen(open);
-    if (!open && selectedFileIds) {
+    setIsDialogOpen(false);
+    if (selectedFileIds) {
       // Filter the selected files from the files array
       const selectedFiles = files.filter((file) =>
         selectedFileIds.includes(file.id)
       );
-      setSelectedFile(selectedFiles || []);
+      setSelectedFile(null);
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setIsDialogOpen(true);
     }
   };
 
   const handleCheckBoxClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsMathChecked((prevState) => !prevState);
+  };
+
+  const handleSubmit = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setIsDialogOpen(false);
+    if (selectedFileIds) {
+      // Filter the selected files from the files array
+      const selectedFiles = files.filter((file) =>
+        selectedFileIds.includes(file.id)
+      );
+      setSelectedFile(selectedFiles || []);
+      if (isMathChecked) setStartExtraction(true);
+    }
   };
 
   return (
@@ -277,14 +296,17 @@ const RefineButtonGroup: React.FC<{
         />
       </Flex>
       <div className="overflow-hidden">
-        <Dialog.Root open={isDialogOpen} onOpenChange={handleDialogClose}>
+        <Dialog.Root open={isDialogOpen} onOpenChange={handleOpenChange}>
           <ScrollArea type={"always"} scrollbars="vertical">
             <Dialog.Content
               size={"4"}
-              className="w-full max-h-7xl  my-6 p-6  rounded-lg bg-white shadow-lg overflow-y-hidden"
+              className="relative w-full max-h-7xl my-6 p-6 rounded-lg bg-white shadow-lg overflow-y-hidden"
             >
               <Dialog.Close>
-                <button className="absolute top-3 right-3">
+                <button
+                  onClick={handleDialogClose}
+                  className="absolute top-3 right-3"
+                >
                   <Cross2Icon className="hover:text-gray-2-translucent" />
                 </button>
               </Dialog.Close>
@@ -346,7 +368,10 @@ const RefineButtonGroup: React.FC<{
                   </label>
                   <div className="flex items-center">
                     <Flex gap="2">
-                      <Checkbox onClick={handleCheckBoxClick} />
+                      <Checkbox
+                        checked={isMathChecked}
+                        onClick={handleCheckBoxClick}
+                      />
 
                       <Text size="3">Math</Text>
                     </Flex>
@@ -365,7 +390,7 @@ const RefineButtonGroup: React.FC<{
                   <Flex justify="center" className="p-5">
                     <Dialog.Close>
                       <Dialog.Close>
-                        <Button onClick={() => setStartExtraction(true)}>
+                        <Button onClick={handleSubmit}>
                           {isMathChecked ? "Extract Equations" : "Submit"}
                         </Button>
                       </Dialog.Close>

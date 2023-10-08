@@ -9,8 +9,17 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  if (!process.env.GOOGLE_CREDENTIALS) {
+    throw new Error("GOOGLE_CREDENTIALS is not defined");
+  }
+
+  const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_CREDENTIALS!, "base64").toString("utf-8")
+  );
+
   const client = new ImageAnnotatorClient({
-    keyFilename: process.env.GCP_SERVICE_ACCOUNT_PATH,
+    credentials,
+    project_id: credentials.project_id,
   });
 
   try {
@@ -26,40 +35,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    console.log("File recieved in req", file);
-
     const arrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(arrayBuffer);
 
-    const result = await cloudinary.uploader.upload(
-      "data:image/jpeg;base64," + inputBuffer.toString("base64"),
-      {
-        format: "jpg",
-      }
-    );
+    // if file is heic convert it to jpeg before returning parsed text from google vision
 
-    console.log("result from cloudinary", result);
+    if (
+      file.name.toLowerCase().endsWith(".heic") ||
+      file.name.toLowerCase().endsWith(".heif")
+    ) {
+      console.log("File is of type heic");
+      const result = await cloudinary.uploader.upload(
+        "data:image/jpeg;base64," + inputBuffer.toString("base64"),
+        {
+          format: "jpg",
+        }
+      );
 
-    const jpegUrl = result.secure_url;
+      const jpegUrl = result.secure_url;
+      const [visionResult] = await client.textDetection(jpegUrl);
+      const detections = visionResult.textAnnotations;
+      const detectedText = detections?.[0]?.description || "";
 
-    const [visionResult] = await client.textDetection(jpegUrl);
-    const detections = visionResult.textAnnotations;
-    const detectedText = detections?.[0]?.description || "";
-
-    const gptResponse = await fetch("http://localhost:3000/api/refine", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: detectedText, initialInput: "" }),
-    });
-
-    const refinedNotes = await gptResponse.json();
-
-    const combinedResponse = {
-      vision: detections,
-      gpt: refinedNotes,
-    };
-
-    return NextResponse.json(combinedResponse);
+      return NextResponse.json({ detectedText, jpegUrl });
+    } else {
+      const [visionResult] = await client.textDetection(inputBuffer);
+      const detections = visionResult.textAnnotations;
+      const detectedText = detections?.[0]?.description || "";
+      return NextResponse.json({ detectedText });
+    }
   } catch (error) {
     console.error(error);
     return new NextResponse(
