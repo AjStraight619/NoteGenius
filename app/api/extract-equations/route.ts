@@ -8,7 +8,7 @@ const openai = new OpenAI({
 export async function POST(req: Request) {
   const { prompt } = await req.json();
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo-16k-0613",
+    model: "gpt-4",
     messages: [
       {
         role: "system",
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
           Your response:\n`,
       },
     ],
-    max_tokens: 200,
+    max_tokens: 300,
     temperature: 0,
     top_p: 1,
     frequency_penalty: 1,
