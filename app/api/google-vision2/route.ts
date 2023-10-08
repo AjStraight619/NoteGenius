@@ -26,27 +26,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    console.log("File recieved in req", file);
-
     const arrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(arrayBuffer);
 
-    const result = await cloudinary.uploader.upload(
-      "data:image/jpeg;base64," + inputBuffer.toString("base64"),
-      {
-        format: "jpg",
-      }
-    );
+    // if file is heic convert it to jpeg before returning parsed text from google vision
 
-    console.log("result from cloudinary", result);
+    if (file.name.toLowerCase().endsWith(".heic")) {
+      console.log("File is of type heic");
+      const result = await cloudinary.uploader.upload(
+        "data:image/jpeg;base64," + inputBuffer.toString("base64"),
+        {
+          format: "jpg",
+        }
+      );
 
-    const jpegUrl = result.secure_url;
+      const jpegUrl = result.secure_url;
+      const [visionResult] = await client.textDetection(jpegUrl);
+      const detections = visionResult.textAnnotations;
+      const detectedText = detections?.[0]?.description || "";
 
-    const [visionResult] = await client.textDetection(jpegUrl);
-    const detections = visionResult.textAnnotations;
-    const detectedText = detections?.[0]?.description || "";
-
-    return NextResponse.json({ detectedText, jpegUrl });
+      return NextResponse.json({ detectedText, jpegUrl });
+    } else {
+      const [visionResult] = await client.textDetection(inputBuffer);
+      const detections = visionResult.textAnnotations;
+      const detectedText = detections?.[0]?.description || "";
+      return NextResponse.json({ detectedText });
+    }
   } catch (error) {
     console.error(error);
     return new NextResponse(

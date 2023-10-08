@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 declare var ImageCapture: any;
 import { CameraIcon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
@@ -32,7 +31,7 @@ function CaptureAndProcessImageButton({
       // Upload image to server
       const formData = new FormData();
       formData.append("image", photo);
-      const response = await fetch("/api/google-vision", {
+      const response = await fetch("/api/google-vision2", {
         method: "POST",
         body: formData,
       });

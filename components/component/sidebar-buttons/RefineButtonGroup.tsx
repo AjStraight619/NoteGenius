@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { ReactEventHandler, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   IconButton,
@@ -10,6 +10,8 @@ import {
   Button,
   ScrollArea,
   TextArea,
+  Text,
+  Checkbox,
 } from "@radix-ui/themes";
 import { UploadIcon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import StackButton from "./StackButton";
@@ -21,12 +23,24 @@ export type FileProps = {
   name: string;
 };
 
+type ProcessImageResponse = {
+  detectedText: string;
+  jpegUrl?: string;
+};
+
 const RefineButtonGroup: React.FC<{
   setSelectedFile: React.Dispatch<React.SetStateAction<FileProps[] | null>>;
   extraMessage: string;
   setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setSelectedFile, setExtraMessage, extraMessage, setIsProcessing }) => {
+  setIsMathChecked: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({
+  setSelectedFile,
+  setExtraMessage,
+  extraMessage,
+  setIsProcessing,
+  setIsMathChecked,
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileProps[]>([]);
@@ -52,13 +66,25 @@ const RefineButtonGroup: React.FC<{
         if (isDuplicateFile(file, files)) continue;
 
         let content = "";
-        let jpegFile;
+        let jpegFile: File | null = null; // initialize jpegFile as null
+
         if (isPDF(file)) {
           content = await extractTextFromPdf(file);
-        } else if (isHEIC(file)) {
-          const result = await processHEICImage(file);
+        } else if (isImageType(file)) {
+          const result = await processImage(file, isHEIC(file));
           content = result.detectedText;
-          jpegFile = result.jpegFile;
+          if (result.jpegUrl) {
+            // If jpegUrl is returned, fetch the JPEG blob and create a File object
+            const jpegResponse = await fetch(result.jpegUrl);
+            const jpegBlob = await jpegResponse.blob();
+            jpegFile = new File(
+              [jpegBlob],
+              file.name.replace(".heic", ".jpeg"),
+              {
+                type: "image/jpeg",
+              }
+            );
+          }
         } else {
           content = await readFileContent(file);
         }
@@ -74,39 +100,37 @@ const RefineButtonGroup: React.FC<{
     }
   };
 
-  const processHEICImage = async (
-    file: File
-  ): Promise<{ detectedText: string; jpegFile: File }> => {
+  const processImage = async (
+    file: File,
+    isHEIC: boolean
+  ): Promise<ProcessImageResponse> => {
     setIsProcessing(true);
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch("/api/google-vision2", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const response = await fetch("/api/google-vision2", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to process HEIC image");
+      if (!response.ok) {
+        throw new Error("Failed to process image");
+      }
+
+      const data = await response.json();
+
+      setIsProcessing(false);
+
+      return {
+        detectedText: data.detectedText || "No text detected",
+        jpegUrl: data.jpegUrl, // jpegUrl will be undefined if not present in the response
+      };
+    } catch (error) {
+      console.error(error);
+      setIsProcessing(false);
+      throw error; // You might want to handle this error in the component that calls processImage
     }
-
-    const data = await response.json();
-
-    // Now data should have both detectedText and jpegUrl
-    const detectedText = data.detectedText || "No text detected";
-
-    // Fetch the JPEG image from the URL
-    const jpegResponse = await fetch(data.jpegUrl);
-    const jpegBlob = await jpegResponse.blob();
-
-    // Create a File object from the JPEG blob
-    const jpegFile = new File([jpegBlob], file.name.replace(".heic", ".jpeg"), {
-      type: "image/jpeg",
-    });
-
-    setIsProcessing(false);
-
-    return { detectedText, jpegFile };
   };
 
   const extractTextFromPdf = async (file: File): Promise<string> => {
@@ -169,6 +193,13 @@ const RefineButtonGroup: React.FC<{
     return file.name.toLowerCase().endsWith(".heic");
   };
 
+  const isImageType = (file: File): boolean => {
+    return (
+      file.type.startsWith("image/") ||
+      /\.(jpeg|jpg|gif|png|bmp|tiff|webp|heic)$/i.test(file.name.toLowerCase())
+    );
+  };
+
   const isDuplicateFile = (
     selectedFile: File,
     files: FileProps[]
@@ -204,10 +235,15 @@ const RefineButtonGroup: React.FC<{
     }
   };
 
+  const handleCheckBoxClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    const isChecked = e.currentTarget.getAttribute("aria-checked") === "true";
+    setIsMathChecked(isChecked);
+  };
+
   return (
     <>
-      <Flex display={"flex"} direction={"column"} m={"3"} gap={"6"}>
-        <Box mb={"4"}>
+      <Flex display={"flex"} direction={"column"} mt={"5"} gap={"8"}>
+        <Box mb={"2"}>
           <input
             ref={fileInputRef}
             type="file"
@@ -221,11 +257,10 @@ const RefineButtonGroup: React.FC<{
         <IconButton
           onClick={handleUploadButtonClick}
           style={{ backgroundColor: "transparent" }}
-          className="appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px]"
+          className="focus:outline-none focus:ring-black appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px]"
         >
           <UploadIcon
             style={{ width: "32px", height: "32px", color: "white" }}
-            className="hover:shadow-lg appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] cursor-pointer"
           />
         </IconButton>
 
@@ -296,23 +331,34 @@ const RefineButtonGroup: React.FC<{
                 ))}
               </div>
               <div className="mt-6">
-                <label
-                  htmlFor="refineInput"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  How would you like to refine the note?
-                </label>
-                <TextArea
-                  value={extraMessage}
-                  onChange={(e) => setExtraMessage(e.target.value)}
-                  placeholder="Give a description on how you want to refine your note..."
-                ></TextArea>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="refineInput"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    How would you like to refine the note?
+                  </label>
+                  <div className="flex items-center">
+                    <Flex gap="2">
+                      <Checkbox onChange={handleCheckBoxClick} />
+
+                      <Text size="3">Math</Text>
+                    </Flex>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <TextArea
+                    value={extraMessage}
+                    onChange={(e) => setExtraMessage(e.target.value)}
+                    placeholder="Give a description on how you want to refine your note..."
+                  ></TextArea>
+                </div>
               </div>
               {files.length > 0 && (
                 <label className="mt-4">
                   <Flex justify="center" className="p-5">
                     <Dialog.Close>
-                      <Button>Refine</Button>
+                      <Button>Submit</Button>
                     </Dialog.Close>
                   </Flex>
                 </label>

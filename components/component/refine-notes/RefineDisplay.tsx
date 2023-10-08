@@ -6,11 +6,13 @@ import { DownloadIcon } from "@radix-ui/react-icons";
 type RefineContentDisplayProps = {
   refinedContent: string | null;
   isLoading: boolean;
+  style?: React.CSSProperties;
 };
 
 const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
   refinedContent,
   isLoading,
+  style,
 }) => {
   const handleParse = async (
     filename: string,
@@ -79,8 +81,8 @@ const RefineContentDisplay: React.FC<RefineContentDisplayProps> = ({
 
   return (
     <Box
-      className="lg:w-1/2 flex items-center justify-center"
-      style={{ height: "100vh" }}
+      className="flex items-center justify-center"
+      style={{ height: "100vh", ...style }}
     >
       {isLoading && (
         <div className="flex items-center space-x-2 z-10">

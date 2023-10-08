@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Box, Dialog, Flex, Grid } from "@radix-ui/themes";
+import { IconButton, Box, Dialog, Grid, Checkbox } from "@radix-ui/themes";
 import { StackIcon } from "@radix-ui/react-icons";
 import { FileProps } from "./RefineButtonGroup";
 
@@ -8,8 +8,6 @@ type StackButtonProps = {
   fileCount: number;
   files: FileProps[]; // additional prop for the files
 };
-
-const testRa = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const StackButton = ({ onClick, fileCount, files }: StackButtonProps) => {
   return (
@@ -27,15 +25,8 @@ const StackButton = ({ onClick, fileCount, files }: StackButtonProps) => {
           <Box position={"absolute"}>{fileCount}</Box>
         </Box>
 
-        {/* Your Dialog UI for displaying and selecting from the "files" prop */}
         <Dialog.Content>
-          <Grid columns="3" gap="3" width="9">
-            {testRa.map((num, idx) => (
-              <Box key={idx} height="9">
-                {num}
-              </Box>
-            ))}
-          </Grid>
+          <Grid columns="3" gap="3" width="9"></Grid>
         </Dialog.Content>
       </Dialog.Root>
     </>

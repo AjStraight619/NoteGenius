@@ -18,19 +18,26 @@ type OriginalContentDisplayProps = {
   selectedFile: FileProps[] | null;
   setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
+  style?: React.CSSProperties;
 };
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   selectedFile,
   setShouldRefine,
   isProcessing,
+  style,
 }) => {
   const handleRefineButtonClick = () => {
     setShouldRefine(true);
   };
 
   return (
-    <Box className="lg:w-1/2 w-full border-r border-gray-300">
+    <Box
+      className={`w-full border-r border-gray-300 flex items-center justify-center ${
+        selectedFile && selectedFile.length > 0 ? "" : "flex-col"
+      }`}
+      style={{ height: "100vh", ...style }}
+    >
       {isProcessing && (
         <div className="flex items-center space-x-2 z-10">
           <div className="h-2 w-2 bg-black rounded-full bounce"></div>

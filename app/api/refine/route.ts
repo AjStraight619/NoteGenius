@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         Your response:\n`,
       },
     ],
-    max_tokens: 7000,
+    max_tokens: 4000,
     temperature: 0,
     top_p: 1,
     frequency_penalty: 1,

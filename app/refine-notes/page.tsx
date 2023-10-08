@@ -8,6 +8,7 @@ import Sidebar from "@/components/sideBar/SideBarGlobal";
 import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButtonGroup";
 import { Flex } from "@radix-ui/themes";
 import CaptureAndProcessImageButton from "@/components/component/sidebar-buttons/GetMedia";
+import SplitScreenButton from "@/components/component/sidebar-buttons/SplitScreenButton";
 
 export type FileProps = {
   id: string;
@@ -19,16 +20,17 @@ export type FileProps = {
 const RefinePage: React.FC = () => {
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const [selectedFile, setSelectedFile] = useState<FileProps[] | null>(null);
-  const [textFromPicture, setTextFromPicture] = useState<string[] | null>(null);
   const [refinedContent, setRefinedContent] = useState<string | null>(null);
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [extraMessage, setExtraMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSplitScreen, setIsSplitScreen] = useState(false);
+  const [isMathChecked, setIsMathChecked] = useState(false);
 
   const { complete, completion, isLoading, handleInputChange, handleSubmit } =
     useCompletion({
-      api: "/api/refine",
+      api: "/api/extract-equations",
       initialInput: extraMessage,
 
       onResponse: (res: any) => {
@@ -107,6 +109,10 @@ const RefinePage: React.FC = () => {
     return "You encountered an error please try again. If the issue persists, refresh the page and try again.";
   };
 
+  const toggleSplitScreen = () => {
+    setIsSplitScreen((prev) => !prev);
+  };
+
   const handleError = (err: any) => {};
 
   return (
@@ -117,15 +123,23 @@ const RefinePage: React.FC = () => {
           setExtraMessage={setExtraMessage}
           extraMessage={extraMessage}
           setIsProcessing={setIsProcessing}
+          setIsMathChecked={setIsMathChecked}
         />
         <CaptureAndProcessImageButton
           setSelectedFile={setSelectedFile}
           setIsProcessing={setIsProcessing}
           isProcessing={isProcessing}
         />
+
+        <SplitScreenButton
+          isSplitScreen={isSplitScreen}
+          toggleSplitScreen={toggleSplitScreen}
+        />
       </Sidebar>
       <Flex
-        className="flex-col-reverse md:flex-row overflow-y-auto h-full md:h-[100vh] hide-scrollbar"
+        className={`flex-col${
+          isSplitScreen ? "-reverse md:flex-row" : ""
+        } overflow-y-auto h-full md:h-[100vh] hide-scrollbar`}
         style={{
           flexGrow: 1,
           marginLeft: isSideBarOpen ? "150px" : "0px",
@@ -136,10 +150,12 @@ const RefinePage: React.FC = () => {
           selectedFile={selectedFile}
           setShouldRefine={setShouldRefine}
           isProcessing={isProcessing}
+          style={{ flex: isSplitScreen ? "1" : "0 0 0%" }}
         />
         <RefineContentDisplay
           refinedContent={refinedContent}
           isLoading={isLoading}
+          style={{ flex: isSplitScreen ? "1" : "0 0 0%" }} // Adjust this as needed
         />
         <textarea
           ref={hiddenTextareaRef}
