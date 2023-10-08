@@ -18,7 +18,6 @@ function CaptureAndProcessImageButton({
   isProcessing,
 }: ImageCapture) {
   async function handleCaptureAndProcessImage() {
-    setIsProcessing(true);
     try {
       // Capture image
       const constraints = { video: true };
@@ -29,12 +28,14 @@ function CaptureAndProcessImageButton({
       track.stop();
 
       // Upload image to server
+      setIsProcessing(true);
       const formData = new FormData();
       formData.append("image", photo);
       const response = await fetch("/api/google-vision2", {
         method: "POST",
         body: formData,
       });
+
       const data = await response.json();
 
       const detectedText = data[0]?.description || "No text detected";
