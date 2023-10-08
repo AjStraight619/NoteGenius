@@ -7,13 +7,16 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   const { prompt, initialInput } = await req.json();
+  console.log("in extract equations api route");
+  console.log(prompt);
+  console.log("in extract api with new hook");
 
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo-16k-0613",
     messages: [
       {
         role: "system",
-        content: `You are tasked with extracting all the mathematical equations present in the text provided by the user. Please ensure to list down each equation clearly.
+        content: `Extract only the equations from the following text, and prefix each equation with a number and a colon. For example 1: (equation) ..., n: (equation). Also make sure there are no unnecessary characters in the equations.
   
           User's input:
           ${prompt}

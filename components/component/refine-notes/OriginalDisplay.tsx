@@ -19,6 +19,9 @@ type OriginalContentDisplayProps = {
   setShouldRefine: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
   style?: React.CSSProperties;
+  isMathChecked: boolean;
+  displayText: string;
+  equations: string[];
 };
 
 const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
@@ -26,10 +29,22 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
   setShouldRefine,
   isProcessing,
   style,
+  isMathChecked,
+  displayText,
+  equations,
 }) => {
   const handleRefineButtonClick = () => {
     setShouldRefine(true);
   };
+
+  console.log("This is the equations", equations);
+
+  const formattedText =
+    equations.length > 0
+      ? equations[0].replace(/^"(.*)"$/, "$1").replace(/\\n/g, "\n\n")
+      : displayText;
+
+  console.log("This is the formated text", formattedText);
 
   return (
     <Box
@@ -49,6 +64,17 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
         </div>
       )}
 
+      {isMathChecked && (
+        <div className="processing-container absolute inset-0 flex items-center justify-center z-10">
+          <div className="flex items-center space-x-2">
+            <div className="h-2 w-2 bg-black rounded-full bounce"></div>
+            <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-1"></div>
+            <div className="h-2 w-2 bg-black rounded-full bounce bounce-delay-2"></div>
+            <span>Extracting equations...</span>
+          </div>
+        </div>
+      )}
+
       {selectedFile && selectedFile.length > 0 && (
         <ScrollArea
           type="always"
@@ -56,10 +82,11 @@ const OriginalContentDisplay: React.FC<OriginalContentDisplayProps> = ({
           style={{ height: "100vh", position: "relative" }}
         >
           <TextArea
-            value={selectedFile[0].content}
+            value={formattedText}
             readOnly
             style={{ width: "100%", height: "100vh" }}
           />
+
           <Button
             onClick={handleRefineButtonClick}
             variant="surface"

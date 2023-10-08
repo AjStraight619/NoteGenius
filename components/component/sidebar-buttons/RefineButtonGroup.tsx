@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactEventHandler, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   IconButton,
@@ -34,12 +34,16 @@ const RefineButtonGroup: React.FC<{
   setExtraMessage: React.Dispatch<React.SetStateAction<string>>;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   setIsMathChecked: React.Dispatch<React.SetStateAction<boolean>>;
+  isMathChecked: boolean;
+  setStartExtraction: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({
   setSelectedFile,
   setExtraMessage,
   extraMessage,
   setIsProcessing,
   setIsMathChecked,
+  isMathChecked,
+  setStartExtraction,
 }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -238,9 +242,8 @@ const RefineButtonGroup: React.FC<{
     }
   };
 
-  const handleCheckBoxClick = (e: React.FormEvent<HTMLButtonElement>) => {
-    const isChecked = e.currentTarget.getAttribute("aria-checked") === "true";
-    setIsMathChecked(isChecked);
+  const handleCheckBoxClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsMathChecked((prevState) => !prevState);
   };
 
   return (
@@ -343,7 +346,7 @@ const RefineButtonGroup: React.FC<{
                   </label>
                   <div className="flex items-center">
                     <Flex gap="2">
-                      <Checkbox onChange={handleCheckBoxClick} />
+                      <Checkbox onClick={handleCheckBoxClick} />
 
                       <Text size="3">Math</Text>
                     </Flex>
@@ -361,7 +364,11 @@ const RefineButtonGroup: React.FC<{
                 <label className="mt-4">
                   <Flex justify="center" className="p-5">
                     <Dialog.Close>
-                      <Button>Submit</Button>
+                      <Dialog.Close>
+                        <Button onClick={() => setStartExtraction(true)}>
+                          {isMathChecked ? "Extract Equations" : "Submit"}
+                        </Button>
+                      </Dialog.Close>
                     </Dialog.Close>
                   </Flex>
                 </label>

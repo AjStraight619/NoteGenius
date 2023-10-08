@@ -9,6 +9,7 @@ import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButt
 import { Flex } from "@radix-ui/themes";
 import CaptureAndProcessImageButton from "@/components/component/sidebar-buttons/GetMedia";
 import SplitScreenButton from "@/components/component/sidebar-buttons/SplitScreenButton";
+import { useExtractEquations } from "@/hooks/useExtractEquations";
 
 export type FileProps = {
   id: string;
@@ -27,22 +28,59 @@ const RefinePage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSplitScreen, setIsSplitScreen] = useState(false);
   const [isMathChecked, setIsMathChecked] = useState(false);
+  const [equations, setEquations] = useState<string[]>([]);
+  const [apiRoute, setApiRoute] = useState("api/refine");
+  const [startExtraction, setStartExtraction] = useState(false);
+  const [displayText, setDisplayText] = useState("");
+
+  useEffect(() => {
+    if (isMathChecked) {
+      setApiRoute("api/extract-equations");
+    } else {
+      setApiRoute("api/refine");
+    }
+  }, [isMathChecked]);
+
+  useEffect(() => {
+    if (selectedFile && selectedFile.length > 0) {
+      setDisplayText(selectedFile[0].content);
+    }
+  }, [selectedFile]);
+
+  const { isLoadingForExtracted, error, extractEquations } =
+    useExtractEquations(
+      apiRoute,
+      selectedFile,
+      isMathChecked,
+      startExtraction,
+      extraMessage,
+      setEquations,
+      setIsMathChecked
+    );
+
+  useEffect(() => {
+    if (startExtraction && selectedFile) {
+      extractEquations(selectedFile[0].content);
+      setStartExtraction(false);
+    }
+  }, [startExtraction, selectedFile, extractEquations]);
 
   const { complete, completion, isLoading, handleInputChange, handleSubmit } =
     useCompletion({
-      api: "/api/refine",
+      api: apiRoute,
       initialInput: extraMessage,
 
       onResponse: (res: any) => {
         if (res && res.error) {
-          // Here, I'm assuming that if there's an error in the response, it might be in a field named 'error'.
           console.error("Error in response:", res.error.message);
+          console.log(res);
 
-          // Convert API error message to a user-friendly message if needed
           const userFriendlyMessage = getFriendlyErrorMessage(
             res.error.message
           );
           setErrorMessage(userFriendlyMessage);
+        } else if (res && res.equations) {
+          setEquations(res.equations);
         }
       },
       onError: (err) => {
@@ -115,6 +153,24 @@ const RefinePage: React.FC = () => {
 
   const handleError = (err: any) => {};
 
+  const parseEquations = (str: string): string[] => {
+    // Split the string into lines based on newline characters
+    const lines = str.split("\n");
+
+    // Initialize an empty array to hold the equations
+    const equations: string[] = [];
+
+    // Process each line
+    lines.forEach((line) => {
+      const match = line.match(/^\d+:\s*(.+)/);
+      if (match) {
+        equations.push(match[1]);
+      }
+    });
+
+    return equations;
+  };
+
   return (
     <Flex style={{ height: "100vh", width: "100%" }} display={"flex"}>
       <Sidebar toggleSideBar={toggleSideBar} isSideBarOpen={isSideBarOpen}>
@@ -124,6 +180,8 @@ const RefinePage: React.FC = () => {
           extraMessage={extraMessage}
           setIsProcessing={setIsProcessing}
           setIsMathChecked={setIsMathChecked}
+          isMathChecked={isMathChecked}
+          setStartExtraction={setStartExtraction}
         />
         {/* <CaptureAndProcessImageButton
           setSelectedFile={setSelectedFile}
@@ -151,6 +209,9 @@ const RefinePage: React.FC = () => {
           setShouldRefine={setShouldRefine}
           isProcessing={isProcessing}
           style={{ flex: isSplitScreen ? "1" : "0 0 0%" }}
+          isMathChecked={isMathChecked}
+          displayText={displayText}
+          equations={equations}
         />
         <RefineContentDisplay
           refinedContent={refinedContent}

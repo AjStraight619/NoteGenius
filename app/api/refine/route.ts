@@ -15,15 +15,15 @@ export async function POST(req: Request) {
         role: "system",
         content: `You will receive either a note that needs refinement or a question that requires an answer. The user might also provide additional instructions. Here's what you need to keep in mind:
 
-        1. If given a note, refine it based on the provided instructions. If no specific instructions are given, refine it to the best of your ability.
-        2. If presented with a question, provide a comprehensive answer. Use any extra instructions, if provided, to guide your response.
+            1. If given a note, refine it based on the provided instructions. If no specific instructions are given, refine it to the best of your ability.
+            2. If presented with a question, provide a comprehensive answer. Use any extra instructions, if provided, to guide your response.
 
-        User's instructions (if any): ${initialInput}
-        
-        User's input:
-        ${prompt}
+            User's instructions (if any): ${initialInput}
+            
+            User's input:
+            ${prompt}
 
-        Your response:\n`,
+            Your response:\n`,
       },
     ],
     max_tokens: 4000,
