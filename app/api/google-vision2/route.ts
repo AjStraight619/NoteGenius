@@ -9,8 +9,8 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  if (!process.env.GOOGLE_SERVICE_KEY) {
-    throw new Error("GOOGLE_SERVICE_KEY is not defined");
+  if (!process.env.GOOGLE_CREDENTIALS) {
+    throw new Error("GOOGLE_CREDENTIALS is not defined");
   }
 
   const credentials = JSON.parse(
