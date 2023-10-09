@@ -75,10 +75,8 @@ export default function Chat({ chats }: { chats: any }) {
 
   return (
     <main className="flex flex-col h-screen p-4">
-      {/* Header */}
       <Heading className="mb-4 self-center">Note Genius</Heading>
 
-      {/* Chat Box */}
       <Box className="flex-grow  p-4 overflow-hidden rounded-lg">
         <ScrollArea type="always" scrollbars="vertical">
           <Box className="w-full lg:w-3/4 mx-auto p-4">
@@ -98,33 +96,29 @@ export default function Chat({ chats }: { chats: any }) {
         </ScrollArea>
       </Box>
 
-      {/* Message Input */}
-      <Box className="mt-4">
-        <Container size="4">
-          <Flex direction="column">
-            <form className="relative w-full" onSubmit={(e) => handleSubmit(e)}>
-              <TextArea
-                placeholder="Type your message here..."
-                className="w-full pr-10"
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-              />
-              <IconButton
-                variant="surface"
-                type="submit"
-                style={{
-                  position: "absolute",
-                  right: "15px",
-                  bottom: "10px",
-                }}
-              >
-                <PaperPlaneIcon />
-              </IconButton>
-            </form>
-          </Flex>
-        </Container>
-      </Box>
+      <Flex direction="column" justify={"center"} align={"center"}>
+        <form className="relative w-1/2 " onSubmit={(e) => handleSubmit(e)}>
+          <TextArea
+            placeholder="Type your message here..."
+            className="justify-center border-r-4"
+            size={"3"}
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+          />
+          <IconButton
+            variant="surface"
+            type="submit"
+            style={{
+              position: "absolute",
+              right: "15px",
+              bottom: "22px",
+            }}
+          >
+            <PaperPlaneIcon />
+          </IconButton>
+        </form>
+      </Flex>
     </main>
   );
 }

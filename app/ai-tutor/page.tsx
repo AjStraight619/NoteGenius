@@ -15,6 +15,7 @@ import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { type User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
 
 import { redirect } from "next/navigation";
 const getChats = async () => {
@@ -44,7 +45,12 @@ const getChats = async () => {
 const ChatPage = async () => {
   const chats = await getChats();
 
-  return <Chat chats={chats} />;
+  return (
+    <>
+      <SideBarAITutor />
+      <Chat chats={chats} />
+    </>
+  );
 };
 
 export default ChatPage;

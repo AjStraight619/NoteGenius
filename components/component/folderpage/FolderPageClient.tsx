@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { Folder } from "@prisma/client";
-import Sidebar from "@/components/sideBar/sideBarFolder";
+import Sidebar from "@/components/side-bar/sideBarFolder";
 
 import { Card, Box, Flex, Container, Section } from "@radix-ui/themes";
 import MyDropzone from "../upload/upload";
