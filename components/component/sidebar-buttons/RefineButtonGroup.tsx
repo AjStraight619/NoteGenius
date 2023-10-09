@@ -233,9 +233,7 @@ const RefineButtonGroup: React.FC<{
     setIsDialogOpen(false);
     if (selectedFileIds) {
       // Filter the selected files from the files array
-      const selectedFiles = files.filter((file) =>
-        selectedFileIds.includes(file.id)
-      );
+      setIsMathChecked(false);
       setSelectedFile(null);
     }
   };
