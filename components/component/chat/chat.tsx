@@ -1,7 +1,6 @@
 "use client";
 
 import { useChat } from "ai/react";
-
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import type { User } from "@prisma/client";
@@ -16,7 +15,7 @@ import {
 } from "@radix-ui/themes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
-import { Chat, ChatMessage } from "@prisma/client";
+import { Chat } from "@prisma/client";
 
 type Message = {
   id: string;
@@ -72,6 +71,8 @@ export default function Chat({ chats }: { chats: any }) {
       },
     ],
   });
+
+  const [allChats, setAllChats] = useState([messages]);
 
   return (
     <main className="flex flex-col h-screen p-4">
