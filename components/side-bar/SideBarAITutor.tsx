@@ -1,39 +1,44 @@
 "use client";
-import { useState } from "react";
-import type { Chat, Folder } from "@prisma/client";
-
+import { Chat } from "@/types/otherTypes";
+import type { Folder } from "@prisma/client";
 import {
-  Box,
-  Flex,
-  TextArea,
-  Text,
-  ScrollArea,
-  IconButton,
-} from "@radix-ui/themes";
-
-import {
-  FilePlusIcon,
   ChatBubbleIcon,
+  FilePlusIcon,
   HamburgerMenuIcon,
 } from "@radix-ui/react-icons";
-import SearchFolders from "../component/search/SearchFolders";
-import FolderView from "../component/ai-tutor/FolderView";
+import { Box, Flex, IconButton } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
 import ChatView from "../component/ai-tutor/ChatView";
+import FolderView from "../component/ai-tutor/FolderView";
+import SearchFolders from "../component/search/SearchFolders";
 
-type SideBarAITutorProps = {
+const SideBarAITutor = ({
+  chats,
+  folders,
+}: {
   chats: Chat[] | undefined;
   folders: Folder[] | undefined;
-};
-
-const SideBarAITutor = ({ chats, folders }: SideBarAITutorProps) => {
+}) => {
   const [view, setView] = useState("chats");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
 
-  console.log("These are the chats", chats);
-  console.log("These are the folders", folders);
+  // Grab the latest chat to display to the user
+  useEffect(() => {
+    const earliestDate = chats?.reduce((earliest, chat) => {
+      return chat.updatedAt < earliest ? chat.updatedAt : earliest;
+    }, new Date());
+    setCurrentChat(
+      chats?.find((chat) => chat.updatedAt === earliestDate) ?? null
+    );
+  }, []);
 
   return (
-    <Box className="w-64 h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4">
+    <Box
+      position={"sticky"}
+      top={"0"}
+      className="w-64 h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4"
+    >
       <Flex direction={"row"} justify="center">
         <IconButton style={{ backgroundColor: "transparent" }}>
           <FilePlusIcon
@@ -61,7 +66,7 @@ const SideBarAITutor = ({ chats, folders }: SideBarAITutorProps) => {
       </Box>
 
       <Box className="flex-grow overflow-y-auto">
-        {view === "chats" ? <ChatView /> : <FolderView />}
+        {view === "chats" ? <ChatView chats={chats} /> : <FolderView />}
       </Box>
     </Box>
   );

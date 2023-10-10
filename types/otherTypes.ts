@@ -5,3 +5,14 @@ export type SortableItem = {
   createdAt: Date;
   isRefined?: boolean;
 };
+
+import {
+  Chat as PrismaChat,
+  ChatMessage as PrismaChatMessage,
+} from "@prisma/client";
+
+export interface ChatMessage extends PrismaChatMessage {}
+
+export interface Chat extends PrismaChat {
+  chatMessages: ChatMessage[];
+}

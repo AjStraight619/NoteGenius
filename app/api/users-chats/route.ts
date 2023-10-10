@@ -1,8 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { User } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -19,6 +19,9 @@ export async function GET() {
   const chats = await prisma.chat.findMany({
     where: {
       userId: userId,
+    },
+    include: {
+      chatMessages: true,
     },
   });
 
@@ -84,8 +87,6 @@ export async function PUT(req: NextRequest) {
       },
     });
   } else {
-    // If chatId is not provided, it's a new chat.
-    // We'll create a new chat record and add the first message to it.
     chat = await prisma.chat.create({
       data: {
         title: "",

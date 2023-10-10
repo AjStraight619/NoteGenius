@@ -1,10 +1,8 @@
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
-import { User, Folder } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import FolderPageClient from "@/components/component/folderpage/FolderPageClient";
-import { Text } from "@radix-ui/themes";
-import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/utils/authOptions";
+import { Folder, User } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 const getFolders = async () => {

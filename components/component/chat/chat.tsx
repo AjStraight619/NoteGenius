@@ -1,32 +1,19 @@
 "use client";
-
-import { useChat } from "ai/react";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import type { User } from "@prisma/client";
-import type { Message } from "ai/react";
+import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
   Box,
-  Container,
   Flex,
   Heading,
   IconButton,
   ScrollArea,
   TextArea,
 } from "@radix-ui/themes";
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import type { Message } from "ai/react";
+import { useChat } from "ai/react";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
-import { Chat } from "@prisma/client";
-
-// type Message = {
-//   id: string;
-//   content: string;
-//   role: string;
-// };
-
-type Role = "function" | "system" | "user" | "assistant";
-
-export default function Chat() {
+export default function Chats() {
   const { data: session } = useSession();
   const [prompt, setPrompt] = useState<string>("");
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
@@ -77,7 +64,7 @@ export default function Chat() {
         },
       ],
 
-      onFinish: async (newMessages) => {
+      onFinish: async () => {
         // Create a new message object for the user's message
         const newUserMessage: Message = {
           id: `user-message-${messages.length + 1}`, // Create a unique id based on the current number of messages
@@ -86,12 +73,11 @@ export default function Chat() {
         };
 
         // Append the new user message to the existing messages
-        const updatedMessages = [...messages, newUserMessage]; // Using spread operator instead of concat
+        const updatedMessages = [...messages, newUserMessage];
 
         // Update the state with the new array of messages
         setMessages(updatedMessages);
 
-        // Now send the updated messages to the API
         const res = await fetch("/api/users-chats", {
           method: "PUT",
           body: JSON.stringify({ newMessages: updatedMessages }), // Send the updated messages array to the API

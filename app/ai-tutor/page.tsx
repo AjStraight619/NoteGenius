@@ -1,21 +1,12 @@
-import React from "react";
-import {
-  Box,
-  Flex,
-  TextArea,
-  Text,
-  ScrollArea,
-  IconButton,
-} from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 
-import Chat from "@/components/component/chat/chat";
-import ChatLog from "@/components/component/chatlog/chatlog";
+import Chats from "@/components/component/chat/chat";
 // export const runtime = "edge";
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
-import { type User } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/utils/authOptions";
+import { type User } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 import { redirect } from "next/navigation";
 const getChatsItems = async () => {
@@ -58,6 +49,7 @@ const ChatPage = async () => {
   const chatItems = await getChatsItems();
   let chats;
   let folders;
+  let chatMessages;
   if (chatItems !== null) {
     ({ chats, folders } = chatItems);
   }
@@ -68,7 +60,7 @@ const ChatPage = async () => {
         <SideBarAITutor chats={chats} folders={folders} />
       </Box>
       <Flex width={"100%"} grow={"1"} display={"flex"} direction={"column"}>
-        <Chat />
+        <Chats />
       </Flex>
     </Flex>
   );
