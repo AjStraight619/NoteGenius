@@ -66,6 +66,22 @@ model Tag {
   folders Folder[] @relation("FolderToTag")
 }
 
+model Chat {
+  id           String        @id @default(uuid())
+  title        String
+  content      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  chatMessages ChatMessage[]
+  fileId       String?       @unique
+  file         File?         @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([userId])
+  @@index([fileId]) // Added index for fileId
+}
+
 model File {
   id          String       @id @default(uuid())
   name        String
@@ -78,23 +94,11 @@ model File {
   userId      String
   user        User         @relation(fields: [userId], references: [id])
   refinedFile RefinedFile?
+  chat        Chat?
   tags        Tag[]        @relation("FileToTag")
 
   @@index([userId])
   @@index([folderId])
-}
-
-model Chat {
-  id           String        @id @default(uuid())
-  title        String
-  content      String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
-  chatMessages ChatMessage[]
-
-  @@index([userId])
 }
 
 model ChatMessage {
@@ -134,4 +138,6 @@ enum FileType {
   IMAGE_JPEG
   IMAGE_PNG
   TEXT
+  HEIC
+  HEIF
 }

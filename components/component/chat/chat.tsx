@@ -4,6 +4,7 @@ import { useChat } from "ai/react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import type { User } from "@prisma/client";
+import type { Message } from "ai/react";
 import {
   Box,
   Container,
@@ -17,16 +18,20 @@ import { PaperPlaneIcon } from "@radix-ui/react-icons";
 
 import { Chat } from "@prisma/client";
 
-type Message = {
-  id: string;
-  content: string;
-  role: string;
-};
+// type Message = {
+//   id: string;
+//   content: string;
+//   role: string;
+// };
 
-export default function Chat({ chats }: { chats: any }) {
+type Role = "function" | "system" | "user" | "assistant";
+
+export default function Chat() {
   const { data: session } = useSession();
   const [prompt, setPrompt] = useState<string>("");
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
+  const [userMessages, setUserMessages] = useState<Message[]>([]);
+  console.log(session?.user?.name);
 
   const defaultPrompts = [
     {
@@ -61,22 +66,46 @@ export default function Chat({ chats }: { chats: any }) {
     }
   };
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "api/chat",
-    initialMessages: [
-      {
-        id: "",
-        content: "",
-        role: "system",
-      },
-    ],
-  });
+  const { messages, setMessages, input, handleInputChange, handleSubmit } =
+    useChat({
+      api: "api/chat",
+      initialMessages: [
+        {
+          id: "",
+          content: "",
+          role: "system",
+        },
+      ],
 
-  const [allChats, setAllChats] = useState([messages]);
+      onFinish: async (newMessages) => {
+        // Create a new message object for the user's message
+        const newUserMessage: Message = {
+          id: `user-message-${messages.length + 1}`, // Create a unique id based on the current number of messages
+          content: input,
+          role: "user",
+        };
+
+        // Append the new user message to the existing messages
+        const updatedMessages = [...messages, newUserMessage]; // Using spread operator instead of concat
+
+        // Update the state with the new array of messages
+        setMessages(updatedMessages);
+
+        // Now send the updated messages to the API
+        const res = await fetch("/api/users-chats", {
+          method: "PUT",
+          body: JSON.stringify({ newMessages: updatedMessages }), // Send the updated messages array to the API
+        });
+        const data = await res.json();
+        console.log("This is the data: ", data);
+      },
+    });
 
   return (
-    <main className="flex flex-col h-screen p-4">
-      <Heading className="mb-4 self-center">Note Genius</Heading>
+    <>
+      <Heading mt={"2"} className="mb-4 self-center">
+        Note Genius
+      </Heading>
 
       <Box className="flex-grow  p-4 overflow-hidden rounded-lg">
         <ScrollArea type="always" scrollbars="vertical">
@@ -100,6 +129,7 @@ export default function Chat({ chats }: { chats: any }) {
       <Flex direction="column" justify={"center"} align={"center"}>
         <form className="relative w-1/2 " onSubmit={(e) => handleSubmit(e)}>
           <TextArea
+            mb={"2"}
             placeholder="Type your message here..."
             className="justify-center border-r-4"
             size={"3"}
@@ -120,6 +150,6 @@ export default function Chat({ chats }: { chats: any }) {
           </IconButton>
         </form>
       </Flex>
-    </main>
+    </>
   );
 }

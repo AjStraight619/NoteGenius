@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import type { Chat, Folder } from "@prisma/client";
+
 import {
   Box,
   Flex,
@@ -18,9 +20,17 @@ import SearchFolders from "../component/search/SearchFolders";
 import FolderView from "../component/ai-tutor/FolderView";
 import ChatView from "../component/ai-tutor/ChatView";
 
-const SideBarAITutor = () => {
+type SideBarAITutorProps = {
+  chats: Chat[] | undefined;
+  folders: Folder[] | undefined;
+};
+
+const SideBarAITutor = ({ chats, folders }: SideBarAITutorProps) => {
   const [view, setView] = useState("chats");
   const [searchTerm, setSearchTerm] = useState("");
+
+  console.log("These are the chats", chats);
+  console.log("These are the folders", folders);
 
   return (
     <Box className="w-64 h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4">

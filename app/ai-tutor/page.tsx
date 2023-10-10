@@ -18,7 +18,7 @@ import { prisma } from "@/lib/prisma";
 import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
 
 import { redirect } from "next/navigation";
-const getChats = async () => {
+const getChatsItems = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -36,20 +36,41 @@ const getChats = async () => {
           chatMessages: true,
         },
       });
-      return chats;
+
+      const folders = await prisma.folder.findMany({
+        where: {
+          userId: userId,
+        },
+        include: {
+          files: true,
+        },
+      });
+      return {
+        chats: chats,
+        folders: folders,
+      };
     }
-    return null;
   }
+  return null;
 };
 
 const ChatPage = async () => {
-  const chats = await getChats();
+  const chatItems = await getChatsItems();
+  let chats;
+  let folders;
+  if (chatItems !== null) {
+    ({ chats, folders } = chatItems);
+  }
 
   return (
-    <>
-      <SideBarAITutor />
-      <Chat chats={chats} />
-    </>
+    <Flex direction="row">
+      <Box>
+        <SideBarAITutor chats={chats} folders={folders} />
+      </Box>
+      <Flex width={"100%"} grow={"1"} display={"flex"} direction={"column"}>
+        <Chat />
+      </Flex>
+    </Flex>
   );
 };
 
