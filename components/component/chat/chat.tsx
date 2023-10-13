@@ -18,6 +18,17 @@ type ChatsProps = {
   currentChat: Chat | null;
 };
 
+function adjustTextAreaHeight(textArea: any) {
+  const maxHeight = window.innerHeight * 0.25; // 25% of the screen height
+  textArea.style.height = "auto"; // Reset the height
+  textArea.style.height = Math.min(textArea.scrollHeight, maxHeight) + "px"; // Set it to the scroll height or max height, whichever is smaller
+
+  // If textArea is empty or only contains whitespace, reset the height
+  if (textArea.value.trim() === "") {
+    textArea.style.height = ""; // Reset to default height
+  }
+}
+
 export default function Chats({ selectedChatId, currentChatMessage }: any) {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -41,6 +52,11 @@ export default function Chats({ selectedChatId, currentChatMessage }: any) {
       e.preventDefault();
       handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
+  };
+
+  const handleTextAreaChange = (e: any) => {
+    adjustTextAreaHeight(e.target);
+    handleInputChange(e); // Call handleInputChange from useChat hook
   };
 
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -86,12 +102,14 @@ export default function Chats({ selectedChatId, currentChatMessage }: any) {
           <TextArea
             mb={"2"}
             placeholder="Type your message here..."
-            className="justify-center border-r-4"
+            className="justify-center border-r-4 max-h-1/4-screen overflow-y-auto" // Added max-h-1/4-screen and overflow-y-auto
             size={"3"}
             value={input}
-            onChange={handleInputChange}
+            onChange={handleTextAreaChange}
+            onInput={handleTextAreaChange}
             onKeyDown={handleKeyDown}
           />
+
           <IconButton
             variant="surface"
             type="submit"

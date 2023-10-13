@@ -1,5 +1,5 @@
-import type { Config } from "tailwindcss";
 import { radixThemePreset } from "radix-themes-tw";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   presets: [radixThemePreset],
@@ -21,6 +21,9 @@ const config: Config = {
       },
       animation: {
         bounce: "bounce 1s infinite",
+      },
+      height: {
+        "1/4-screen": "25vh",
       },
     },
   },
