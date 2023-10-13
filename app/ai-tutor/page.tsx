@@ -1,6 +1,5 @@
-import { Box, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 
-import Chats from "@/components/component/chat/chat";
 // export const runtime = "edge";
 import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
 import { prisma } from "@/lib/prisma";
@@ -56,12 +55,7 @@ const ChatPage = async () => {
 
   return (
     <Flex direction="row">
-      <Box>
-        <SideBarAITutor chats={chats} folders={folders} />
-      </Box>
-      <Flex width={"100%"} grow={"1"} display={"flex"} direction={"column"}>
-        <Chats />
-      </Flex>
+      <SideBarAITutor chats={chats} folders={folders} />
     </Flex>
   );
 };

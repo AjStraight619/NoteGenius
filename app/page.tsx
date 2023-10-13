@@ -1,19 +1,19 @@
-import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/authOptions";
 import {
-  LogOutButton,
   LogInButton,
+  LogOutButton,
   RegisterButton,
 } from "@/components/component/auth/auth";
+import { authOptions } from "@/utils/authOptions";
 import {
-  Section,
+  Box,
+  Button,
   Container,
   Flex,
   Heading,
-  Box,
-  Button,
+  Section,
 } from "@radix-ui/themes";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
 import "./home-styles.css";
 
 export default async function Home() {
@@ -60,7 +60,11 @@ export default async function Home() {
                 <Link href="/folders" passHref>
                   <Button>Go to Folders</Button>
                 </Link>
-                <Link href="/chat" passHref>
+                <Link
+                  href="/ai-tutor
+                "
+                  passHref
+                >
                   <Button>Go to Chat</Button>
                 </Link>
               </Flex>

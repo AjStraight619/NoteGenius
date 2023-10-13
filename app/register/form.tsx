@@ -1,10 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import { signIn } from "next-auth/react";
 import * as Form from "@radix-ui/react-form";
 import { Button, TextFieldInput } from "@radix-ui/themes";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export const RegisterForm = () => {
   const [name, setName] = useState("");

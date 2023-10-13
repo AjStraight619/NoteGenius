@@ -1,11 +1,11 @@
-import { Card, Flex, Button } from "@radix-ui/themes";
 import { TextField } from "@/components/ui/text-field";
-import { CaretLeftIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { CaretLeftIcon } from "@radix-ui/react-icons";
+import { Button, Card, Flex } from "@radix-ui/themes";
 import { randomUUID } from "crypto";
-import Mailgun from "mailgun.js";
 import formData from "form-data";
+import Mailgun from "mailgun.js";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const DOMAIN =

@@ -1,4 +1,5 @@
 "use client";
+import { type Chat } from "@prisma/client";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
   Box,
@@ -8,84 +9,52 @@ import {
   ScrollArea,
   TextArea,
 } from "@radix-ui/themes";
-import type { Message } from "ai/react";
 import { useChat } from "ai/react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+type ChatsProps = {
+  selectedChatId: string | null;
+  currentChat: Chat | null;
+};
 
-export default function Chats() {
+export default function Chats({ selectedChatId, currentChatMessage }: any) {
+  const pathname = usePathname();
   const { data: session } = useSession();
-  const [prompt, setPrompt] = useState<string>("");
-  const [initialMessages, setInitialMessages] = useState<Message[]>([]);
-  const [userMessages, setUserMessages] = useState<Message[]>([]);
-  console.log(session?.user?.name);
+  const [isOnThisPage, setIsOnThisPage] = useState(false);
 
-  const defaultPrompts = [
-    {
-      id: "MathPrompt",
-      content:
-        "You are going to act like a math tutor for this conversation...",
-      role: "system",
-    },
-    // TODO: Add more default prompts:
-  ];
-
-  const handlePromptChange = (e: any) => {
-    setPrompt(e.target.value);
-  };
-
-  const handlePromptSubmit = (e: any) => {
-    setInitialMessages([
-      ...(initialMessages ?? []),
-      {
-        id: `system-message-${(initialMessages?.length ?? 0) + 1}`,
-        content: prompt,
-        role: "system",
-      },
-    ]);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch(`/api/users-chats?chatId=${selectedChatId}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      const { id } = data;
+      console.log("This is the selected chat id", selectedChatId);
+      console.log("This is the id from the data returned", data);
+    }
+    fetchData();
+  }, [selectedChatId]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      // Here you can either manually create a new FormEvent object or use any other method to pass the correct type of event to handleSubmit
       handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
 
-  const { messages, setMessages, input, handleInputChange, handleSubmit } =
-    useChat({
-      api: "api/chat",
-      initialMessages: [
-        {
-          id: "",
-          content: "",
-          role: "system",
-        },
-      ],
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: "api/chat",
 
-      onFinish: async () => {
-        // Create a new message object for the user's message
-        const newUserMessage: Message = {
-          id: `user-message-${messages.length + 1}`, // Create a unique id based on the current number of messages
-          content: input,
-          role: "user",
-        };
-
-        // Append the new user message to the existing messages
-        const updatedMessages = [...messages, newUserMessage];
-
-        // Update the state with the new array of messages
-        setMessages(updatedMessages);
-
-        const res = await fetch("/api/users-chats", {
-          method: "PUT",
-          body: JSON.stringify({ newMessages: updatedMessages }), // Send the updated messages array to the API
-        });
-        const data = await res.json();
-        console.log("This is the data: ", data);
-      },
-    });
+    onFinish: async () => {
+      const res = await fetch("/api/users-chats", {
+        method: "PUT",
+        body: JSON.stringify({ newMessages: messages }), // Send the updated messages array to the API
+      });
+      const data = await res.json();
+      console.log("This is the data: ", data);
+    },
+  });
 
   return (
     <>

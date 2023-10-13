@@ -21,7 +21,6 @@ model User {
   refinedFiles       RefinedFile[]
   PasswordResetToken PasswordResetToken[]
   files              File[]
-  chatLogs           ChatLog[]
 
   @@index([email])
 }
@@ -69,7 +68,6 @@ model Tag {
 model Chat {
   id           String        @id @default(uuid())
   title        String
-  content      String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   userId       String
@@ -109,17 +107,6 @@ model ChatMessage {
   chat      Chat     @relation(fields: [chatId], references: [id])
 
   @@index([chatId])
-}
-
-model ChatLog {
-  id        String   @id @default(uuid())
-  content   String   @db.LongText
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId])
 }
 
 model PasswordResetToken {
