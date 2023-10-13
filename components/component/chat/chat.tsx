@@ -19,13 +19,12 @@ type ChatsProps = {
 };
 
 function adjustTextAreaHeight(textArea: any) {
-  const maxHeight = window.innerHeight * 0.25; // 25% of the screen height
-  textArea.style.height = "auto"; // Reset the height
-  textArea.style.height = Math.min(textArea.scrollHeight, maxHeight) + "px"; // Set it to the scroll height or max height, whichever is smaller
+  const maxHeight = window.innerHeight * 0.25;
+  textArea.style.height = "auto";
+  textArea.style.height = Math.min(textArea.scrollHeight, maxHeight) + "px";
 
-  // If textArea is empty or only contains whitespace, reset the height
   if (textArea.value.trim() === "") {
-    textArea.style.height = ""; // Reset to default height
+    textArea.style.height = "";
   }
 }
 

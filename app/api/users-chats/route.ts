@@ -117,11 +117,18 @@ export async function PUT(req: NextRequest) {
     // Generate a new chatId only if needed
     const newChatId = uuidV4();
 
+    let chatTitle = "Untitled Chat";
+    // If there's no file title, generate a title from the first message of the chat.
+    if (newMessages.length > 0) {
+      // This is a simplistic example, you may want a more robust method to generate a meaningful title.
+      chatTitle = newMessages[0].content.substring(0, 30); // Take the first 30 characters of the first message.
+    }
+
     // No chatId provided, create a new chat and messages
     chat = await prisma.chat.create({
       data: {
         id: newChatId, // Specify the generated chatId
-        title: "",
+        title: chatTitle || "Untitles Chat",
         userId: userId,
         chatMessages: {
           create: newMessages.map((message: any) => ({
@@ -136,4 +143,32 @@ export async function PUT(req: NextRequest) {
   return new NextResponse(JSON.stringify({ chat }));
 }
 
-export async function DELETE() {}
+export async function DELETE(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "No valid session provided" });
+  }
+
+  const user = session.user as User;
+
+  if (!user) {
+    return NextResponse.json({ error: "Invalid user provided" });
+  }
+
+  const userId = user.id;
+
+  const chatId = req.nextUrl.searchParams.get("chatId");
+  console.log("user id: " + userId, "chatId: " + chatId);
+  if (!chatId) {
+    return NextResponse.json({ error: "No chatId provided" });
+  }
+
+  const chatToDelete = await prisma.chat.delete({
+    where: {
+      id: chatId,
+    },
+  });
+
+  return NextResponse.json({ chatToDelete });
+}
