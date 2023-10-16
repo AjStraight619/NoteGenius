@@ -16,3 +16,5 @@ export interface ChatMessage extends PrismaChatMessage {}
 export interface Chat extends PrismaChat {
   chatMessages: ChatMessage[];
 }
+
+export type ChatWithMessages = Chat & { chatMessages: ChatMessage[] };

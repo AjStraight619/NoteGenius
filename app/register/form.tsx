@@ -38,7 +38,7 @@ export const RegisterForm = () => {
 
   return (
     <Form.Root onSubmit={onSubmit} className="space-y-4 w-full sm:w-[400px]">
-      <Form.Field name="email" className="flex flex-col">
+      <Form.Field name="name" className="flex flex-col">
         <Form.Label className="FormLabel">Name</Form.Label>
         <Form.Control asChild>
           <TextFieldInput

@@ -4,24 +4,25 @@ import { Box, Flex } from "@radix-ui/themes";
 
 type ChatProps = {
   chats: Chat[] | undefined;
-  selectedChat: Chat | null;
+  selectedChatId: string | undefined;
   onDeleteChat: (chatId: string) => void;
   onEditChat: (chatId: string) => void;
-  onSelectChat: (chat: Chat) => void;
+  onSelectChat: (chatId: string | undefined) => void;
 };
 
 const ChatView = ({
   chats,
-  selectedChat,
+  selectedChatId,
   onDeleteChat,
   onEditChat,
   onSelectChat,
 }: ChatProps) => {
   const getChatStyle = (chat: Chat) => {
-    return chat === selectedChat
+    return chat.id === selectedChatId
       ? "truncate bg-blue-100 p-2 rounded"
       : "truncate bg-gray-100 p-2 rounded";
   };
+
   return (
     <>
       <Flex direction={"column"} grow={"1"} gap={"2"}>
@@ -32,7 +33,7 @@ const ChatView = ({
                 key={chat.id}
                 className={getChatStyle(chat) + "hover: cursor-pointer"}
                 pr={"3"}
-                onClick={() => onSelectChat(chat)}
+                onClick={() => onSelectChat(chat.id)}
               >
                 <Flex direction={"row"} gap={"1"} justify={"between"}>
                   {chat.title || "Untitled Chat"}

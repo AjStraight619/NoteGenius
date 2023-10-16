@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import { Folder } from "@prisma/client";
 import { Note } from "@/types/noteTypes";
+import { Folder } from "@prisma/client";
+import { useEffect, useRef } from "react";
 
 export default function useFilteredData(
   initialData: Folder[] | Note[] | null | undefined,
@@ -12,7 +12,6 @@ export default function useFilteredData(
 
   useEffect(() => {
     if (!initialDataRef.current) {
-      console.log("Initial data is not available");
       return;
     }
 

@@ -1,82 +1,57 @@
 "use client";
-import Chats from "@/components/component/chat/chat";
-import { Chat } from "@/types/otherTypes";
+import Chats from "@/components/component/chat/Chats";
+import { useChatSelection } from "@/hooks/useChatSelection";
+import useInitialMessages from "@/hooks/useInitialMessages";
+import { Chat, ChatWithMessages } from "@/types/otherTypes";
 import type { Folder } from "@prisma/client";
-import { type ChatMessage } from "@prisma/client";
 import {
   ChatBubbleIcon,
   FilePlusIcon,
   HamburgerMenuIcon,
-  PlusIcon,
 } from "@radix-ui/react-icons";
-import { Box, Button, Flex, IconButton } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { Box, Flex, IconButton } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
+import { experimental_useOptimistic as useOptimistic, useState } from "react";
+import AddChatDialog from "../add-chat/AddChatDialog";
 import ChatView from "../component/ai-tutor/ChatView";
 import FolderView from "../component/ai-tutor/FolderView";
 import SearchFolders from "../component/search/SearchFolders";
 
-import { experimental_useOptimistic as useOptimistic } from "react";
-
-const SideBarAITutor = ({
-  chats,
-  folders,
-}: {
+type sideBarAITutorProps = {
   chats: Chat[] | undefined;
   folders: Folder[] | undefined;
-}) => {
+  mostRecentChat: ChatWithMessages | undefined;
+};
+
+const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
+  const router = useRouter();
   const [view, setView] = useState("chats");
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
-  const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
-    undefined
-  );
-  const [currentChatMessage, setCurrentChatMessage] = useState<
-    ChatMessage[] | undefined
-  >(undefined);
 
-  const [optimisticDelete, setOptimisticDelete] = useOptimistic(null);
-  const [optimisticEdit, setOptimisticEdit] = useOptimistic(null);
+  const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
 
-  // Grab the latest chat to display to the user
-  useEffect(() => {
-    const earliestDate = chats?.reduce((earliest, chat) => {
-      return chat.updatedAt < earliest ? chat.updatedAt : earliest;
-    }, new Date());
-    const mostRecentChat =
-      chats?.find((chat) => chat.updatedAt === earliestDate) ?? null;
-    setCurrentChat(mostRecentChat);
-    // Extract and set chatMessages from the most recent chat
-    setSelectedChatId(mostRecentChat?.id);
-    const { chatMessages } = mostRecentChat ?? {};
-    setCurrentChatMessage(chatMessages);
-  }, []);
+  const { initialMessages } = useInitialMessages({
+    chatId: selectedChat?.id,
+    messages: selectedChat,
+  });
 
-  const { chatMessages } = currentChat ?? {};
-  console.log("These are the most recent chat messages", chatMessages);
-
-  if (chatMessages) {
-    for (let i = 0; i < chatMessages.length; i++) {
-      console.log(chatMessages[i].content);
+  const [optimisticChats, addOptimisticChats] = useOptimistic(
+    chats,
+    (state: ChatWithMessages[] = [], newChat: ChatWithMessages) => {
+      return [newChat, ...state];
     }
-  } else {
-    console.log("no chat messages");
-  }
+  );
 
   const handleDeleteChat = async (chatId: string) => {
-    const res = await fetch(`/api/users-chats/${chatId}`, {
+    const res = await fetch(`/api/users-chats?chatId=${chatId}`, {
       method: "DELETE",
     });
     const data = await res.json();
+    router.refresh();
     console.log("This is the data returned from the delete request", data);
   };
 
-  const handleEditChat = () => {};
-
-  const handleSelectChat = (chat: Chat) => {
-    setCurrentChat(chat);
-    setSelectedChatId(chat.id);
-    setCurrentChatMessage(chat.chatMessages);
-  };
+  const handleEditChat = async (chatId: string) => {};
 
   return (
     <>
@@ -85,15 +60,14 @@ const SideBarAITutor = ({
         top={"0"}
         className="w-64 h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4"
       >
-        <Flex direction={"row"} justify="center">
-          <Button variant={"outline"}>
-            New Chat
-            <PlusIcon />
-          </Button>
-          <IconButton style={{ backgroundColor: "transparent" }} ml={"5"}>
-            <HamburgerMenuIcon
-              style={{ width: "25px", height: "25px", color: "white" }}
-            />
+        <Flex direction={"row"} justify={"center"}>
+          <AddChatDialog
+            chats={chats}
+            addOptimisticChats={addOptimisticChats}
+            optimisticChats={optimisticChats}
+          />
+          <IconButton ml={"5"} size={"2"} variant="outline" radius="medium">
+            <HamburgerMenuIcon width={"20px"} height={"20px"} />
           </IconButton>
         </Flex>
         <Box pt={"3"}>
@@ -105,27 +79,23 @@ const SideBarAITutor = ({
           />
         </Box>
 
-        <Flex direction={"row"} justify="center" mt={"2"}>
-          <IconButton style={{ backgroundColor: "transparent" }}>
-            <FilePlusIcon
-              style={{ width: "25px", height: "25px", color: "white" }}
-            />
+        <Flex direction={"row"} justify="center" mt={"3"}>
+          <IconButton variant="ghost">
+            <FilePlusIcon width={"25px"} height={"25px"} />
           </IconButton>
-          <IconButton style={{ backgroundColor: "transparent" }} ml={"5"}>
-            <ChatBubbleIcon
-              style={{ width: "25px", height: "25px", color: "white" }}
-            />
+          <IconButton ml={"5"} variant="ghost">
+            <ChatBubbleIcon width={"25px"} height={"25px"} />
           </IconButton>
         </Flex>
 
         <Box className="flex-grow overflow-y-auto">
           {view === "chats" ? (
             <ChatView
-              chats={chats}
-              selectedChat={currentChat}
+              chats={optimisticChats}
+              selectedChatId={selectedChat?.id || undefined}
               onDeleteChat={handleDeleteChat}
               onEditChat={handleEditChat}
-              onSelectChat={handleSelectChat}
+              onSelectChat={selectChat}
             />
           ) : (
             <FolderView />
@@ -134,8 +104,9 @@ const SideBarAITutor = ({
       </Box>
       <Flex width={"100%"} grow={"1"} display={"flex"} direction={"column"}>
         <Chats
-          selectedChatId={selectedChatId}
-          currentChatMessage={currentChatMessage}
+          key={selectedChat?.id || mostRecentChat?.id}
+          selectedChatId={selectedChat?.id || mostRecentChat?.id}
+          initialMessages={initialMessages || mostRecentChat}
         />
       </Flex>
     </>

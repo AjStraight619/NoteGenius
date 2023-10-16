@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   const chat = await prisma.chat.findUnique({
     where: {
       id: chatId,
-      userId: userId, // Ensures the chat belongs to the authenticated user
+      userId: userId,
     },
     include: {
       chatMessages: true,
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  console.log("This is the request body", req.body);
+  console.log("PUT request received");
 
   // Get the session
   const session = await getServerSession(authOptions);
@@ -92,7 +92,12 @@ export async function PUT(req: NextRequest) {
   const userId = user.id;
   console.log("current user id", userId);
   const { newMessages, chatId } = await req.json();
-  console.log("this is the new messages object in the put method", newMessages);
+  console.log(
+    "These are the new messages being appended",
+    newMessages,
+    " to this chatId",
+    chatId
+  );
 
   // Variable to hold the chat data
   let chat;
@@ -101,12 +106,13 @@ export async function PUT(req: NextRequest) {
   if (chatId) {
     // Update existing chat with new messages
     for (let i = 0; i < newMessages.length; i++) {
-      const message = newMessages[i].content;
-      if (message) {
+      const { content, role } = newMessages[i];
+      if (content && role) {
         await prisma.chatMessage.create({
           data: {
-            content: message,
+            content: content,
             chatId: chatId,
+            role: role,
           },
         });
       }
@@ -140,7 +146,7 @@ export async function PUT(req: NextRequest) {
   }
 
   // Respond with the chat data
-  return new NextResponse(JSON.stringify({ chat }));
+  return new NextResponse(JSON.stringify({ newMessages }));
 }
 
 export async function DELETE(req: NextRequest) {
