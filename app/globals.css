@@ -49,11 +49,11 @@
     animation: fadeOut 300ms ease-in;
   }
 
-  .rt-BaseButton:focus,
+  /* .rt-BaseButton:focus,
   .rt-BaseButton:active {
     outline: none !important;
     box-shadow: none !important;
-}
+} */
 
 
 

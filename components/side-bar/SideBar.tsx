@@ -14,7 +14,7 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
         <Box
           position={"sticky"}
           top={"0"}
-          className={` h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4 transition ${
+          className={` h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-3 transition ${
             isSidebarOpen ? "sidebar-open" : "sidebar-closed"
           }`}
         >

@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon } from "@radix-ui/react-icons";
-import { Button, Dialog } from "@radix-ui/themes";
+import { Button, Dialog, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import { AddChatForm } from "./AddChatForm";
 
@@ -14,8 +14,9 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <Button variant={"outline"}>
-          New Chat
+        <Button size={"2"} variant={"outline"} mr={"8"}>
+          <Text size={"1"}>New Chat</Text>
+
           <PlusIcon />
         </Button>
       </Dialog.Trigger>

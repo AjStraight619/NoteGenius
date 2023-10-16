@@ -14,7 +14,7 @@ import {
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import SideBarToggle from "../sidebar-buttons/SideBarToggle";
+import { v4 as uuid } from "uuid";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
@@ -128,14 +128,6 @@ export default function Chats({
 
   return (
     <>
-      <Flex position={"absolute"} className="top-3 left-10">
-        {!isSidebarOpen ? (
-          <SideBarToggle
-            toggleSidebar={toggleSidebar}
-            isSideBarOpen={isSidebarOpen}
-          />
-        ) : null}
-      </Flex>
       <ScrollArea type="always" scrollbars="vertical" ref={scrollContainerRef}>
         {isPageLoading ? (
           <div className="align-center justify-center">Loading...</div>
@@ -144,9 +136,9 @@ export default function Chats({
             <ul className="w-full">
               {displayMessages
                 .filter((msg) => msg.role !== "system")
-                .map((msg, idx) => (
+                .map((msg) => (
                   <li
-                    key={idx}
+                    key={uuid()}
                     className="w-full"
                     style={{
                       backgroundColor:

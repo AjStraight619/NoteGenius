@@ -58,18 +58,16 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
 
   return (
     <>
+      <SideBarToggle
+        toggleSidebar={toggleSidebar}
+        isSideBarOpen={isSidebarOpen}
+      />
       <Sidebar isSidebarOpen={isSidebarOpen}>
-        <Flex gap={"2"}>
-          <AddChatDialog
-            chats={chats}
-            addOptimisticChats={addOptimisticChats}
-            optimisticChats={optimisticChats}
-          />
-          <SideBarToggle
-            toggleSidebar={toggleSidebar}
-            isSideBarOpen={isSidebarOpen}
-          />
-        </Flex>
+        <AddChatDialog
+          chats={chats}
+          addOptimisticChats={addOptimisticChats}
+          optimisticChats={optimisticChats}
+        />
 
         <SearchFolders
           searchTerm={searchTerm}
