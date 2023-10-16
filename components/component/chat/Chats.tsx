@@ -1,4 +1,5 @@
 "use client";
+import LoadingDots from "@/components/loading/LoadingDots";
 import { ChatWithMessages } from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
@@ -204,7 +205,7 @@ export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
               <PaperPlaneIcon />
             </IconButton>
           ) : (
-            <Text size={"1"}>...</Text>
+            <LoadingDots className="right-2 bottom-4 absolute" />
           )}
         </form>
       </Flex>

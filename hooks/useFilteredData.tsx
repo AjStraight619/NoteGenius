@@ -28,5 +28,5 @@ export default function useFilteredData(
     );
 
     updateDataInParent(filteredData);
-  }, [searchTerm]); // Removed initialData and updateDataInParent from dependencies
+  }, [searchTerm, updateDataInParent]); // Removed initialData and updateDataInParent from dependencies
 }

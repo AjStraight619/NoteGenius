@@ -3,28 +3,21 @@
 @tailwind utilities;
  
 
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
 
   body::-webkit-scrollbar {
     display: none;
   }
   
-  body {
-    -ms-overflow-style: none;  /* for Internet Explorer and Edge */
-    scrollbar-width: none;  /* for Firefox */
+  /* body {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
   }
-  
+   */
   
   .rt-IconButton:hover {
-    background-color: transparent; /* Maintain the transparent background on hover */
-    transform: scale(1.05); /* Slightly enlarge the button */
-    box-shadow: 0 4px 12px rgba(34, 0, 224, 0.08); /* Cloudyish shadow effect */
+    background-color: transparent; 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 12px rgba(34, 0, 224, 0.08); 
   }
 
 

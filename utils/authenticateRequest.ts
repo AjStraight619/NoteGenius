@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/authOptions";
 import { User } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { NextRequest } from "next/server";
 
 export async function authenticateRequest(
   req: NextRequest

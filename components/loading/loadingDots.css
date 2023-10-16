@@ -1,0 +1,23 @@
+.loading-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 2px;
+    background-color: #333;  /* Change color as needed */
+    border-radius: 50%;
+    animation: dotPulse 1.4s infinite linear;
+  }
+  
+  @keyframes dotPulse {
+    0%, 80%, 100% {
+      transform: scale(0.5);
+    }
+    40% {
+      transform: scale(1);
+    }
+  }

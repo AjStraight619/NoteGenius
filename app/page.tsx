@@ -61,19 +61,21 @@ export default async function Home() {
                   <Button>Go to Folders</Button>
                 </Link>
                 <Link
-                  href="/ai-tutor
+                  href="/refine-note
                 "
                   passHref
                 >
-                  <Button>Go to Chat</Button>
+                  <Button>Refine a Note</Button>
                 </Link>
               </Flex>
             </Flex>
           </Container>
         </Section>
         <Section size="3" className="mt-5 flex justify-center">
-          <Link href="/refine-notes" passHref>
-            <Button size="3">Refine a Note!</Button>
+          <Link href="/ai-tutor" passHref>
+            <Button radius="medium" size="3">
+              Chat with Note Genius
+            </Button>
           </Link>
         </Section>
       </main>

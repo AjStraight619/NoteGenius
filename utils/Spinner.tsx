@@ -1,4 +1,3 @@
-// Spinner.js
 "use client";
 export default function Spinner() {
   return (

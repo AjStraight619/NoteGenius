@@ -1,10 +1,7 @@
-import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
-import { Flex } from "@radix-ui/themes";
-
-// export const runtime = "edge";
-
 import { getChats, getMostRecentChatMessages } from "@/actions/actions";
+import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
 import { ChatWithMessages } from "@/types/otherTypes";
+import { Flex } from "@radix-ui/themes";
 
 const ChatPage = async () => {
   const mostRecentChat =
@@ -14,10 +11,6 @@ const ChatPage = async () => {
   let folders;
 
   chats = await getChats();
-
-  for (let i = 0; i < chats.length; i++) {
-    console.log(chats[i].chatMessages);
-  }
 
   return (
     <Flex direction="row">
