@@ -4,11 +4,7 @@ import { useChatSelection } from "@/hooks/useChatSelection";
 import useInitialMessages from "@/hooks/useInitialMessages";
 import { Chat, ChatWithMessages } from "@/types/otherTypes";
 import type { Folder } from "@prisma/client";
-import {
-  ChatBubbleIcon,
-  FilePlusIcon,
-  HamburgerMenuIcon,
-} from "@radix-ui/react-icons";
+import { ChatBubbleIcon, FilePlusIcon } from "@radix-ui/react-icons";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import { experimental_useOptimistic as useOptimistic, useState } from "react";
@@ -16,6 +12,8 @@ import AddChatDialog from "../add-chat/AddChatDialog";
 import ChatView from "../component/ai-tutor/ChatView";
 import FolderView from "../component/ai-tutor/FolderView";
 import SearchFolders from "../component/search/SearchFolders";
+import SideBarToggle from "../component/sidebar-buttons/SideBarToggle";
+import Sidebar from "./SideBar";
 
 type sideBarAITutorProps = {
   chats: Chat[] | undefined;
@@ -27,6 +25,7 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
   const router = useRouter();
   const [view, setView] = useState("chats");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
 
@@ -42,6 +41,10 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
     }
   );
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
   const handleDeleteChat = async (chatId: string) => {
     const res = await fetch(`/api/users-chats?chatId=${chatId}`, {
       method: "DELETE",
@@ -55,31 +58,27 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
 
   return (
     <>
-      <Box
-        position={"sticky"}
-        top={"0"}
-        className="w-64 h-screen bg-gray-100 border-r border-gray-300 flex flex-col justify-start p-4"
-      >
-        <Flex direction={"row"} justify={"center"}>
+      <Sidebar isSidebarOpen={isSidebarOpen}>
+        <Flex gap={"2"}>
           <AddChatDialog
             chats={chats}
             addOptimisticChats={addOptimisticChats}
             optimisticChats={optimisticChats}
           />
-          <IconButton ml={"5"} size={"2"} variant="outline" radius="medium">
-            <HamburgerMenuIcon width={"20px"} height={"20px"} />
-          </IconButton>
-        </Flex>
-        <Box pt={"3"}>
-          <SearchFolders
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            view={view}
-            setView={setView}
+          <SideBarToggle
+            toggleSidebar={toggleSidebar}
+            isSideBarOpen={isSidebarOpen}
           />
-        </Box>
+        </Flex>
 
-        <Flex direction={"row"} justify="center" mt={"3"}>
+        <SearchFolders
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          view={view}
+          setView={setView}
+        />
+
+        <Flex direction={"row"} justify="center">
           <IconButton variant="ghost">
             <FilePlusIcon width={"25px"} height={"25px"} />
           </IconButton>
@@ -101,12 +100,14 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
             <FolderView />
           )}
         </Box>
-      </Box>
-      <Flex width={"100%"} grow={"1"} display={"flex"} direction={"column"}>
+      </Sidebar>
+      <Flex grow={"1"} display={"flex"} direction={"column"}>
         <Chats
           key={selectedChat?.id || mostRecentChat?.id}
           selectedChatId={selectedChat?.id || mostRecentChat?.id}
           initialMessages={initialMessages || mostRecentChat}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
         />
       </Flex>
     </>

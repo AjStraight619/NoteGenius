@@ -3,17 +3,15 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { IconButton } from "@radix-ui/themes";
 
 type SideBarToggleProps = {
-  setIsSideBarOpen: any;
+  toggleSidebar: () => void;
   isSideBarOpen: boolean;
+  className?: string;
 };
 
 const SideBarToggle = ({
-  setIsSideBarOpen,
+  toggleSidebar,
   isSideBarOpen,
 }: SideBarToggleProps) => {
-  const toggleSideBar = () => {
-    setIsSideBarOpen((prev: any) => !prev);
-  };
   return (
     <div
       className={`z-50 transition-transform duration-300 ${
@@ -24,7 +22,7 @@ const SideBarToggle = ({
       }}
     >
       <IconButton
-        onClick={toggleSideBar}
+        onClick={toggleSidebar}
         size={"2"}
         variant="outline"
         radius="medium"

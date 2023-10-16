@@ -6,7 +6,6 @@ import {
   Avatar,
   Box,
   Flex,
-  Heading,
   IconButton,
   ScrollArea,
   Text,
@@ -15,10 +14,13 @@ import {
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import SideBarToggle from "../sidebar-buttons/SideBarToggle";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
   initialMessages: ChatWithMessages | undefined;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -31,7 +33,12 @@ function adjustTextAreaHeight(textArea: any) {
   }
 }
 
-export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
+export default function Chats({
+  selectedChatId,
+  initialMessages,
+  isSidebarOpen,
+  setIsSidebarOpen,
+}: ChatsProps) {
   const { data: session } = useSession();
   const [isPageLoading, setIsPageLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -115,12 +122,20 @@ export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
     handleInputChange(e);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
   return (
     <>
-      <Heading mt={"2"} className="mb-4 self-center">
-        Note Genius
-      </Heading>
-
+      <Flex position={"absolute"} className="top-3 left-10">
+        {!isSidebarOpen ? (
+          <SideBarToggle
+            toggleSidebar={toggleSidebar}
+            isSideBarOpen={isSidebarOpen}
+          />
+        ) : null}
+      </Flex>
       <ScrollArea type="always" scrollbars="vertical" ref={scrollContainerRef}>
         {isPageLoading ? (
           <div className="align-center justify-center">Loading...</div>
@@ -171,12 +186,11 @@ export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
       </ScrollArea>
 
       <Flex
-        direction="column"
         justify={"center"}
         align={"center"}
-        position={"sticky"}
+        position={"fixed"}
         bottom={"0"}
-        className="bg-white p-4 fixed w-full"
+        className="p-4 fixed w-full"
       >
         <form className="relative w-1/3" onSubmit={handleSubmit}>
           <TextArea
@@ -186,7 +200,7 @@ export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
             variant="classic"
             mb={"2"}
             placeholder="Type your message here..."
-            className="shadow-md max-h-1/4-screen overflow-y-auto z-10"
+            className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
             size={"2"}
             value={input}
             onChange={handleTextAreaChange}
