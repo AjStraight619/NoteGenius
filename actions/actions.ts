@@ -80,11 +80,6 @@ export const getMostRecentChatMessages = async () => {
     },
   });
 
-  console.log(
-    "This is the chat returned from the db, ---------------------------------",
-    chat
-  );
-
   revalidatePath("/ai-tutor");
 
   return chat;
@@ -97,10 +92,13 @@ export const getChats = async () => {
     where: {
       userId: userId,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
     include: {
       chatMessages: {
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       },
     },
