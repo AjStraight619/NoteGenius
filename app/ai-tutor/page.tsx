@@ -1,4 +1,8 @@
-import { getChats, getMostRecentChatMessages } from "@/actions/actions";
+import {
+  getChats,
+  getLinks,
+  getMostRecentChatMessages,
+} from "@/actions/actions";
 import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
 import { ChatWithMessages } from "@/types/otherTypes";
 
@@ -8,8 +12,10 @@ const ChatPage = async () => {
 
   let chats;
   let folders;
+  let links;
 
   chats = await getChats();
+  links = await getLinks();
 
   return (
     <SideBarAITutor

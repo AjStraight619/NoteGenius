@@ -75,6 +75,7 @@ model Chat {
   chatMessages ChatMessage[]
   fileId       String?       @unique
   file         File?         @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  links        Link[]
 
   @@index([userId])
   @@index([fileId]) // Added index for fileId
@@ -94,9 +95,23 @@ model File {
   refinedFile RefinedFile?
   chat        Chat?
   tags        Tag[]        @relation("FileToTag")
+  links       Link[]
 
   @@index([userId])
   @@index([folderId])
+}
+
+model Link {
+  id        String   @id @default(uuid())
+  chatId    String
+  fileId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  file      File     @relation(fields: [fileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([chatId, fileId])
+  @@index([fileId])
 }
 
 model ChatMessage {

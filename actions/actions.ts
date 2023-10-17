@@ -106,3 +106,52 @@ export const getChats = async () => {
 
   return chats;
 };
+
+export const getLinks = async () => {
+  const userId = (await getSession()) as unknown as string;
+
+  const links = await prisma.chat.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      file: true,
+    },
+  });
+
+  return links;
+};
+
+export const getSpecificLink = async (chatId: string) => {
+  const link = await prisma.chat.findUnique({
+    where: {
+      id: chatId,
+    },
+    include: {
+      file: true,
+    },
+  });
+
+  return link;
+};
+
+export const addLink = async (formData: FormData) => {
+  const userId = (await getSession()) as unknown as string;
+  const title = formData.get("title") as string;
+
+  const addedLink = await prisma.chat.create({
+    data: {
+      title,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/'ai-tutor'");
+  return {
+    addedLink,
+  };
+};
