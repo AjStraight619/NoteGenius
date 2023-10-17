@@ -14,7 +14,7 @@ import {
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef } from "react";
-import { AddFileDialog } from "../ai-tutor/add-file/AddFIleDIalog";
+import { ConvertFileToText } from "../ai-tutor/add-file/ConvertFileContentToText";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
@@ -22,6 +22,8 @@ type ChatsProps = {
   isProcessing: boolean;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   addOptimisticFiles: (filename: string) => void;
+  state: any;
+  dispatch: any;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -40,6 +42,8 @@ export default function Chats({
   isProcessing,
   setIsProcessing,
   addOptimisticFiles,
+  state,
+  dispatch,
 }: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -211,10 +215,12 @@ export default function Chats({
                 <LoadingDots className="right-2 bottom-4 absolute" />
               )}
             </form>
-            <AddFileDialog
+            <ConvertFileToText
+              addOptimisticFiles={addOptimisticFiles}
               setIsProcessing={setIsProcessing}
               isProcessing={isProcessing}
-              addOptimisticFiles={addOptimisticFiles}
+              files={state.files}
+              dispatch={dispatch}
             />
           </Box>
         </Flex>

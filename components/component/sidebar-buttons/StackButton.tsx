@@ -1,12 +1,11 @@
-import React from "react";
-import { IconButton, Box, Dialog, Grid, Checkbox } from "@radix-ui/themes";
 import { StackIcon } from "@radix-ui/react-icons";
+import { Box, Dialog, Grid, IconButton } from "@radix-ui/themes";
 import { FileProps } from "./RefineButtonGroup";
 
 type StackButtonProps = {
   onClick: () => void;
   fileCount: number;
-  files: FileProps[]; // additional prop for the files
+  files: FileProps[];
 };
 
 const StackButton = ({ onClick, fileCount, files }: StackButtonProps) => {

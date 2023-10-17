@@ -6,9 +6,10 @@ import Chats from "@/components/component/chat/Chats";
 import SearchFolders from "@/components/component/search/SearchFolders";
 import Sidebar from "@/components/side-bar/Sidebar";
 import { useChatSelection } from "@/hooks/useChatSelection";
+import { useFileManagement } from "@/hooks/useFileManagment";
 import useInitialMessages from "@/hooks/useInitialMessages";
 import { Chat, ChatWithMessages, FolderWithFiles } from "@/types/otherTypes";
-import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
+import { ChatBubbleIcon, Link1Icon, StackIcon } from "@radix-ui/react-icons";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import { experimental_useOptimistic as useOptimistic, useState } from "react";
@@ -19,8 +20,6 @@ type sideBarAITutorProps = {
   folders: FolderWithFiles[] | undefined;
   mostRecentChat: ChatWithMessages | undefined;
 };
-
-type FileName = string;
 
 const SideBarAITutor = ({
   chats,
@@ -34,6 +33,8 @@ const SideBarAITutor = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
+
+  const { state, dispatch } = useFileManagement();
 
   const filenames =
     folders?.map((folder) => folder.files.map((file) => file.name)).flat() ||
@@ -103,6 +104,9 @@ const SideBarAITutor = ({
             <IconButton variant="ghost">
               <Link1Icon width={"25px"} height={"25px"} />
             </IconButton>
+            <IconButton variant="ghost">
+              <StackIcon width={"25px"} height={"25px"} />
+            </IconButton>
           </Flex>
 
           <Box className="flex-grow overflow-y-auto">
@@ -127,6 +131,8 @@ const SideBarAITutor = ({
             isProcessing={isProcessing}
             setIsProcessing={setIsProcessing}
             addOptimisticFiles={addOptimisticFiles}
+            state={state}
+            dispatch={dispatch}
           />
         </Flex>
       </Flex>

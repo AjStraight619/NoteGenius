@@ -1,6 +1,6 @@
 "use client";
 import { FileProps, ProcessImageResponse } from "@/types/fileTypes";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -11,22 +11,23 @@ import {
   readFileContent,
 } from "@/utils/file-processing/fileProcessing";
 
-type AddFileFormProps = {
+import AddFileButton from "./AddFileButton";
+
+type ConvertFileContentToTextProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
-  onClose: () => void;
   addOptimisticFiles: (newFile: any) => void;
+  files: FileProps[];
 };
 
-export const AddFileForm = ({
+export const ConvertFileToText = ({
   setIsProcessing,
   isProcessing,
-  onClose,
+
   addOptimisticFiles,
-}: AddFileFormProps) => {
+  files,
+}: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [files, setFiles] = useState<FileProps[]>([]);
-  const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -61,7 +62,7 @@ export const AddFileForm = ({
 
         selectedFiles.push({
           id: uuid(),
-          file: jpegFile || file, // Use the converted JPEG file if available
+          file: jpegFile || file,
           name: file.name,
           content: content,
         });
@@ -166,6 +167,8 @@ export const AddFileForm = ({
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
+
+      <AddFileButton />
     </form>
   );
 };
