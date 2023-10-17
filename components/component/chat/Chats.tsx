@@ -14,10 +14,13 @@ import {
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef } from "react";
+import AddFileForm from "../ai-tutor/add-file/AddFileForm";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
   initialMessages: ChatWithMessages | undefined;
+  isProcessing: boolean;
+  setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -30,7 +33,12 @@ function adjustTextAreaHeight(textArea: any) {
   }
 }
 
-export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
+export default function Chats({
+  selectedChatId,
+  initialMessages,
+  isProcessing,
+  setIsProcessing,
+}: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -168,36 +176,44 @@ export default function Chats({ selectedChatId, initialMessages }: ChatsProps) {
           bottom={"0"}
           width={"100%"}
         >
-          <form className="relative w-1/3" onSubmit={handleSubmit}>
-            <TextArea
-              style={{
-                backgroundColor: "#1A1A1A",
-              }}
-              variant="classic"
-              mb={"2"}
-              placeholder="Type your message here..."
-              className="shadow-md max-h-1/4-screen overflow-y-auto z-10"
-              size={"2"}
-              value={input}
-              onChange={handleTextAreaChange}
-              onInput={handleTextAreaChange}
-              onKeyDown={handleKeyDown}
-            />
+          <Box position={"relative"} className="w-1/3">
+            <form onSubmit={handleSubmit}>
+              <TextArea
+                style={{
+                  backgroundColor: "#1A1A1A",
+                  paddingLeft: "3rem",
+                  paddingTop: "1rem",
+                }}
+                variant="classic"
+                mb={"2"}
+                placeholder="Type your message here"
+                className="shadow-md max-h-1/4-screen overflow-y-auto z-10"
+                size={"1"}
+                value={input}
+                onChange={handleTextAreaChange}
+                onInput={handleTextAreaChange}
+                onKeyDown={handleKeyDown}
+              />
 
-            {!isLoading ? (
-              <IconButton
-                radius="medium"
-                variant="solid"
-                type="submit"
-                className="right-2 bottom-4 absolute"
-                disabled={isLoading}
-              >
-                <PaperPlaneIcon />
-              </IconButton>
-            ) : (
-              <LoadingDots className="right-2 bottom-4 absolute" />
-            )}
-          </form>
+              {!isLoading ? (
+                <IconButton
+                  radius="medium"
+                  variant="solid"
+                  type="submit"
+                  className="right-2 bottom-4 absolute"
+                  disabled={isLoading}
+                >
+                  <PaperPlaneIcon />
+                </IconButton>
+              ) : (
+                <LoadingDots className="right-2 bottom-4 absolute" />
+              )}
+            </form>
+            <AddFileForm
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
+            />
+          </Box>
         </Flex>
       </Flex>
     </>

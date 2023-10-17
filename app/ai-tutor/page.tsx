@@ -1,9 +1,10 @@
 import {
   getChats,
+  getFolders,
   getLinks,
   getMostRecentChatMessages,
 } from "@/actions/actions";
-import SideBarAITutor from "@/components/side-bar/SideBarAITutor";
+import SideBarAITutor from "@/components/component/ai-tutor/side-bar/SideBarAITutor";
 import { ChatWithMessages } from "@/types/otherTypes";
 
 const ChatPage = async () => {
@@ -16,6 +17,9 @@ const ChatPage = async () => {
 
   chats = await getChats();
   links = await getLinks();
+  folders = await getFolders();
+
+  console.log("These are the folders fromt the db", folders);
 
   return (
     <SideBarAITutor

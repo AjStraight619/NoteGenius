@@ -6,3 +6,8 @@
     overflow-x: auto;
     white-space: pre-wrap;
   }
+
+  textarea::placeholder {
+    padding-left: 3rem;
+    padding-top: 2rem;
+}

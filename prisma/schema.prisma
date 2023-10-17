@@ -84,8 +84,8 @@ model Chat {
 model File {
   id          String       @id @default(uuid())
   name        String
-  type        String
-  s3Path      String // The S3 path or URL where the file is stored
+  type        String?
+  s3Path      String? // The S3 path or URL where the file is stored
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   folderId    String?

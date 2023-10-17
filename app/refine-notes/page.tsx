@@ -1,15 +1,14 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
-import useHandleRefine from "@/hooks/useHandleRefine";
-import { useCompletion } from "ai/react";
 import OriginalContentDisplay from "@/components/component/refine-notes/OriginalDisplay";
 import RefineContentDisplay from "@/components/component/refine-notes/RefineDisplay";
-import Sidebar from "@/components/side-bar/SideBarGlobal";
 import RefineButtonGroup from "@/components/component/sidebar-buttons/RefineButtonGroup";
-import { Flex } from "@radix-ui/themes";
-import CaptureAndProcessImageButton from "@/components/component/sidebar-buttons/GetMedia";
 import SplitScreenButton from "@/components/component/sidebar-buttons/SplitScreenButton";
+import Sidebar from "@/components/side-bar/SideBarGlobal";
 import { useExtractEquations } from "@/hooks/useExtractEquations";
+import useHandleRefine from "@/hooks/useHandleRefine";
+import { Flex } from "@radix-ui/themes";
+import { useCompletion } from "ai/react";
+import { useEffect, useRef, useState } from "react";
 
 export type FileProps = {
   id: string;
@@ -149,26 +148,6 @@ const RefinePage: React.FC = () => {
 
   const toggleSplitScreen = () => {
     setIsSplitScreen((prev) => !prev);
-  };
-
-  const handleError = (err: any) => {};
-
-  const parseEquations = (str: string): string[] => {
-    // Split the string into lines based on newline characters
-    const lines = str.split("\n");
-
-    // Initialize an empty array to hold the equations
-    const equations: string[] = [];
-
-    // Process each line
-    lines.forEach((line) => {
-      const match = line.match(/^\d+:\s*(.+)/);
-      if (match) {
-        equations.push(match[1]);
-      }
-    });
-
-    return equations;
   };
 
   return (
