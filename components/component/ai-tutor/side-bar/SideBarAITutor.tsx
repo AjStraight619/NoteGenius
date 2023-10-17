@@ -7,8 +7,7 @@ import SearchFolders from "@/components/component/search/SearchFolders";
 import Sidebar from "@/components/side-bar/Sidebar";
 import { useChatSelection } from "@/hooks/useChatSelection";
 import useInitialMessages from "@/hooks/useInitialMessages";
-import { Chat, ChatWithMessages } from "@/types/otherTypes";
-import type { Folder } from "@prisma/client";
+import { Chat, ChatWithMessages, FolderWithFiles } from "@/types/otherTypes";
 import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
@@ -17,9 +16,11 @@ import SideBarToggle from "../../sidebar-buttons/SideBarToggle";
 
 type sideBarAITutorProps = {
   chats: Chat[] | undefined;
-  folders: Folder[] | undefined;
+  folders: FolderWithFiles[] | undefined;
   mostRecentChat: ChatWithMessages | undefined;
 };
+
+type FileName = string;
 
 const SideBarAITutor = ({
   chats,
@@ -34,6 +35,10 @@ const SideBarAITutor = ({
 
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
 
+  const filenames =
+    folders?.map((folder) => folder.files.map((file) => file.name)).flat() ||
+    [];
+
   const { initialMessages } = useInitialMessages({
     chatId: selectedChat?.id,
     messages: selectedChat,
@@ -43,6 +48,13 @@ const SideBarAITutor = ({
     chats,
     (state: ChatWithMessages[] = [], newChat: ChatWithMessages) => {
       return [newChat, ...state];
+    }
+  );
+
+  const [optimisticFiles, addOptimisticFiles] = useOptimistic(
+    filenames,
+    (state: string[] = [], newFile: string) => {
+      return [newFile, ...state];
     }
   );
 
@@ -114,6 +126,7 @@ const SideBarAITutor = ({
             initialMessages={initialMessages || mostRecentChat}
             isProcessing={isProcessing}
             setIsProcessing={setIsProcessing}
+            addOptimisticFiles={addOptimisticFiles}
           />
         </Flex>
       </Flex>

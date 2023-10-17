@@ -1,7 +1,5 @@
 "use client";
 import { FileProps, ProcessImageResponse } from "@/types/fileTypes";
-import { FilePlusIcon } from "@radix-ui/react-icons";
-import { IconButton } from "@radix-ui/themes";
 import { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 
@@ -13,12 +11,19 @@ import {
   readFileContent,
 } from "@/utils/file-processing/fileProcessing";
 
-type AddFilleFormProps = {
+type AddFileFormProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
+  onClose: () => void;
+  addOptimisticFiles: (newFile: any) => void;
 };
 
-const AddFileForm = ({ setIsProcessing, isProcessing }: AddFilleFormProps) => {
+export const AddFileForm = ({
+  setIsProcessing,
+  isProcessing,
+  onClose,
+  addOptimisticFiles,
+}: AddFileFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileProps[]>([]);
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
@@ -161,17 +166,6 @@ const AddFileForm = ({ setIsProcessing, isProcessing }: AddFilleFormProps) => {
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
-      <IconButton
-        radius="medium"
-        variant="outline"
-        className="left-2 bottom-6 absolute"
-        size={"1"}
-        onClick={handleUploadButtonClick}
-      >
-        <FilePlusIcon />
-      </IconButton>
     </form>
   );
 };
-
-export default AddFileForm;
