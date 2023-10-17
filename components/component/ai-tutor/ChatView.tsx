@@ -17,27 +17,29 @@ const ChatView = ({
   onEditChat,
   onSelectChat,
 }: ChatProps) => {
-  const getChatStyle = (chat: Chat) => {
-    return chat.id === selectedChatId
-      ? "truncate bg-blue-100 p-2 rounded"
-      : "truncate bg-gray-100 p-2 rounded";
-  };
-
   return (
     <>
-      <Flex direction={"column"} grow={"1"} gap={"2"}>
-        {Array.isArray(chats) && chats.length > 0 ? (
-          <Box className="flex flex-col space-y-2 p-3">
-            {chats?.map((chat) => (
-              <Box
-                key={chat.id}
-                className={getChatStyle(chat) + "hover: cursor-pointer"}
-                pr={"3"}
-                onClick={() => onSelectChat(chat.id)}
-              >
-                <Flex direction={"row"} gap={"1"} justify={"between"}>
+      {Array.isArray(chats) && chats.length > 0 ? (
+        <Box className="flex flex-col space-y-2">
+          {chats?.map((chat) => (
+            <Box
+              key={chat.id}
+              onClick={() => onSelectChat(chat.id)}
+              className={`p-2 flex justify-between items-center cursor-pointer rounded 
+                  ${
+                    chat.id === selectedChatId
+                      ? "rounded-2 bg-gray-5"
+                      : "hover:bg-gray-4 rounded-2"
+                  }`}
+            >
+              <Box className="flex-grow relative mr-4 max-w-[175px]">
+                <Box className="whitespace-nowrap overflow-hidden">
                   {chat.title || "Untitled Chat"}
-
+                </Box>
+                {chat.id === selectedChatId && <Box />}
+              </Box>
+              <Box className="w-10 flex-shrink-0 flex justify-end">
+                {selectedChatId === chat.id ? (
                   <Flex direction={"row"} gap={"2"}>
                     <Pencil1Icon
                       onClick={(e) => {
@@ -52,12 +54,12 @@ const ChatView = ({
                       }}
                     />
                   </Flex>
-                </Flex>
+                ) : null}
               </Box>
-            ))}
-          </Box>
-        ) : null}
-      </Flex>
+            </Box>
+          ))}
+        </Box>
+      ) : null}
     </>
   );
 };

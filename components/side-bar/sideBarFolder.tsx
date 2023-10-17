@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
-import { FaCog, FaBars } from "react-icons/fa";
+import { useState } from "react";
+import { FaBars, FaCog } from "react-icons/fa";
 
-import AddFolder from "../component/sidebar-buttons/AddFolder";
-import UploadButton from "../component/sidebar-buttons/UploadButton";
 import SearchFolders from "../component/search/SearchFolders";
+import AddFolder from "../component/sidebar-buttons/AddFolder";
 import SortingButton from "../component/sidebar-buttons/SortingButton";
+import UploadButton from "../component/sidebar-buttons/UploadButton";
 
 import { Folder } from "@prisma/client";
 type SidebarProps = {
@@ -23,7 +23,7 @@ const Sidebar = ({ folders, updateFolders, children }: SidebarProps) => {
       <div
         className="fixed top-4 z-50 transition-transform duration-300"
         style={{
-          left: isSidebarOpen ? "60px" : "36px", // Adjust these values for the exact position
+          left: isSidebarOpen ? "60px" : "36px",
           transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)",
         }}
       >

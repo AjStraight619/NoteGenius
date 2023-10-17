@@ -98,7 +98,7 @@ export const getChats = async () => {
     include: {
       chatMessages: {
         orderBy: {
-          createdAt: "desc",
+          createdAt: "asc",
         },
       },
     },

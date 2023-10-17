@@ -58,55 +58,55 @@ const SideBarAITutor = ({ chats, mostRecentChat }: sideBarAITutorProps) => {
 
   return (
     <>
-      <SideBarToggle
-        toggleSidebar={toggleSidebar}
-        isSideBarOpen={isSidebarOpen}
-      />
-      <Sidebar isSidebarOpen={isSidebarOpen}>
-        <AddChatDialog
-          chats={chats}
-          addOptimisticChats={addOptimisticChats}
-          optimisticChats={optimisticChats}
+      <Flex direction="row">
+        <SideBarToggle
+          toggleSidebar={toggleSidebar}
+          isSideBarOpen={isSidebarOpen}
         />
+        <Sidebar isSidebarOpen={isSidebarOpen}>
+          <AddChatDialog
+            chats={chats}
+            addOptimisticChats={addOptimisticChats}
+            optimisticChats={optimisticChats}
+          />
 
-        <SearchFolders
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          view={view}
-          setView={setView}
-        />
+          <SearchFolders
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            view={view}
+            setView={setView}
+          />
 
-        <Flex direction={"row"} justify="center">
-          <IconButton variant="ghost">
-            <FilePlusIcon width={"25px"} height={"25px"} />
-          </IconButton>
-          <IconButton ml={"5"} variant="ghost">
-            <ChatBubbleIcon width={"25px"} height={"25px"} />
-          </IconButton>
+          <Flex direction={"row"} justify="center">
+            <IconButton variant="ghost">
+              <FilePlusIcon width={"25px"} height={"25px"} />
+            </IconButton>
+            <IconButton ml={"5"} variant="ghost">
+              <ChatBubbleIcon width={"25px"} height={"25px"} />
+            </IconButton>
+          </Flex>
+
+          <Box className="flex-grow overflow-y-auto">
+            {view === "chats" ? (
+              <ChatView
+                chats={optimisticChats}
+                selectedChatId={selectedChat?.id || undefined}
+                onDeleteChat={handleDeleteChat}
+                onEditChat={handleEditChat}
+                onSelectChat={selectChat}
+              />
+            ) : (
+              <FolderView />
+            )}
+          </Box>
+        </Sidebar>
+        <Flex grow={"1"} direction={"column"}>
+          <Chats
+            key={selectedChat?.id || mostRecentChat?.id}
+            selectedChatId={selectedChat?.id || mostRecentChat?.id}
+            initialMessages={initialMessages || mostRecentChat}
+          />
         </Flex>
-
-        <Box className="flex-grow overflow-y-auto">
-          {view === "chats" ? (
-            <ChatView
-              chats={optimisticChats}
-              selectedChatId={selectedChat?.id || undefined}
-              onDeleteChat={handleDeleteChat}
-              onEditChat={handleEditChat}
-              onSelectChat={selectChat}
-            />
-          ) : (
-            <FolderView />
-          )}
-        </Box>
-      </Sidebar>
-      <Flex grow={"1"} display={"flex"} direction={"column"}>
-        <Chats
-          key={selectedChat?.id || mostRecentChat?.id}
-          selectedChatId={selectedChat?.id || mostRecentChat?.id}
-          initialMessages={initialMessages || mostRecentChat}
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-        />
       </Flex>
     </>
   );

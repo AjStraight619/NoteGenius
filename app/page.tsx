@@ -61,7 +61,7 @@ export default async function Home() {
                   <Button>Go to Folders</Button>
                 </Link>
                 <Link
-                  href="/refine-note
+                  href="/refine-notes
                 "
                   passHref
                 >
