@@ -120,7 +120,11 @@ const SideBarAITutor = ({
   const handleEditChat = async (chatId: string) => {};
 
   return (
-    <Flex direction={"row"} style={{ backgroundColor: "transparent" }}>
+    <Flex
+      direction={"row"}
+      style={{ backgroundColor: "transparent" }}
+      position={"relative"}
+    >
       <SideBarToggle
         toggleSidebar={toggleSidebar}
         isSideBarOpen={isSidebarOpen}
@@ -165,11 +169,7 @@ const SideBarAITutor = ({
           )}
         </Box>
       </Sidebar>
-      <Flex
-        grow={"1"}
-        direction={"column"}
-        style={{ backgroundColor: "transparent" }}
-      >
+      <Flex grow={"1"} direction={"column"} position={"relative"}>
         <Chats
           key={selectedChat?.id || mostRecentChat?.id}
           selectedChatId={selectedChat?.id || mostRecentChat?.id}

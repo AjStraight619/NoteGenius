@@ -29,7 +29,7 @@ const ChatView = ({
                   ${
                     chat.id === selectedChatId
                       ? "rounded-2 bg-gray-5"
-                      : "hover:bg-gray-4 rounded-2"
+                      : "hover:bg-gray-3 rounded-2"
                   }`}
             >
               <Box className="flex-grow relative mr-4 max-w-[175px]">

@@ -12,20 +12,20 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
     <>
       {isSidebarOpen && (
         <Box
-          position={"sticky"}
+          position={"relative"}
           top={"0"}
           style={{
             height: "100vh",
             overflowY: "auto",
-            maxWidth: "175px",
+            maxWidth: "200px",
             width: "15vw",
           }}
-          className={`bg-gray-1 border-r border-gray-200 p-3 transition ${
+          className={`bg-gray-1 border-r border-gray-3 p-3 transition shadow ${
             isSidebarOpen ? "sidebar-open" : "sidebar-closed"
           }`}
         >
           <Flex
-            direction="column"
+            direction={"column"}
             justify={"between"}
             align={"center"}
             className="space-y-2"

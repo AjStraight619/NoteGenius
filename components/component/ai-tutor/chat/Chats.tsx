@@ -155,32 +155,30 @@ export default function Chats({
           ref={scrollContainerRef}
           className="md:scroll-auto"
           onScroll={handleScroll}
-          style={{ height: "100vh" }}
         >
-          <ul className="w-full">
+          <ul className="w-full pb-12 mb-4 pr-3">
             {displayMessages
               .filter((msg) => msg.role !== "system")
               .map((msg) => (
                 <li
                   key={msg.id}
-                  className="w-full"
-                  style={{
-                    backgroundColor:
-                      msg.role === "assistant" ? "#FFFFFF09" : "",
-                  }}
+                  className={`w-full ${
+                    msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
+                  }`}
                 >
-                  <Flex justify={"center"} align={"center"} mb={"9"}>
+                  <Flex justify={"center"} align={"center"}>
                     <Box className="w-1/3 py-5">
                       <Flex
                         direction="row"
                         justify="start"
                         align="start"
                         className="whitespace-pre-line"
-                        gap="3"
+                        gap="5"
                       >
                         <Avatar
-                          radius="medium"
+                          radius="small"
                           variant="solid"
+                          size={"2"}
                           fallback={
                             <Text>
                               {msg.role === "user"
@@ -197,7 +195,12 @@ export default function Chats({
               ))}
           </ul>
         </ScrollArea>
-        <Flex justify={"center"} bottom={"0"} width={"100%"} position={"fixed"}>
+        <Flex
+          justify={"center"}
+          bottom={"0"}
+          width={"100%"}
+          position={"absolute"}
+        >
           <Box className="w-1/3 relative">
             <form onSubmit={handleSubmit}>
               <div className="container">

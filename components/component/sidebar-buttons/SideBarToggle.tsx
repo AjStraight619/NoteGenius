@@ -18,9 +18,9 @@ const SideBarToggle = ({
         isSideBarOpen ? "translate-x-0" : "translate-x-[-10%]"
       }`}
       style={{
-        left: isSideBarOpen ? "130px" : "10px",
+        left: isSideBarOpen ? "140px" : "10px",
         top: isSideBarOpen ? "13px" : "10px",
-        position: "fixed",
+        position: "absolute",
       }}
     >
       <IconButton
