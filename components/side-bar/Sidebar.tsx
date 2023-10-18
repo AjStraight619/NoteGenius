@@ -17,10 +17,12 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
           style={{
             height: "100vh",
             overflowY: "auto",
+            maxWidth: "175px",
+            width: "15vw",
           }}
-          className={`bg-gray-3 border-r border-gray-200 p-3 transition ${
-            isSidebarOpen ? "w-[150vh]" : "w-0"
-          } ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}
+          className={`bg-gray-1 border-r border-gray-200 p-3 transition ${
+            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+          }`}
         >
           <Flex
             direction="column"

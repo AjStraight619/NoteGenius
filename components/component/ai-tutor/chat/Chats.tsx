@@ -140,7 +140,8 @@ export default function Chats({
 
     const { scrollTop, scrollHeight, clientHeight } =
       scrollContainerRef.current;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+    console.log(scrollTop, scrollHeight, clientHeight);
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
 
     setIsAutoScrollEnabled(isAtBottom);
   };
@@ -168,14 +169,14 @@ export default function Chats({
                       msg.role === "assistant" ? "#FFFFFF09" : "",
                   }}
                 >
-                  <Flex justify={"center"} align={"center"}>
+                  <Flex justify={"center"} align={"center"} mb={"9"}>
                     <Box className="w-1/3 py-5">
                       <Flex
                         direction="row"
                         justify="start"
                         align="start"
                         className="whitespace-pre-line"
-                        gap="2"
+                        gap="3"
                       >
                         <Avatar
                           radius="medium"
@@ -196,54 +197,54 @@ export default function Chats({
               ))}
           </ul>
         </ScrollArea>
+        <Flex justify={"center"} bottom={"0"} width={"100%"} position={"fixed"}>
+          <Box className="w-1/3 relative">
+            <form onSubmit={handleSubmit}>
+              <div className="container">
+                <TextArea
+                  style={{
+                    backgroundColor: "#1A1A1A",
+                    paddingLeft: "3rem",
+                    paddingTop: "1rem",
+                    fontSize: "0.9rem",
+                  }}
+                  variant="classic"
+                  placeholder="Type your message here"
+                  className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
+                  size={"1"}
+                  mb={"2"}
+                  value={input}
+                  onChange={handleTextAreaChange}
+                  onInput={handleTextAreaChange}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+
+              {!isLoading ? (
+                <IconButton
+                  radius="medium"
+                  variant="solid"
+                  type="submit"
+                  className="right-2 bottom-5 absolute text-4"
+                  disabled={isLoading}
+                >
+                  <PaperPlaneIcon />
+                </IconButton>
+              ) : (
+                <LoadingDots className="right-2 bottom-4 absolute" />
+              )}
+            </form>
+
+            <ConvertFileToText
+              addOptimisticFiles={addOptimisticFiles}
+              setIsProcessing={setIsProcessing}
+              isProcessing={isProcessing}
+              files={state}
+              dispatch={dispatch}
+            />
+          </Box>
+        </Flex>
       </Grid>
-
-      <Flex justify={"center"} bottom={"0"} width={"100%"} position={"sticky"}>
-        <Box className="w-1/3 relative">
-          <form onSubmit={handleSubmit}>
-            <div className="container">
-              <TextArea
-                style={{
-                  backgroundColor: "#1A1A1A",
-                  paddingLeft: "3rem",
-                  paddingTop: "1rem",
-                }}
-                variant="classic"
-                placeholder="Type your message here"
-                className="shadow-md max-h-1/4-screen overflow-y-auto z-10"
-                size={"1"}
-                mb={"3"}
-                value={input}
-                onChange={handleTextAreaChange}
-                onInput={handleTextAreaChange}
-                onKeyDown={handleKeyDown}
-              />
-            </div>
-
-            {!isLoading ? (
-              <IconButton
-                radius="medium"
-                variant="solid"
-                type="submit"
-                className="right-2 bottom-5 absolute text-4"
-                disabled={isLoading}
-              >
-                <PaperPlaneIcon />
-              </IconButton>
-            ) : (
-              <LoadingDots className="right-2 bottom-4 absolute" />
-            )}
-          </form>
-
-          <ConvertFileToText
-            addOptimisticFiles={addOptimisticFiles}
-            setIsProcessing={setIsProcessing}
-            isProcessing={isProcessing}
-            files={state}
-            dispatch={dispatch}
-          />
-        </Box>
-      </Flex>
     </>
   );
 }
