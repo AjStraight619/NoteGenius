@@ -25,6 +25,11 @@ const config: Config = {
           "60%": { transform: "translateY(-15%)" },
         },
       },
+      width: {
+        "custom-sidebar": "20rem",
+        "custom-sidebar-md": "24rem",
+        "custom-sidebar-lg": "28rem",
+      },
       animation: {
         bounce: "bounce 1s infinite",
       },

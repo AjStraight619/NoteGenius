@@ -14,15 +14,19 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
         <Box
           position={"sticky"}
           top={"0"}
-          className={`h-screen bg-gray-3 border-r border-gray-200 flex flex-col justify-start p-3 transition ${
-            isSidebarOpen ? "w-full md:w-1/4 lg:w-1/5" : "w-0"
+          style={{
+            height: "100vh",
+            overflowY: "auto",
+          }}
+          className={`bg-gray-3 border-r border-gray-200 p-3 transition ${
+            isSidebarOpen ? "w-[150vh]" : "w-0"
           } ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}
         >
           <Flex
             direction="column"
             justify={"between"}
             align={"center"}
-            className=" flex-grow space-y-2"
+            className="space-y-2"
             gap={"2"}
           >
             {isSidebarOpen && children}

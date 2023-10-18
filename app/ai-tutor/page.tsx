@@ -1,11 +1,10 @@
 import {
   getChats,
   getFolders,
-  getLinks,
   getMostRecentChatMessages,
 } from "@/actions/actions";
 import SideBarAITutor from "@/components/component/ai-tutor/side-bar/SideBarAITutor";
-import { ChatWithMessages } from "@/types/otherTypes";
+import { ChatWithMessages, UIFile } from "@/types/otherTypes";
 
 const ChatPage = async () => {
   const mostRecentChat =
@@ -16,16 +15,23 @@ const ChatPage = async () => {
   let links;
 
   chats = await getChats();
-  links = await getLinks();
   folders = await getFolders();
 
-  console.log("These are the folders fromt the db", folders);
+  const filesWithFolderInfo: UIFile[] | undefined = folders?.flatMap((folder) =>
+    folder.files.map((file) => ({
+      ...file,
+      folderName: folder.name,
+    }))
+  );
+
+  console.log("These are the files related to a folder", filesWithFolderInfo);
 
   return (
     <SideBarAITutor
       chats={chats}
       mostRecentChat={mostRecentChat}
       folders={folders}
+      files={filesWithFolderInfo}
     />
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 
-import { StackIcon } from "@radix-ui/react-icons";
-import { Dialog, IconButton } from "@radix-ui/themes";
+import { Dialog } from "@radix-ui/themes";
 import { useState } from "react";
 
 type AddFileDialog = {
@@ -24,24 +23,26 @@ export const AddFileDialog = ({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <IconButton
+        {/* <IconButton
           radius="medium"
           variant="outline"
           className="left-2 bottom-6 absolute"
           size={"1"}
+          onClick={handleUploadButtonClick}
         >
-          <StackIcon />
-        </IconButton>
+          <FilePlusIcon />
+        </IconButton> */}
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Description>
           Select options for creating a new chat.
         </Dialog.Description>
         {/* <ConvertFileToText
-          files={state.files}
+          onClose={handleClose}
           addOptimisticFiles={addOptimisticFiles}
           setIsProcessing={setIsProcessing}
           isProcessing={isProcessing}
+
         /> */}
       </Dialog.Content>
       <Dialog.Close></Dialog.Close>

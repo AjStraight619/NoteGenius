@@ -16,7 +16,6 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
       <Dialog.Trigger>
         <Button size={"2"} variant={"outline"} mr={"8"}>
           <Text size={"1"}>New Chat</Text>
-
           <PlusIcon />
         </Button>
       </Dialog.Trigger>

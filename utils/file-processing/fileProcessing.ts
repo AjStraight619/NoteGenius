@@ -1,4 +1,4 @@
-import { FileProps } from "@/types/fileTypes";
+import { UIFile } from "@/types/otherTypes";
 
 export const readFileContent = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -32,7 +32,7 @@ export const isImageType = (file: File): boolean => {
 
 export const isDuplicateFile = (
   selectedFile: File,
-  files: FileProps[]
+  files: UIFile[]
 ): boolean | undefined => {
   return files.some((file) => selectedFile.name === file.name);
 };

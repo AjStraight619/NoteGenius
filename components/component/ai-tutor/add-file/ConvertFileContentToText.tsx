@@ -1,5 +1,5 @@
 "use client";
-import { FileProps, ProcessImageResponse } from "@/types/fileTypes";
+import { ProcessImageResponse } from "@/types/fileTypes";
 import { useRef } from "react";
 import { v4 as uuid } from "uuid";
 
@@ -11,31 +11,31 @@ import {
   readFileContent,
 } from "@/utils/file-processing/fileProcessing";
 
+import { FileAction, UIFile } from "@/types/otherTypes";
 import AddFileButton from "./AddFileButton";
 
 type ConvertFileContentToTextProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
-  addOptimisticFiles: (newFile: any) => void;
-  files: FileProps[];
-  dispatch: React.Dispatch<any>;
+  addOptimisticFiles?: (newFile: any) => void;
+  files: UIFile[] | undefined;
+  dispatch: React.Dispatch<FileAction>;
 };
-
 export const ConvertFileToText = ({
   setIsProcessing,
   isProcessing,
+  dispatch,
   addOptimisticFiles,
   files,
-  dispatch,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const selectedFiles: FileProps[] = [];
+      const selectedFiles: UIFile[] = [];
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        if (isDuplicateFile(file, files)) continue;
+        if (files && isDuplicateFile(file, files)) continue;
 
         let content = "";
         let jpegFile: File | null = null;
@@ -46,7 +46,6 @@ export const ConvertFileToText = ({
           const result = await processImage(file, isHEIC(file));
           content = result.detectedText;
           if (result.jpegUrl) {
-            // If jpegUrl is returned, fetch the JPEG blob and create a File object
             const jpegResponse = await fetch(result.jpegUrl);
             const jpegBlob = await jpegResponse.blob();
             jpegFile = new File(
@@ -63,12 +62,18 @@ export const ConvertFileToText = ({
 
         selectedFiles.push({
           id: uuid(),
-          file: jpegFile || file,
           name: file.name,
-          content: content,
+          content: content || null, // Making sure it matches the 'string | null' type.
+          type: jpegFile ? "image/jpeg" : null,
+          s3Path: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          folderId: null,
+          userId: "your-user-id-here", // Replace with actual userId from context or state.
+          chatId: "",
         });
       }
-      // setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      dispatch({ type: "ADD_FILE", payload: selectedFiles });
     }
   };
 
@@ -159,18 +164,7 @@ export const ConvertFileToText = ({
   };
 
   return (
-    <form
-      action={async (formData) => {
-        addOptimisticFiles({
-          id: uuid(),
-          file: formData.get("file") as File,
-          name: formData.get("name") as string,
-          // content: formData.get("file") as string,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
-      }}
-    >
+    <form action={async (formData) => {}}>
       <input
         ref={fileInputRef}
         type="file"

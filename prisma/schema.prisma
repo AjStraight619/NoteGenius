@@ -28,6 +28,7 @@ model User {
 model Folder {
   id           String        @id @default(uuid())
   name         String
+  content      String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   userId       String
@@ -73,17 +74,16 @@ model Chat {
   userId       String
   user         User          @relation(fields: [userId], references: [id])
   chatMessages ChatMessage[]
-  fileId       String?       @unique
-  file         File?         @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  links        Link[]
+  files        File[]
+  Link         Link[]
 
   @@index([userId])
-  @@index([fileId]) // Added index for fileId
 }
 
 model File {
   id          String       @id @default(uuid())
   name        String
+  content     String?
   type        String?
   s3Path      String? // The S3 path or URL where the file is stored
   createdAt   DateTime     @default(now())
@@ -92,13 +92,15 @@ model File {
   folder      Folder?      @relation(fields: [folderId], references: [id])
   userId      String
   user        User         @relation(fields: [userId], references: [id])
+  chatId      String?
+  chat        Chat?        @relation(fields: [chatId], references: [id])
   refinedFile RefinedFile?
-  chat        Chat?
   tags        Tag[]        @relation("FileToTag")
-  links       Link[]
+  Link        Link[]
 
   @@index([userId])
   @@index([folderId])
+  @@index([chatId])
 }
 
 model Link {

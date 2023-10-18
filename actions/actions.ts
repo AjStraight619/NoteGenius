@@ -107,33 +107,33 @@ export const getChats = async () => {
   return chats;
 };
 
-export const getLinks = async () => {
-  const userId = (await getSession()) as unknown as string;
+// export const getLinks = async () => {
+//   const userId = (await getSession()) as unknown as string;
 
-  const links = await prisma.chat.findMany({
-    where: {
-      userId: userId,
-    },
-    include: {
-      file: true,
-    },
-  });
+//   const links = await prisma.chat.findMany({
+//     where: {
+//       userId: userId,
+//     },
+//     include: {
+//       file: true,
+//     },
+//   });
 
-  return links;
-};
+//   return links;
+// };
 
-export const getSpecificLink = async (chatId: string) => {
-  const link = await prisma.chat.findUnique({
-    where: {
-      id: chatId,
-    },
-    include: {
-      file: true,
-    },
-  });
+// export const getSpecificLink = async (chatId: string) => {
+//   const link = await prisma.chat.findUnique({
+//     where: {
+//       id: chatId,
+//     },
+//     include: {
+//       file: true,
+//     },
+//   });
 
-  return link;
-};
+//   return link;
+// };
 
 export const addLink = async (formData: FormData) => {
   const userId = (await getSession()) as unknown as string;

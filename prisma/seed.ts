@@ -1,90 +1,144 @@
-// import { PrismaClient } from "@prisma/client";
-// import { hash } from "bcrypt";
+import { PrismaClient } from "@prisma/client";
+import { hash } from "bcrypt";
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
-// async function main() {
-//   // Clear database
-//   await prisma.chatMessage.deleteMany({});
-//   await prisma.chat.deleteMany({});
-//   await prisma.refinedNote.deleteMany({});
-//   await prisma.note.deleteMany({});
-//   await prisma.folder.deleteMany({});
-//   await prisma.tag.deleteMany({});
-//   await prisma.passwordResetToken.deleteMany({}); // Assuming there's a PasswordResetToken model.
-//   await prisma.user.deleteMany({});
+async function main() {
+  // Clear database
+  await prisma.chatMessage.deleteMany({});
+  await prisma.chat.deleteMany({});
+  await prisma.refinedFile.deleteMany({});
+  await prisma.file.deleteMany({});
+  await prisma.folder.deleteMany({});
+  await prisma.tag.deleteMany({});
+  await prisma.passwordResetToken.deleteMany({});
 
-//   // Create a hashed password for Alex
-//   const alexPassword = await hash("Alex", 10);
+  // Create a hashed password for Alex
+  const alexPassword = await hash("test", 10);
 
-//   // Create a new user named "Alex" with password "Alex"
-//   const alex = await prisma.user.create({
-//     data: {
-//       email: "alex@prisma.io",
-//       password: alexPassword,
-//       name: "Alex",
-//     },
-//   });
+  // Create a new user named "Alex" with password "test"
+  const alex = await prisma.user.create({
+    data: {
+      email: "alex@prisma.io",
+      password: alexPassword,
+      name: "Alex",
+    },
+  });
 
-//   // Create the tags: Math, Reading, Science
-//   const tags = await Promise.all(
-//     ["Math", "Reading", "Science"].map((tagName) =>
-//       prisma.tag.create({
-//         data: {
-//           name: tagName,
-//         },
-//       })
-//     )
-//   );
+  // Create the tags: Math, Reading, Science
+  const tags = await Promise.all(
+    ["Math", "Reading", "Science"].map((tagName) =>
+      prisma.tag.create({
+        data: {
+          name: tagName,
+        },
+      })
+    )
+  );
 
-//   // Create folders named A, C, E, ... (skipping every other letter)
-//   for (let i = 65; i <= 90; i += 2) {
-//     const folderTitle = "Folder " + String.fromCharCode(i);
+  // Create folders named A, C, E, ... (skipping every other letter)
+  const folders = [];
+  for (let i = 65; i <= 90; i += 2) {
+    const folderTitle = "Folder " + String.fromCharCode(i);
 
-//     await prisma.folder.create({
-//       data: {
-//         name: folderTitle,
-//         userId: alex.id,
-//         tags: {
-//           connect: tags.map((tag) => ({ id: tag.id })),
-//         },
-//       },
-//     });
-//   }
+    const folder = await prisma.folder.create({
+      data: {
+        name: folderTitle,
+        userId: alex.id,
+        tags: {
+          connect: tags.map((tag) => ({ id: tag.id })),
+        },
+      },
+    });
+    folders.push(folder);
+  }
 
-//   // Create some chats for Alice
-//   for (let i = 0; i < 5; i++) {
-//     const chatTitle = "Chat " + i.toString();
-//     const chatContent = "This is content of chat " + chatTitle;
+  // Create files for Alex's folders
+  const fileContents = [
+    "This is content of file 1",
+    "Content for the second file",
+    "Another file's content here",
+    "Yet another file's text content",
+    "Final file content for testing",
+  ];
 
-//     const newChat = await prisma.chat.create({
-//       data: {
-//         title: chatTitle,
-//         content: chatContent,
-//         userId: alex.id,
-//       },
-//     });
+  const fileTypes = ["TEXT", "TEXT", "TEXT", "TEXT", "TEXT"];
 
-//     // Create some chat messages for each chat
-//     for (let j = 0; j < 10; j++) {
-//       const messageContent = "Message " + j.toString();
+  const files = [];
+  for (let i = 0; i < folders.length && i < fileContents.length; i++) {
+    const file = await prisma.file.create({
+      data: {
+        name: `File ${i + 1}`,
+        content: fileContents[i],
+        type: fileTypes[i],
+        folderId: folders[i].id,
+        userId: alex.id,
+      },
+    });
+    files.push(file);
+  }
 
-//       await prisma.chatMessage.create({
-//         data: {
-//           content: messageContent,
-//           chatId: newChat.id,
-//         },
-//       });
-//     }
-//   }
-// }
+  // Create some chats for Alex
+  const chats = [];
+  for (let i = 0; i < 5; i++) {
+    const chatTitle = "Chat " + i.toString();
 
-// main()
-//   .then(async () => {
-//     await prisma.$disconnect();
-//   })
-//   .catch(async (e) => {
-//     console.error(e);
-//     await prisma.$disconnect();
-//     process.exit(1);
-//   });
+    const newChat = await prisma.chat.create({
+      data: {
+        title: chatTitle,
+        userId: alex.id,
+      },
+    });
+    chats.push(newChat);
+
+    // Create some chat messages for each chat
+    for (let j = 0; j < 10; j++) {
+      const messageContent = "Message " + j.toString();
+      let role;
+
+      if (j % 2 === 0) {
+        role = "user";
+      } else {
+        role = "assistant";
+      }
+
+      await prisma.chatMessage.create({
+        data: {
+          content: messageContent,
+          chatId: newChat.id,
+          role: role,
+        },
+      });
+    }
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    if (chats[i]) {
+      await prisma.file.update({
+        where: { id: files[i].id },
+        data: { chatId: chats[i].id },
+      });
+    }
+  }
+
+  //   // Create some links connecting files to chats
+  //   for (let i = 0; i < chats.length && i < files.length; i++) {
+  //     await prisma.link.create({
+  //       data: {
+  //         chatId: chats[i].id,
+  //         fileId: files[i].id,
+  //       },
+  //     });
+  //   }
+  // }
+
+  main()
+    .then(async () => {
+      await prisma.$disconnect();
+    })
+    .catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}

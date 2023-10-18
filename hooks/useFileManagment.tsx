@@ -1,5 +1,5 @@
 import { FolderWithFiles } from "@/types/otherTypes";
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 
 type FolderState = {
   files: FolderWithFiles[];
@@ -41,11 +41,6 @@ function fileReducer(state: FolderState, action: FileActions): FolderState {
 
 export function useFileManagement() {
   const [state, dispatch] = useReducer(fileReducer, initialState);
-
-  useEffect(() => {
-    // You can do something here whenever state.files changes
-    // Example: Maybe save state to local storage, or send an update to a server
-  }, [state.files]);
 
   return { state, dispatch };
 }

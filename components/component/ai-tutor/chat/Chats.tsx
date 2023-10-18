@@ -1,11 +1,12 @@
 "use client";
 import LoadingDots from "@/components/loading/LoadingDots";
-import { ChatWithMessages } from "@/types/otherTypes";
+import { ChatWithMessages, FileAction, UIFile } from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
   Avatar,
   Box,
   Flex,
+  Grid,
   IconButton,
   ScrollArea,
   Text,
@@ -13,8 +14,9 @@ import {
 } from "@radix-ui/themes";
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useRef } from "react";
-import { ConvertFileToText } from "../ai-tutor/add-file/ConvertFileContentToText";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ConvertFileToText } from "../add-file/ConvertFileContentToText";
+import "./styles.css";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
@@ -22,8 +24,8 @@ type ChatsProps = {
   isProcessing: boolean;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   addOptimisticFiles: (filename: string) => void;
-  state: any;
-  dispatch: any;
+  state: UIFile[] | undefined;
+  dispatch: React.Dispatch<FileAction>;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -47,6 +49,14 @@ export default function Chats({
 }: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+
+  useEffect(() => {
+    if (isAutoScrollEnabled && scrollContainerRef.current) {
+      const { scrollHeight } = scrollContainerRef.current;
+      scrollContainerRef.current.scrollTop = scrollHeight;
+    }
+  }, [isAutoScrollEnabled]);
 
   const {
     messages,
@@ -125,14 +135,26 @@ export default function Chats({
     handleInputChange(e);
   };
 
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+
+    setIsAutoScrollEnabled(isAtBottom);
+  };
+
   return (
     <>
-      <Flex justify={"center"} align={"center"} direction={"column"}>
+      <Grid style={{ height: "100vh" }}>
         <ScrollArea
           type="always"
           scrollbars="vertical"
           ref={scrollContainerRef}
-          className="pb-20 md:scroll-auto"
+          className="md:scroll-auto"
+          onScroll={handleScroll}
+          style={{ height: "100vh" }}
         >
           <ul className="w-full">
             {displayMessages
@@ -146,13 +168,14 @@ export default function Chats({
                       msg.role === "assistant" ? "#FFFFFF09" : "",
                   }}
                 >
-                  <Flex justify="center" width={"100%"}>
-                    <Box className="w-[800px] p-5">
+                  <Flex justify={"center"} align={"center"}>
+                    <Box className="w-1/3 py-5">
                       <Flex
                         direction="row"
                         justify="start"
                         align="start"
                         className="whitespace-pre-line"
+                        gap="2"
                       >
                         <Avatar
                           radius="medium"
@@ -165,9 +188,7 @@ export default function Chats({
                             </Text>
                           }
                         />
-                        <Text className="pl-6" size={"2"}>
-                          {msg.content}
-                        </Text>
+                        <Text size={"2"}>{msg.content}</Text>
                       </Flex>
                     </Box>
                   </Flex>
@@ -175,15 +196,12 @@ export default function Chats({
               ))}
           </ul>
         </ScrollArea>
-        <Flex
-          justify={"center"}
-          align={"center"}
-          position={"fixed"}
-          bottom={"0"}
-          width={"100%"}
-        >
-          <Box position={"relative"} className="w-1/3">
-            <form onSubmit={handleSubmit}>
+      </Grid>
+
+      <Flex justify={"center"} bottom={"0"} width={"100%"} position={"sticky"}>
+        <Box className="w-1/3 relative">
+          <form onSubmit={handleSubmit}>
+            <div className="container">
               <TextArea
                 style={{
                   backgroundColor: "#1A1A1A",
@@ -191,39 +209,40 @@ export default function Chats({
                   paddingTop: "1rem",
                 }}
                 variant="classic"
-                mb={"2"}
                 placeholder="Type your message here"
                 className="shadow-md max-h-1/4-screen overflow-y-auto z-10"
                 size={"1"}
+                mb={"3"}
                 value={input}
                 onChange={handleTextAreaChange}
                 onInput={handleTextAreaChange}
                 onKeyDown={handleKeyDown}
               />
+            </div>
 
-              {!isLoading ? (
-                <IconButton
-                  radius="medium"
-                  variant="solid"
-                  type="submit"
-                  className="right-2 bottom-4 absolute"
-                  disabled={isLoading}
-                >
-                  <PaperPlaneIcon />
-                </IconButton>
-              ) : (
-                <LoadingDots className="right-2 bottom-4 absolute" />
-              )}
-            </form>
-            <ConvertFileToText
-              addOptimisticFiles={addOptimisticFiles}
-              setIsProcessing={setIsProcessing}
-              isProcessing={isProcessing}
-              files={state.files}
-              dispatch={dispatch}
-            />
-          </Box>
-        </Flex>
+            {!isLoading ? (
+              <IconButton
+                radius="medium"
+                variant="solid"
+                type="submit"
+                className="right-2 bottom-5 absolute text-4"
+                disabled={isLoading}
+              >
+                <PaperPlaneIcon />
+              </IconButton>
+            ) : (
+              <LoadingDots className="right-2 bottom-4 absolute" />
+            )}
+          </form>
+
+          <ConvertFileToText
+            addOptimisticFiles={addOptimisticFiles}
+            setIsProcessing={setIsProcessing}
+            isProcessing={isProcessing}
+            files={state}
+            dispatch={dispatch}
+          />
+        </Box>
       </Flex>
     </>
   );
