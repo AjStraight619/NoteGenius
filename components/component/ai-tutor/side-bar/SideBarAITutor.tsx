@@ -120,68 +120,82 @@ const SideBarAITutor = ({
   const handleEditChat = async (chatId: string) => {};
 
   return (
-    <Flex
-      direction={"row"}
-      style={{ backgroundColor: "transparent" }}
-      position={"relative"}
-    >
-      <SideBarToggle
-        toggleSidebar={toggleSidebar}
-        isSideBarOpen={isSidebarOpen}
-      />
-      <Sidebar isSidebarOpen={isSidebarOpen}>
-        <AddChatDialog
-          chats={chats}
-          addOptimisticChats={addOptimisticChats}
-          optimisticChats={optimisticChats}
-        />
+    <>
+      <Flex
+        direction={"row"}
+        style={{ backgroundColor: "transparent" }}
+        position={"relative"}
+      >
+        {!isSidebarOpen ? (
+          <SideBarToggle
+            toggleSidebar={toggleSidebar}
+            isSideBarOpen={isSidebarOpen}
+            className="absolute top-2.5 left-2.5"
+          />
+        ) : null}
 
-        <SearchFolders
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          view={view}
-          setView={setView}
-        />
-
-        <Flex direction={"row"} justify="center" gap="5">
-          <IconButton variant="ghost">
-            <ChatBubbleIcon width={"25px"} height={"25px"} />
-          </IconButton>
-          <IconButton variant="ghost">
-            <Link1Icon width={"25px"} height={"25px"} />
-          </IconButton>
-          <IconButton variant="ghost">
-            <StackIcon width={"25px"} height={"25px"} />
-          </IconButton>
-        </Flex>
-
-        <Box className="flex-grow overflow-y-auto">
-          {view === "chats" ? (
-            <ChatView
-              chats={optimisticChats}
-              selectedChatId={selectedChat?.id || undefined}
-              onDeleteChat={handleDeleteChat}
-              onEditChat={handleEditChat}
-              onSelectChat={selectChat}
+        <Sidebar isSidebarOpen={isSidebarOpen}>
+          <Flex direction={"row"} align={"center"} justify={"center"} gap={"3"}>
+            <AddChatDialog
+              chats={chats}
+              addOptimisticChats={addOptimisticChats}
+              optimisticChats={optimisticChats}
             />
-          ) : (
-            <FolderView />
-          )}
-        </Box>
-      </Sidebar>
-      <Flex grow={"1"} direction={"column"} position={"relative"}>
-        <Chats
-          key={selectedChat?.id || mostRecentChat?.id}
-          selectedChatId={selectedChat?.id || mostRecentChat?.id}
-          initialMessages={initialMessages || mostRecentChat}
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-          addOptimisticFiles={addOptimisticFiles}
-          state={state.files}
-          dispatch={dispatch}
-        />
+
+            <SideBarToggle
+              toggleSidebar={toggleSidebar}
+              isSideBarOpen={isSidebarOpen}
+            />
+          </Flex>
+
+          <SearchFolders
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            view={view}
+            setView={setView}
+          />
+
+          <Flex direction={"row"} justify="center" gap="5">
+            <IconButton variant="ghost">
+              <ChatBubbleIcon width={"25px"} height={"25px"} />
+            </IconButton>
+            <IconButton variant="ghost">
+              <Link1Icon width={"25px"} height={"25px"} />
+            </IconButton>
+            <IconButton variant="ghost">
+              <StackIcon width={"25px"} height={"25px"} />
+            </IconButton>
+          </Flex>
+
+          <Box className="flex-grow overflow-y-auto">
+            {view === "chats" ? (
+              <ChatView
+                chats={optimisticChats}
+                selectedChatId={selectedChat?.id || undefined}
+                onDeleteChat={handleDeleteChat}
+                onEditChat={handleEditChat}
+                onSelectChat={selectChat}
+              />
+            ) : (
+              <FolderView />
+            )}
+          </Box>
+        </Sidebar>
+
+        <Flex grow={"1"} direction={"column"} position={"relative"}>
+          <Chats
+            key={selectedChat?.id || mostRecentChat?.id}
+            selectedChatId={selectedChat?.id || mostRecentChat?.id}
+            initialMessages={initialMessages || mostRecentChat}
+            isProcessing={isProcessing}
+            setIsProcessing={setIsProcessing}
+            addOptimisticFiles={addOptimisticFiles}
+            state={state.files}
+            dispatch={dispatch}
+          />
+        </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
 

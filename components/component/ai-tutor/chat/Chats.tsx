@@ -124,6 +124,7 @@ export default function Chats({
   }, [displayMessages]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (isLoading) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
@@ -179,6 +180,7 @@ export default function Chats({
                           radius="small"
                           variant="solid"
                           size={"2"}
+                          color={msg.role === "user" ? "teal" : "indigo"}
                           fallback={
                             <Text>
                               {msg.role === "user"

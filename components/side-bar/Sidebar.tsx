@@ -19,6 +19,7 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
             overflowY: "auto",
             maxWidth: "200px",
             width: "15vw",
+            minWidth: "150px",
           }}
           className={`bg-gray-1 border-r border-gray-3 p-3 transition shadow ${
             isSidebarOpen ? "sidebar-open" : "sidebar-closed"
