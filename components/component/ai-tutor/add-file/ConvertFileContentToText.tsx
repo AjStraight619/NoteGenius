@@ -18,14 +18,15 @@ type ConvertFileContentToTextProps = {
   isProcessing: boolean;
   addOptimisticFiles: (newFile: any) => void;
   files: FileProps[];
+  dispatch: React.Dispatch<any>;
 };
 
 export const ConvertFileToText = ({
   setIsProcessing,
   isProcessing,
-
   addOptimisticFiles,
   files,
+  dispatch,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +68,7 @@ export const ConvertFileToText = ({
           content: content,
         });
       }
-      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      // setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     }
   };
 
@@ -158,7 +159,18 @@ export const ConvertFileToText = ({
   };
 
   return (
-    <form action={async (formData) => {}}>
+    <form
+      action={async (formData) => {
+        addOptimisticFiles({
+          id: uuid(),
+          file: formData.get("file") as File,
+          name: formData.get("name") as string,
+          // content: formData.get("file") as string,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }}
+    >
       <input
         ref={fileInputRef}
         type="file"
