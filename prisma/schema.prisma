@@ -89,6 +89,7 @@ model File {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   folderId    String?
+  math        Boolean      @default(false)
   folder      Folder?      @relation(fields: [folderId], references: [id])
   userId      String
   user        User         @relation(fields: [userId], references: [id])

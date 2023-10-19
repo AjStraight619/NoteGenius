@@ -34,7 +34,7 @@ export const deleteChat = async (chatId: string) => {
     },
   });
 
-  revalidatePath("/chat");
+  revalidatePath("/ai-tutor");
   return {
     deletedChat,
   };
@@ -171,15 +171,34 @@ export const getFolders = async () => {
   return folders;
 };
 
-export const addFile = async (formData: FormData) => {
+export const addFile = async (formData: FormData, math: boolean = false) => {
   const userId = (await getSession()) as unknown as string;
   const name = formData.get("name") as string;
   const type = formData.get("type") as string;
+  let content = formData.get("content") as string;
+
+  if (math) {
+    try {
+      const res = await fetch("http://localhost:3000/api/extract-equations", {
+        method: "POST",
+        body: JSON.stringify({ prompt: content }),
+      });
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const extractedEquations = await res.json();
+      content = extractedEquations;
+    } catch (error) {
+      console.error("Error extracting equations:", error);
+    }
+  }
 
   const addedFile = await prisma.file.create({
     data: {
       name,
       type,
+      content,
       user: {
         connect: {
           id: userId,

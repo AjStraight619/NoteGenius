@@ -1,8 +1,4 @@
-"use client";
 import { ProcessImageResponse } from "@/types/fileTypes";
-import { useRef } from "react";
-import { v4 as uuid } from "uuid";
-
 import {
   isDuplicateFile,
   isHEIC,
@@ -10,6 +6,8 @@ import {
   isPDF,
   readFileContent,
 } from "@/utils/file-processing/fileProcessing";
+import { useRef } from "react";
+import { v4 as uuid } from "uuid";
 
 import { FileAction, UIFile } from "@/types/otherTypes";
 import AddFileButton from "./AddFileButton";
@@ -17,7 +15,6 @@ import AddFileButton from "./AddFileButton";
 type ConvertFileContentToTextProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
-  addOptimisticFiles?: (newFile: UIFile) => void;
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
 };
@@ -25,7 +22,7 @@ export const ConvertFileToText = ({
   setIsProcessing,
   isProcessing,
   dispatch,
-  addOptimisticFiles,
+
   files,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

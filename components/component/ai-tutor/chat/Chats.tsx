@@ -240,7 +240,6 @@ export default function Chats({
             </form>
 
             <ConvertFileToText
-              addOptimisticFiles={addOptimisticFiles}
               setIsProcessing={setIsProcessing}
               isProcessing={isProcessing}
               files={state}

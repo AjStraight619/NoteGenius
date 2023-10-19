@@ -1,8 +1,15 @@
 "use client";
 import { addFile } from "@/actions/actions";
 import { UIFile } from "@/types/otherTypes";
-import { Box, Button, Flex, Heading } from "@radix-ui/themes";
-import { useRef, useState } from "react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Heading,
+  TextFieldInput,
+} from "@radix-ui/themes";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 type ProcessFileFormProps = {
@@ -11,6 +18,12 @@ type ProcessFileFormProps = {
   addOptimisticFiles: (newFile: UIFile) => void;
   optimisticFiles: UIFile[] | undefined;
 };
+type MathFile = {
+  isMathChecked: boolean;
+} & UIFile;
+type FileWithCheckStatus = {
+  isMathChecked: boolean;
+} & UIFile;
 
 const ProcessFileForm = ({
   isProcessing,
@@ -18,12 +31,38 @@ const ProcessFileForm = ({
   addOptimisticFiles,
   optimisticFiles,
 }: ProcessFileFormProps) => {
-  const files = state?.map((file) => file.name).toString();
-
-  console.log("This is the state of the files added in ProcessFileForm", state);
+  const initialFilesWithCheckStatus: FileWithCheckStatus[] =
+    state?.map((file) => ({
+      ...file,
+      isMathChecked: false,
+    })) || [];
+  const [filesWithCheckStatus, setFilesWithCheckStatus] = useState<
+    FileWithCheckStatus[]
+  >(initialFilesWithCheckStatus);
 
   const fileInputRef = useRef<HTMLFormElement>(null);
-  const [isMathChecked, setIsMathChecked] = useState(false);
+
+  useEffect(() => {
+    const checkedFiles = filesWithCheckStatus.filter(
+      (file) => file.isMathChecked
+    );
+
+    if (checkedFiles.length > 0) {
+      console.log("The following files are checked:", checkedFiles);
+    }
+  }, [filesWithCheckStatus]);
+
+  const handleCheckBoxClick = (fileId: string) => {
+    setFilesWithCheckStatus((prevFilesWithCheckStatus) =>
+      prevFilesWithCheckStatus.map((file) =>
+        file.id === fileId
+          ? { ...file, isMathChecked: !file.isMathChecked }
+          : file
+      )
+    );
+    console.log("This is the fileId", fileId);
+    console.log("This is the filesWithCheckStatus state", filesWithCheckStatus);
+  };
 
   return (
     <>
@@ -69,21 +108,26 @@ const ProcessFileForm = ({
             Files to be processed if math is checked:
           </Heading>
 
-          {state?.map((file) => (
-            <Box key={file.id}>
-              <ul>
-                <li>
-                  <input
-                    type="text"
-                    name={`file-name-${file.id}`}
-                    defaultValue={file.name}
-                  />
-                </li>
-              </ul>
+          {filesWithCheckStatus?.map((file) => (
+            <Box key={file.id} className="flex row">
+              <Flex direction={"row"} align="center" gap={"2"}>
+                <TextFieldInput
+                  type="text"
+                  name={`file-name-${file.id}`}
+                  defaultValue={file.name}
+                />
+                <Checkbox
+                  checked={file.isMathChecked}
+                  onClick={() => handleCheckBoxClick(file.id)}
+                />
+                Math
+              </Flex>
             </Box>
           ))}
         </Flex>
-        <Button type="submit">Process Files</Button>
+        <Button mt={"2"} type="submit">
+          Process Files
+        </Button>
       </form>
     </>
   );

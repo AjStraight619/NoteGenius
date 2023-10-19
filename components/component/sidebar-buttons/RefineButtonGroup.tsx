@@ -1,19 +1,19 @@
 "use client";
 
+import { CheckIcon, Cross2Icon, UploadIcon } from "@radix-ui/react-icons";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  Flex,
+  IconButton,
+  ScrollArea,
+  Text,
+  TextArea,
+} from "@radix-ui/themes";
 import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-  IconButton,
-  Box,
-  Flex,
-  Dialog,
-  Button,
-  ScrollArea,
-  TextArea,
-  Text,
-  Checkbox,
-} from "@radix-ui/themes";
-import { UploadIcon, Cross2Icon, CheckIcon } from "@radix-ui/react-icons";
 import StackButton from "./StackButton";
 
 export type FileProps = {
@@ -244,7 +244,7 @@ const RefineButtonGroup: React.FC<{
     }
   };
 
-  const handleCheckBoxClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCheckBoxClick = () => {
     setIsMathChecked((prevState) => !prevState);
   };
 
