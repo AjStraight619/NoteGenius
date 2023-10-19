@@ -65,13 +65,13 @@ export const ConvertFileToText = ({
         selectedFiles.push({
           id: uuid(),
           name: file.name,
-          content: content || null, // Making sure it matches the 'string | null' type.
+          content: content || null,
           type: jpegFile ? "image/jpeg" : null,
           s3Path: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           folderId: null,
-          userId: "your-user-id-here", // Replace with actual userId from context or state.
+          userId: "",
           chatId: "",
         });
       }
@@ -167,25 +167,7 @@ export const ConvertFileToText = ({
   };
 
   return (
-    <form
-      ref={fileInputRefForm}
-      action={async (formData) => {
-        files?.map((file) => {
-          addOptimisticFiles?.({
-            id: uuid(),
-            name: file.name,
-            content: "",
-            type: null,
-            s3Path: null,
-            folderId: null,
-            userId: "your-user-id-here",
-            chatId: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
-        });
-      }}
-    >
+    <>
       <input
         ref={fileInputRef}
         type="file"
@@ -196,6 +178,6 @@ export const ConvertFileToText = ({
       />
 
       <AddFileButton onClick={handleUploadButtonClick} />
-    </form>
+    </>
   );
 };
