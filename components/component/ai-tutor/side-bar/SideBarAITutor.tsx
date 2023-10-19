@@ -2,7 +2,7 @@
 import AddChatDialog from "@/components/component/ai-tutor/add-chat/AddChatDialog";
 import Chats from "@/components/component/ai-tutor/chat/Chats";
 import ChatView from "@/components/component/ai-tutor/views/ChatView";
-import FolderView from "@/components/component/ai-tutor/views/FolderView";
+import StackButtonDialog from "@/components/component/ai-tutor/views/StackButtonDialog";
 import SearchFolders from "@/components/component/search/SearchFolders";
 import Sidebar from "@/components/side-bar/Sidebar";
 import { useChatSelection } from "@/hooks/useChatSelection";
@@ -14,7 +14,7 @@ import {
   FolderWithFiles,
   UIFile,
 } from "@/types/otherTypes";
-import { ChatBubbleIcon, Link1Icon, StackIcon } from "@radix-ui/react-icons";
+import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
 import { Box, Flex, IconButton } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import {
@@ -25,6 +25,7 @@ import {
 import SideBarToggle from "../../sidebar-buttons/SideBarToggle";
 
 import { FileAction, FileState } from "@/types/otherTypes";
+import LinkView from "../views/LinkView";
 
 type sideBarAITutorProps = {
   chats: Chat[] | undefined;
@@ -34,6 +35,7 @@ type sideBarAITutorProps = {
 };
 
 function reducer(state: FileState, action: FileAction): FileState {
+  console.log("Called dispatch for adding a file, this is the state", state);
   switch (action.type) {
     case "ADD_FILE":
       return {
@@ -95,9 +97,11 @@ const SideBarAITutor = ({
     }
   );
 
+  console.log(filenames);
+
   const [optimisticFiles, addOptimisticFiles] = useOptimistic(
-    filenames,
-    (state: string[] = [], newFile: string) => {
+    files,
+    (state: UIFile[] = [], newFile: UIFile) => {
       return [newFile, ...state];
     }
   );
@@ -162,9 +166,12 @@ const SideBarAITutor = ({
             <IconButton variant="ghost">
               <Link1Icon width={"25px"} height={"25px"} />
             </IconButton>
-            <IconButton variant="ghost">
-              <StackIcon width={"25px"} height={"25px"} />
-            </IconButton>
+            <StackButtonDialog
+              state={state.files}
+              isProcessing={isProcessing}
+              addOptimisticFiles={addOptimisticFiles}
+              optimisticFiles={optimisticFiles}
+            />
           </Flex>
 
           <Box className="flex-grow overflow-y-auto">
@@ -177,7 +184,7 @@ const SideBarAITutor = ({
                 onSelectChat={selectChat}
               />
             ) : (
-              <FolderView />
+              <LinkView />
             )}
           </Box>
         </Sidebar>

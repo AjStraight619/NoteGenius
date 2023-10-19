@@ -23,7 +23,7 @@ type ChatsProps = {
   initialMessages: ChatWithMessages | undefined;
   isProcessing: boolean;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
-  addOptimisticFiles: (filename: string) => void;
+  addOptimisticFiles: (newFile: UIFile) => void;
   state: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
 };
@@ -141,7 +141,6 @@ export default function Chats({
 
     const { scrollTop, scrollHeight, clientHeight } =
       scrollContainerRef.current;
-    console.log(scrollTop, scrollHeight, clientHeight);
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
 
     setIsAutoScrollEnabled(isAtBottom);

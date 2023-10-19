@@ -17,7 +17,7 @@ import AddFileButton from "./AddFileButton";
 type ConvertFileContentToTextProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   isProcessing: boolean;
-  addOptimisticFiles?: (newFile: any) => void;
+  addOptimisticFiles?: (newFile: UIFile) => void;
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
 };
@@ -29,6 +29,7 @@ export const ConvertFileToText = ({
   files,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRefForm = useRef<HTMLFormElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -58,6 +59,7 @@ export const ConvertFileToText = ({
           }
         } else {
           content = await readFileContent(file);
+          console.log("Read the content from the txt file", content);
         }
 
         selectedFiles.push({
@@ -161,10 +163,29 @@ export const ConvertFileToText = ({
 
   const handleUploadButtonClick = () => {
     fileInputRef.current?.click();
+    fileInputRefForm.current?.click();
   };
 
   return (
-    <form action={async (formData) => {}}>
+    <form
+      ref={fileInputRefForm}
+      action={async (formData) => {
+        files?.map((file) => {
+          addOptimisticFiles?.({
+            id: uuid(),
+            name: file.name,
+            content: "",
+            type: null,
+            s3Path: null,
+            folderId: null,
+            userId: "your-user-id-here",
+            chatId: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        });
+      }}
+    >
       <input
         ref={fileInputRef}
         type="file"
@@ -174,7 +195,7 @@ export const ConvertFileToText = ({
         onChange={handleFileChange}
       />
 
-      <AddFileButton />
+      <AddFileButton onClick={handleUploadButtonClick} />
     </form>
   );
 };

@@ -171,25 +171,25 @@ export const getFolders = async () => {
   return folders;
 };
 
-// export const addFile = async (formData: FormData) => {
-//   const userId = (await getSession()) as unknown as string;
-//   const name = formData.get("name") as string;
-//   const type = formData.get("type") as string;
+export const addFile = async (formData: FormData) => {
+  const userId = (await getSession()) as unknown as string;
+  const name = formData.get("name") as string;
+  const type = formData.get("type") as string;
 
-//   const addedFile = await prisma.file.create({
-//     data: {
-//       name,
-//       type,
-//       user: {
-//         connect: {
-//           id: userId,
-//         },
-//       },
-//     },
-//   });
+  const addedFile = await prisma.file.create({
+    data: {
+      name,
+      type,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
 
-//   revalidatePath("/'ai-tutor'");
-//   return {
-//     addedFile,
-//   };
-// };
+  revalidatePath("/'ai-tutor'");
+  return {
+    addedFile,
+  };
+};
