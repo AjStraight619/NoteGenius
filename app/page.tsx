@@ -25,7 +25,7 @@ export default async function Home() {
       <nav className="p-4 border-b border-gray-800">
         <Container size="2">
           <Flex justify="between" align="center">
-            <Heading size="2">NoteGenius</Heading>
+            <Heading size="2">Note Genius</Heading>
 
             <Flex align="center" gap="4">
               {session ? (
@@ -51,7 +51,7 @@ export default async function Home() {
         <Section size="3">
           <Container size="2">
             <Flex direction="column" align="center" gap="7">
-              <Heading size="2">Welcome to NoteGenius</Heading>
+              <Heading size="2">Welcome to Note Genius</Heading>
               <Box className="text-gray-400 text-center">
                 The advanced note-organizing platform powered by AI
                 technologies.
