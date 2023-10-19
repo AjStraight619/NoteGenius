@@ -5,8 +5,14 @@ import {
 } from "@/actions/actions";
 import SideBarAITutor from "@/components/component/ai-tutor/side-bar/SideBarAITutor";
 import { ChatWithMessages, UIFile } from "@/types/otherTypes";
+import { getSession } from "@/utils/getSession";
+import { redirect } from "next/navigation";
 
 const ChatPage = async () => {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
   const mostRecentChat =
     (await getMostRecentChatMessages()) as ChatWithMessages;
 

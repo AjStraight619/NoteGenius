@@ -49,6 +49,7 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "formidable": "^3.5.1",
+    "framer-motion": "^10.16.4",
     "fs": "^0.0.1-security",
     "lucide-react": "^0.277.0",
     "mailgun.js": "^9.3.0",

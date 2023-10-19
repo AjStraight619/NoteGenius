@@ -49,12 +49,18 @@
     animation: fadeOut 300ms ease-in;
   }
 
-  /* .rt-BaseButton:focus,
-  .rt-BaseButton:active {
-    outline: none !important;
-    box-shadow: none !important;
-} */
 
+
+
+/* Add this to your CSS file */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 2s linear infinite;
+}
 
 
 
