@@ -68,6 +68,7 @@ export const ConvertFileToText = ({
           createdAt: new Date(),
           updatedAt: new Date(),
           folderId: null,
+          math: false,
           userId: "",
           chatId: "",
         });

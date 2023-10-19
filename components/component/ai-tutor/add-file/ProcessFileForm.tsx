@@ -80,6 +80,7 @@ const ProcessFileForm = ({
               folderId: null,
               userId: "your-user-id-here",
               chatId: null,
+              math: false,
               createdAt: new Date(),
               updatedAt: new Date(),
             });
