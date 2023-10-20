@@ -46,7 +46,7 @@ export const RegisterForm = () => {
             type="name"
             value={name}
             onChange={(e: any) => setName(e.target.value)}
-            placeholder="Enter your name..."
+            placeholder="Name"
           />
         </Form.Control>
       </Form.Field>
@@ -59,7 +59,7 @@ export const RegisterForm = () => {
             required
             value={email}
             onChange={(e: any) => setEmail(e.target.value)}
-            placeholder="Enter your email..."
+            placeholder="Email"
           />
         </Form.Control>
         <Form.Message match="valueMissing">
@@ -79,7 +79,7 @@ export const RegisterForm = () => {
             required
             value={password}
             onChange={(e: any) => setPassword(e.target.value)}
-            placeholder="Create a password..."
+            placeholder="Password"
           />
         </Form.Control>
         <Form.Message match="valueMissing">

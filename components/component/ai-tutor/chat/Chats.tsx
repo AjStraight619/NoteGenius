@@ -213,7 +213,7 @@ export default function Chats({
                     fontSize: "0.9rem",
                   }}
                   variant="classic"
-                  placeholder="Type your message here"
+                  placeholder=""
                   className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
                   size={"1"}
                   mb={"2"}
