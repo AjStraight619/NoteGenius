@@ -1,6 +1,11 @@
 "use client";
 import LoadingDots from "@/components/loading/LoadingDots";
-import { ChatWithMessages, FileAction, UIFile } from "@/types/otherTypes";
+import {
+  ChatWithMessages,
+  FileAction,
+  FolderWithFiles,
+  UIFile,
+} from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
   Avatar,
@@ -26,6 +31,7 @@ type ChatsProps = {
   addOptimisticFiles: (newFile: UIFile) => void;
   state: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
+  folders: FolderWithFiles[] | undefined;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -43,7 +49,7 @@ export default function Chats({
   initialMessages,
   isProcessing,
   setIsProcessing,
-  addOptimisticFiles,
+  folders,
   state,
   dispatch,
 }: ChatsProps) {
@@ -240,6 +246,7 @@ export default function Chats({
             </form>
 
             <ConvertFileToText
+              folders={folders}
               setIsProcessing={setIsProcessing}
               isProcessing={isProcessing}
               files={state}

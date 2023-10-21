@@ -1,5 +1,5 @@
-import { PDFDocument } from "pdf-lib";
 import { NextRequest, NextResponse } from "next/server";
+import { PDFDocument } from "pdf-lib";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage();
 
-  const fontSize = 12; // You can adjust this value as needed
-  const textWidth = page.getWidth() - 100; // Leaving some margin from the right
-  const textHeight = page.getHeight() - 100; // Starting 100 units from the top
+  const fontSize = 12;
+  const textWidth = page.getWidth() - 100;
+  const textHeight = page.getHeight() - 100;
 
   page.drawText(content, {
     x: 50, // 50 units from the left

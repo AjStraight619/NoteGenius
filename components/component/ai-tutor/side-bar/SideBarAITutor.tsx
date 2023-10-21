@@ -15,7 +15,7 @@ import {
   UIFile,
 } from "@/types/otherTypes";
 import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
-import { Box, Flex, IconButton } from "@radix-ui/themes";
+import { Box, Flex, IconButton, Tooltip } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import {
   experimental_useOptimistic as useOptimistic,
@@ -77,6 +77,10 @@ const SideBarAITutor = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
+
+  console.log("These are the current folders", folders);
+  const filesInFolders = folders?.map((folder) => folder.files) || [];
+  console.log("These are the files in folders", filesInFolders);
 
   const initialState: any = { files: [], processing: false };
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -160,18 +164,26 @@ const SideBarAITutor = ({
           />
 
           <Flex direction={"row"} justify="center" gap="5">
-            <IconButton variant="ghost">
-              <ChatBubbleIcon width={"25px"} height={"25px"} />
-            </IconButton>
-            <IconButton variant="ghost">
-              <Link1Icon width={"25px"} height={"25px"} />
-            </IconButton>
-            <StackButtonDialog
-              state={state.files}
-              isProcessing={isProcessing}
-              addOptimisticFiles={addOptimisticFiles}
-              optimisticFiles={optimisticFiles}
-            />
+            <Tooltip content="View Chats">
+              <IconButton variant="ghost">
+                <ChatBubbleIcon width={"25px"} height={"25px"} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Link file with chat">
+              <IconButton variant="ghost">
+                <Link1Icon width={"25px"} height={"25px"} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="New Files">
+              <StackButtonDialog
+                folders={folders}
+                state={state.files}
+                isProcessing={isProcessing}
+                addOptimisticFiles={addOptimisticFiles}
+                optimisticFiles={optimisticFiles}
+                dispatch={dispatch}
+              />
+            </Tooltip>
           </Flex>
 
           <Box className="flex-grow overflow-y-auto">
@@ -192,6 +204,7 @@ const SideBarAITutor = ({
         <Flex grow={"1"} direction={"column"} position={"relative"}>
           <Chats
             key={selectedChat?.id || mostRecentChat?.id}
+            folders={folders}
             selectedChatId={selectedChat?.id || mostRecentChat?.id}
             initialMessages={initialMessages || mostRecentChat}
             isProcessing={isProcessing}

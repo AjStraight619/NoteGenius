@@ -1,7 +1,7 @@
 "use client";
-import { UIFile } from "@/types/otherTypes";
+import { FolderWithFiles, UIFile } from "@/types/otherTypes";
 import { Cross2Icon, StackIcon } from "@radix-ui/react-icons";
-import { Box, Dialog, Flex, Heading, IconButton, Text } from "@radix-ui/themes";
+import { Box, Dialog, IconButton, Text, Tooltip } from "@radix-ui/themes";
 import { useState } from "react";
 import ProcessFileForm from "../add-file/ProcessFileForm";
 
@@ -10,6 +10,8 @@ type StackButtonDialogProps = {
   isProcessing: boolean;
   addOptimisticFiles: (newFile: UIFile) => void;
   optimisticFiles: UIFile[] | undefined;
+  folders: FolderWithFiles[] | undefined;
+  dispatch: React.Dispatch<any>;
 };
 
 const StackButtonDialog = ({
@@ -17,6 +19,8 @@ const StackButtonDialog = ({
   isProcessing,
   addOptimisticFiles,
   optimisticFiles,
+  folders,
+  dispatch,
 }: StackButtonDialogProps) => {
   const [open, setOpen] = useState(false);
 
@@ -27,25 +31,31 @@ const StackButtonDialog = ({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <IconButton variant="ghost" className="relative">
-          <StackIcon width={"25px"} height={"25px"} />
-          <Box className="absolute left-7 bottom-5 bg-red-5 rounded-l-3 rounded-r-3 p-1 min-w-6 flex items-center justify-center">
-            <Text size="1">{state?.length}</Text>
-          </Box>
-        </IconButton>
+        <Tooltip content="New Files">
+          <IconButton variant="ghost" className="relative">
+            <StackIcon width={"25px"} height={"25px"} />
+            <Box className="absolute left-7 bottom-5 bg-red-5 rounded-l-3 rounded-r-3 p-1 min-w-6 flex items-center justify-center">
+              <Text size="1">{state?.length}</Text>
+            </Box>
+          </IconButton>
+        </Tooltip>
       </Dialog.Trigger>
       <Dialog.Content className="relative">
-        <Flex direction={"column"} align={"center"} justify={"center"}>
-          <Heading size={"3"} mb={"3"}>
-            Select Files to Work On
-          </Heading>
-          <ProcessFileForm
-            addOptimisticFiles={addOptimisticFiles}
-            optimisticFiles={optimisticFiles}
-            state={state}
-            isProcessing={isProcessing}
-          />
-        </Flex>
+        <Dialog.Title>
+          <Box className="flex justify-center align-text-top w-auto">
+            Select a File
+          </Box>
+        </Dialog.Title>
+
+        <ProcessFileForm
+          addOptimisticFiles={addOptimisticFiles}
+          optimisticFiles={optimisticFiles}
+          state={state}
+          isProcessing={isProcessing}
+          folders={folders}
+          setOpen={setOpen}
+          dispatch={dispatch}
+        />
 
         <Dialog.Close>
           <IconButton

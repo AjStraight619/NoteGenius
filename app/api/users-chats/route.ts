@@ -99,7 +99,6 @@ export async function PUT(req: NextRequest) {
     chatId
   );
 
-  // Variable to hold the chat data
   let chat;
 
   // Check if chatId is provided

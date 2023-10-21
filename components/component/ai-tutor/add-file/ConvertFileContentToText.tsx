@@ -9,7 +9,7 @@ import {
 import { useRef } from "react";
 import { v4 as uuid } from "uuid";
 
-import { FileAction, UIFile } from "@/types/otherTypes";
+import { FileAction, FolderWithFiles, UIFile } from "@/types/otherTypes";
 import AddFileButton from "./AddFileButton";
 
 type ConvertFileContentToTextProps = {
@@ -17,12 +17,12 @@ type ConvertFileContentToTextProps = {
   isProcessing: boolean;
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
+  folders: FolderWithFiles[] | undefined;
 };
 export const ConvertFileToText = ({
   setIsProcessing,
   isProcessing,
   dispatch,
-
   files,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -177,6 +177,8 @@ export const addFile = async (formData: FormData, math: boolean = false) => {
   const type = formData.get("type") as string;
   let content = formData.get("content") as string;
 
+  console.log("This is the name of the file:", name);
+
   if (math) {
     try {
       const res = await fetch("http://localhost:3000/api/extract-equations", {
@@ -207,7 +209,7 @@ export const addFile = async (formData: FormData, math: boolean = false) => {
     },
   });
 
-  revalidatePath("/'ai-tutor'");
+  revalidatePath("/ai-tutor");
   return {
     addedFile,
   };

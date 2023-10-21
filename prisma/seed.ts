@@ -38,7 +38,7 @@ async function main() {
 
   // Create folders named A, C, E, ... (skipping every other letter)
   const folders = [];
-  for (let i = 65; i <= 90; i += 2) {
+  for (let i = 65; i <= 80; i += 2) {
     const folderTitle = "Folder " + String.fromCharCode(i);
 
     const folder = await prisma.folder.create({
