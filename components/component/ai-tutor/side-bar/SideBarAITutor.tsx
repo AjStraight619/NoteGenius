@@ -2,20 +2,27 @@
 import AddChatDialog from "@/components/component/ai-tutor/add-chat/AddChatDialog";
 import Chats from "@/components/component/ai-tutor/chat/Chats";
 import ChatView from "@/components/component/ai-tutor/views/ChatView";
-import StackButtonDialog from "@/components/component/ai-tutor/views/StackButtonDialog";
+import Links from "@/components/component/ai-tutor/views/LinkView";
 import SearchFolders from "@/components/component/search/SearchFolders";
 import Sidebar from "@/components/side-bar/Sidebar";
 import { useChatSelection } from "@/hooks/useChatSelection";
-
 import useInitialMessages from "@/hooks/useInitialMessages";
 import {
   Chat,
+  ChatFileLink,
   ChatWithMessages,
   FolderWithFiles,
   UIFile,
 } from "@/types/otherTypes";
 import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
-import { Box, Flex, IconButton, Tooltip } from "@radix-ui/themes";
+import {
+  Box,
+  Flex,
+  IconButton,
+  Separator,
+  Text,
+  Tooltip,
+} from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import {
   experimental_useOptimistic as useOptimistic,
@@ -24,14 +31,19 @@ import {
 } from "react";
 import SideBarToggle from "../../sidebar-buttons/SideBarToggle";
 
+import { useFileSelection } from "@/hooks/useFileSelection";
+// import useManageData from "@/hooks/useManageData";
 import { FileAction, FileState } from "@/types/otherTypes";
-import LinkView from "../views/LinkView";
+import FileView from "../views/FileView";
+import FolderDropDown from "../views/FolderDropDown";
 
 type sideBarAITutorProps = {
   chats: Chat[] | undefined;
   folders: FolderWithFiles[] | undefined;
   mostRecentChat: ChatWithMessages | undefined;
   files: UIFile[] | undefined;
+  mostRecentFile: UIFile | undefined;
+  links: ChatFileLink | undefined;
 };
 
 function reducer(state: FileState, action: FileAction): FileState {
@@ -54,6 +66,30 @@ function reducer(state: FileState, action: FileAction): FileState {
           file.id === action.payload.id ? action.payload : file
         ),
       };
+    case "ADD_LINK":
+      return {
+        ...state,
+        links: [...state.links, action.payload],
+      };
+    case "REMOVE_LINK":
+      return {
+        ...state,
+        links: state.links.filter(
+          (link) =>
+            link.chatId !== action.payload.chatId ||
+            link.fileId !== action.payload.fileId
+        ),
+      };
+    case "UPDATE_LINK":
+      return {
+        ...state,
+        links: state.links.map((link) =>
+          link.chatId === action.payload.oldLink.chatId &&
+          link.fileId === action.payload.oldLink.fileId
+            ? action.payload.newLink
+            : link
+        ),
+      };
     case "PROCESSING_FILE":
       return {
         ...state,
@@ -69,14 +105,21 @@ const SideBarAITutor = ({
   mostRecentChat,
   folders,
   files,
+  mostRecentFile,
+  links,
 }: sideBarAITutorProps) => {
   const router = useRouter();
   const [view, setView] = useState("chats");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-
+  const [selectedFolder, setSelectedFolder] = useState<
+    FolderWithFiles | undefined
+  >(undefined);
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
+  const { selectedFile, selectFile } = useFileSelection(files, mostRecentFile);
+  // const { manageData } = useManageData();
 
   console.log("These are the current folders", folders);
   const filesInFolders = folders?.map((folder) => folder.files) || [];
@@ -101,7 +144,7 @@ const SideBarAITutor = ({
     }
   );
 
-  console.log(filenames);
+  console.log("These are the links", links);
 
   const [optimisticFiles, addOptimisticFiles] = useOptimistic(
     files,
@@ -110,30 +153,69 @@ const SideBarAITutor = ({
     }
   );
 
-  // const [optimisticUploads, addOptimisticUploads] = useOptimistic();
-
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  const handleDeleteChat = async (chatId: string) => {
-    const res = await fetch(`/api/users-chats?chatId=${chatId}`, {
-      method: "DELETE",
-    });
-    const data = await res.json();
-    router.refresh();
-    console.log("This is the data returned from the delete request", data);
-  };
-
-  const handleEditChat = async (chatId: string) => {};
+  function sideBarOptionsView() {
+    switch (view) {
+      case "files":
+        return (
+          <>
+            <Text size={"1"} color="gray">
+              {selectedFolder?.name || "Select Folder"}
+            </Text>
+            <Box width={"100%"} pb={"2"}>
+              <Separator size={"4"} />
+            </Box>
+            <FileView
+              selectedFolder={selectedFolder}
+              selectedFileId={selectedFile?.id || undefined}
+              onSelectFile={selectFile}
+            />
+          </>
+        );
+      case "links":
+        return (
+          <>
+            <Text size={"1"} color="gray">
+              Links
+            </Text>
+            <Box width={"100%"} pb={"2"}>
+              <Separator size={"4"} />
+            </Box>
+            <Links
+              selectedFile={selectedFile}
+              selectedChat={selectedChat}
+              dispatch={dispatch}
+              links={links}
+              files={files}
+              chats={chats}
+            />
+          </>
+        );
+      default:
+        return (
+          <>
+            <Text size={"1"} color="gray">
+              Chats
+            </Text>
+            <Box width={"100%"} pb={"2"}>
+              <Separator size={"4"} />
+            </Box>
+            <ChatView
+              chats={optimisticChats}
+              selectedChatId={selectedChat?.id || undefined}
+              onSelectChat={selectChat}
+            />
+          </>
+        );
+    }
+  }
 
   return (
     <>
-      <Flex
-        direction={"row"}
-        style={{ backgroundColor: "transparent" }}
-        position={"relative"}
-      >
+      <Flex direction={"row"}>
         {!isSidebarOpen ? (
           <SideBarToggle
             toggleSidebar={toggleSidebar}
@@ -163,41 +245,34 @@ const SideBarAITutor = ({
             setView={setView}
           />
 
-          <Flex direction={"row"} justify="center" gap="5">
+          <Flex direction={"row"} justify="center" gap="3">
             <Tooltip content="View Chats">
-              <IconButton variant="ghost">
+              <IconButton
+                variant="ghost"
+                mr={"3"}
+                onClick={() => setView("chats")}
+              >
                 <ChatBubbleIcon width={"25px"} height={"25px"} />
               </IconButton>
             </Tooltip>
-            <Tooltip content="Link file with chat">
+            <FolderDropDown
+              setSelectedFolder={setSelectedFolder}
+              folders={folders}
+              setView={setView}
+            />
+            <Tooltip content="Chats linked with files">
               <IconButton variant="ghost">
-                <Link1Icon width={"25px"} height={"25px"} />
+                <Link1Icon
+                  width={"25px"}
+                  height={"25px"}
+                  onClick={() => setView("links")}
+                />
               </IconButton>
-            </Tooltip>
-            <Tooltip content="New Files">
-              <StackButtonDialog
-                folders={folders}
-                state={state.files}
-                isProcessing={isProcessing}
-                addOptimisticFiles={addOptimisticFiles}
-                optimisticFiles={optimisticFiles}
-                dispatch={dispatch}
-              />
             </Tooltip>
           </Flex>
 
-          <Box className="flex-grow overflow-y-auto">
-            {view === "chats" ? (
-              <ChatView
-                chats={optimisticChats}
-                selectedChatId={selectedChat?.id || undefined}
-                onDeleteChat={handleDeleteChat}
-                onEditChat={handleEditChat}
-                onSelectChat={selectChat}
-              />
-            ) : (
-              <LinkView />
-            )}
+          <Box className="overflow-y-auto" width={"100%"}>
+            {sideBarOptionsView()}
           </Box>
         </Sidebar>
 
@@ -212,6 +287,7 @@ const SideBarAITutor = ({
             addOptimisticFiles={addOptimisticFiles}
             state={state.files}
             dispatch={dispatch}
+            optimisticFiles={optimisticFiles}
           />
         </Flex>
       </Flex>

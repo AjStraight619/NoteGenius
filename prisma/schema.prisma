@@ -9,6 +9,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// User model
+
 model User {
   id                 String               @id @default(uuid())
   email              String               @unique
@@ -25,6 +27,7 @@ model User {
   @@index([email])
 }
 
+// Folder model that will hold files
 model Folder {
   id           String        @id @default(uuid())
   name         String
@@ -41,6 +44,8 @@ model Folder {
   @@unique([name, userId])
   @@index([userId])
 }
+
+// Refined file that will be a file that has been changed with wolfram alpha api and/or chatgpt api
 
 model RefinedFile {
   id        String   @id @default(uuid())
@@ -59,12 +64,15 @@ model RefinedFile {
   @@index([userId, fileId])
 }
 
+// Tags for files and folders for search methods
 model Tag {
   id      String   @id @default(uuid())
   name    String   @unique
   files   File[]   @relation("FileToTag")
   folders Folder[] @relation("FolderToTag")
 }
+
+// Chat model that will hold messages with links to files
 
 model Chat {
   id           String        @id @default(uuid())
@@ -75,17 +83,18 @@ model Chat {
   user         User          @relation(fields: [userId], references: [id])
   chatMessages ChatMessage[]
   files        File[]
-  Link         Link[]
+  links        Link[]
 
   @@index([userId])
 }
 
+// File model that will hold files
 model File {
   id          String       @id @default(uuid())
   name        String
   content     String?
   type        String?
-  s3Path      String? // The S3 path or URL where the file is stored
+  s3Path      String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   folderId    String?
@@ -97,26 +106,27 @@ model File {
   chat        Chat?        @relation(fields: [chatId], references: [id])
   refinedFile RefinedFile?
   tags        Tag[]        @relation("FileToTag")
-  Link        Link[]
+  links       Link[]
 
   @@index([userId])
   @@index([folderId])
   @@index([chatId])
 }
 
-model Link {
-  id        String   @id @default(uuid())
-  chatId    String
-  fileId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
-  file      File     @relation(fields: [fileId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Link model that represents a link between a chat and a file
 
-  @@unique([chatId, fileId])
+model Link {
+  id     String @id @default(uuid())
+  chatId String
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  fileId String
+  file   File   @relation(fields: [fileId], references: [id])
+
+  @@index([chatId, fileId])
   @@index([fileId])
 }
 
+// ChatMessage model that will hold all of the messages between user and ai
 model ChatMessage {
   id        String   @id @default(uuid())
   role      String
@@ -128,6 +138,8 @@ model ChatMessage {
   @@index([chatId])
 }
 
+// Password reset token model
+
 model PasswordResetToken {
   id        String    @id @default(uuid())
   token     String    @unique
@@ -138,6 +150,8 @@ model PasswordResetToken {
 
   @@index([userId])
 }
+
+// File type enum
 
 enum FileType {
   PDF

@@ -56,7 +56,6 @@ export const ConvertFileToText = ({
           }
         } else {
           content = await readFileContent(file);
-          console.log("Read the content from the txt file", content);
         }
 
         selectedFiles.push({

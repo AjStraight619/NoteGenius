@@ -2,9 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/utils/getSession";
 import { revalidatePath } from "next/cache";
-
+const userId = (await getSession()) as unknown as string;
 export const addChat = async (formData: FormData) => {
-  const userId = (await getSession()) as unknown as string;
   const title = formData.get("title") as string;
 
   const addedChat = await prisma.chat.create({
@@ -25,8 +24,6 @@ export const addChat = async (formData: FormData) => {
 };
 
 export const deleteChat = async (chatId: string) => {
-  const userId = (await getSession()) as unknown as string;
-
   const deletedChat = await prisma.chat.delete({
     where: {
       id: chatId,
@@ -44,8 +41,6 @@ export const addChatMessage = async (
   chatId: string,
   messageContent: string
 ) => {
-  const userId = (await getSession()) as unknown as string;
-
   const addedChatMessage = await prisma.chat.update({
     where: { id: chatId, userId },
     data: {
@@ -62,8 +57,6 @@ export const addChatMessage = async (
 };
 
 export const getMostRecentChatMessages = async () => {
-  const userId = (await getSession()) as unknown as string;
-
   const chat = await prisma.chat.findFirst({
     where: {
       userId: userId,
@@ -86,8 +79,6 @@ export const getMostRecentChatMessages = async () => {
 };
 
 export const getChats = async () => {
-  const userId = (await getSession()) as unknown as string;
-
   const chats = await prisma.chat.findMany({
     where: {
       userId: userId,
@@ -101,6 +92,7 @@ export const getChats = async () => {
           createdAt: "asc",
         },
       },
+      files: true,
     },
   });
 
@@ -135,26 +127,26 @@ export const getChats = async () => {
 //   return link;
 // };
 
-export const addLink = async (formData: FormData) => {
-  const userId = (await getSession()) as unknown as string;
-  const title = formData.get("title") as string;
+// export const addLink = async (formData: FormData) => {
+//   const userId = (await getSession()) as unknown as string;
+//   const title = formData.get("title") as string;
 
-  const addedLink = await prisma.chat.create({
-    data: {
-      title,
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
-    },
-  });
+//   const addedLink = await prisma.chat.create({
+//     data: {
+//       title,
+//       user: {
+//         connect: {
+//           id: userId,
+//         },
+//       },
+//     },
+//   });
 
-  revalidatePath("/'ai-tutor'");
-  return {
-    addedLink,
-  };
-};
+//   revalidatePath("/'ai-tutor'");
+//   return {
+//     addedLink,
+//   };
+// };
 
 export const getFolders = async () => {
   const userId = (await getSession()) as unknown as string;
@@ -171,46 +163,137 @@ export const getFolders = async () => {
   return folders;
 };
 
-export const addFile = async (formData: FormData, math: boolean = false) => {
+// export const addFile = async (formData: FormData, math: boolean = false) => {
+//   const userId = (await getSession()) as unknown as string;
+//   const name = formData.get("name") as string;
+//   const type = formData.get("type") as string;
+//   let content = formData.get("content") as string;
+
+//   console.log("This is the name of the file:", name);
+
+//   if (math) {
+//     try {
+//       const res = await fetch("http://localhost:3000/api/extract-equations", {
+//         method: "POST",
+//         body: JSON.stringify({ prompt: content }),
+//       });
+//       if (!res.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+
+//       const extractedEquations = await res.json();
+//       content = extractedEquations;
+//     } catch (error) {
+//       console.error("Error extracting equations:", error);
+//     }
+//   }
+
+//   const addedFile = await prisma.file.create({
+//     data: {
+//       name,
+//       type,
+//       content,
+//       user: {
+//         connect: {
+//           id: userId,
+//         },
+//       },
+//     },
+//   });
+
+//   revalidatePath("/ai-tutor");
+//   return {
+//     addedFile,
+//   };
+// };
+
+export const addFile = async (formData: FormData) => {
   const userId = (await getSession()) as unknown as string;
-  const name = formData.get("name") as string;
-  const type = formData.get("type") as string;
-  let content = formData.get("content") as string;
 
-  console.log("This is the name of the file:", name);
+  // Assume you have a way to get the count of files being uploaded
+  const fileCount = Number(formData.get("fileCount"));
+  const fileCreationPromises = [];
 
-  if (math) {
-    try {
-      const res = await fetch("http://localhost:3000/api/extract-equations", {
-        method: "POST",
-        body: JSON.stringify({ prompt: content }),
-      });
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
+  for (let i = 0; i < fileCount; i++) {
+    const name = formData.get(`files[${i}].name`) as string;
+    const type = formData.get(`files[${i}].type`) as string;
+    const content = formData.get(`files[${i}].content`) as string;
+    const folderId = formData.get(`files[${i}].folderId`) as string;
+    const math = formData.get(`files[${i}].math`) === "true";
 
-      const extractedEquations = await res.json();
-      content = extractedEquations;
-    } catch (error) {
-      console.error("Error extracting equations:", error);
-    }
-  }
-
-  const addedFile = await prisma.file.create({
-    data: {
-      name,
-      type,
-      content,
-      user: {
-        connect: {
-          id: userId,
+    const fileCreationPromise = prisma.file.create({
+      data: {
+        name,
+        type,
+        content,
+        math,
+        folder: {
+          connect: {
+            id: folderId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
         },
       },
+    });
+
+    fileCreationPromises.push(fileCreationPromise);
+  }
+
+  try {
+    const addedFiles = await Promise.all(fileCreationPromises);
+    revalidatePath("/ai-tutor");
+    return {
+      addedFiles,
+    };
+  } catch (error) {
+    console.error("Error adding files:", error);
+    // Handle the error, e.g., by returning an error response or re-throwing the error
+    throw error;
+  }
+};
+
+export const getMostRecentFile = async () => {
+  const userId = (await getSession()) as unknown as string;
+
+  const file = await prisma.file.findFirst({
+    where: {
+      userId: userId,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+    include: {
+      folder: true,
     },
   });
 
-  revalidatePath("/ai-tutor");
-  return {
-    addedFile,
-  };
+  return file;
+};
+
+// get all chats that are linked with files
+
+export const getAllChatsWithFiles = async () => {
+  const links = await prisma.link.findMany({
+    where: {
+      AND: [{ chat: { userId: userId } }],
+    },
+    include: {
+      chat: {
+        include: {
+          chatMessages: {
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
+        },
+      },
+      file: true,
+    },
+  });
+
+  return links;
 };

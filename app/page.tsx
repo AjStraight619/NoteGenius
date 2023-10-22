@@ -3,6 +3,7 @@ import {
   LogOutButton,
   RegisterButton,
 } from "@/components/component/auth/auth";
+import ProductionModal from "@/lib/ProductionModal";
 import { authOptions } from "@/utils/authOptions";
 import {
   Box,
@@ -21,7 +22,6 @@ export default async function Home() {
 
   return (
     <div className="home-gradient flex flex-col min-h-screen bg-gray-900 text-white">
-      {/* Navigation */}
       <nav className="p-4 border-b border-gray-800">
         <Container size="2">
           <Flex justify="between" align="center">
@@ -46,12 +46,14 @@ export default async function Home() {
         </Container>
       </nav>
 
-      {/* Main Content */}
       <main className="flex-grow p-8">
         <Section size="3">
           <Container size="2">
             <Flex direction="column" align="center" gap="7">
               <Heading size="2">Welcome to Note Genius</Heading>
+              <div>
+                <ProductionModal />
+              </div>
               <Box className="text-gray-400 text-center">
                 The advanced note-organizing platform powered by AI
                 technologies.

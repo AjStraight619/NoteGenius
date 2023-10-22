@@ -1,7 +1,7 @@
 "use client";
 import { FolderWithFiles, UIFile } from "@/types/otherTypes";
 import { Cross2Icon, StackIcon } from "@radix-ui/react-icons";
-import { Box, Dialog, IconButton, Text, Tooltip } from "@radix-ui/themes";
+import { Box, Dialog, IconButton, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import ProcessFileForm from "../add-file/ProcessFileForm";
 
@@ -25,20 +25,18 @@ const StackButtonDialog = ({
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
-    setOpen((prev) => !prev);
+    setOpen(false);
   };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <Tooltip content="New Files">
-          <IconButton variant="ghost" className="relative">
-            <StackIcon width={"25px"} height={"25px"} />
-            <Box className="absolute left-7 bottom-5 bg-red-5 rounded-l-3 rounded-r-3 p-1 min-w-6 flex items-center justify-center">
-              <Text size="1">{state?.length}</Text>
-            </Box>
-          </IconButton>
-        </Tooltip>
+        <IconButton variant="ghost" className="relative">
+          <StackIcon width={"25px"} height={"25px"} />
+          <Box className="absolute left-7 bottom-5 bg-indigo-3 rounded-l-3 rounded-r-3 rounded-t-3 rounded-b-3 p-1.5  min-w-4 flex items-center justify-center">
+            <Text size="1">{state?.length}</Text>
+          </Box>
+        </IconButton>
       </Dialog.Trigger>
       <Dialog.Content className="relative">
         <Dialog.Title>

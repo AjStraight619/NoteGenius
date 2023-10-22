@@ -1,54 +1,58 @@
-import { Chat } from "@/types/otherTypes";
+import { FolderWithFiles } from "@/types/otherTypes";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { Box, Flex } from "@radix-ui/themes";
 
 type ActionType = "CREATE" | "UPDATE" | "DELETE" | null;
 
-type ChatProps = {
-  chats: Chat[] | undefined;
-  selectedChatId: string | undefined;
-  onSelectChat: (id: string) => void;
+type FileViewProps = {
+  selectedFolder: FolderWithFiles | undefined;
+  selectedFileId: string | undefined;
+
+  onSelectFile: (id: string) => void;
 };
 
-const ChatView = ({ chats, selectedChatId, onSelectChat }: ChatProps) => {
-  // const handleChatAction = (actionType: ActionType, chatId: string) => {
-  //   manageData(actionType, { type: "chat", id: chatId });
-  // };
+const FileView = ({
+  selectedFolder,
+  selectedFileId,
+
+  onSelectFile,
+}: FileViewProps) => {
+  const allFiles = selectedFolder ? selectedFolder.files : [];
 
   return (
     <>
-      {Array.isArray(chats) && chats.length > 0 ? (
+      {allFiles.length > 0 ? (
         <Box className="flex flex-col space-y-2">
-          {chats?.map((chat) => (
+          {allFiles.map((file) => (
             <Box
-              key={chat.id}
-              onClick={() => onSelectChat(chat.id)}
+              key={file.id}
+              onClick={() => onSelectFile(file.id)}
               className={`p-2 flex justify-between items-center cursor-pointer rounded 
                   ${
-                    chat.id === selectedChatId
+                    file.id === selectedFileId
                       ? "rounded-2 bg-gray-5"
                       : "hover:bg-gray-3 rounded-2"
                   }`}
             >
               <Box className="flex-grow relative mr-4 max-w-[175px]">
                 <Box className="whitespace-nowrap overflow-hidden">
-                  {chat.title || "Untitled Chat"}
+                  {file.name || "Untitled file"}
                 </Box>
-                {chat.id === selectedChatId && <Box />}
+                {file.id === selectedFileId && <Box />}
               </Box>
               <Box className="w-10 flex-shrink-0 flex justify-end">
-                {selectedChatId === chat.id ? (
+                {selectedFileId === file.id ? (
                   <Flex direction={"row"} gap={"2"}>
                     <Pencil1Icon
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleChatAction("UPDATE", chat.id);
+                        // handleFileAction("UPDATE", file.id);
                       }}
                     />
                     <TrashIcon
                       onClick={(e) => {
                         e.stopPropagation();
-                        // handleChatAction("DELETE", chat.id);
+                        // handleFileAction("DELETE", file.id);
                       }}
                     />
                   </Flex>
@@ -62,4 +66,4 @@ const ChatView = ({ chats, selectedChatId, onSelectChat }: ChatProps) => {
   );
 };
 
-export default ChatView;
+export default FileView;

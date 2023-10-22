@@ -14,7 +14,6 @@ import {
   TextFieldInput,
 } from "@radix-ui/themes";
 import { useEffect, useRef, useState } from "react";
-import { v4 as uuid } from "uuid";
 
 type ProcessFileFormProps = {
   state: UIFile[] | undefined;
@@ -96,22 +95,38 @@ const ProcessFileForm = ({
         ref={fileInputRef}
         action={async (formData) => {
           fileInputRef.current?.reset();
-          state?.map((file) => {
+          formData.append("fileCount", (state?.length || 0).toString());
+          state?.forEach((file, index) => {
+            formData.append(`files[${index}].name`, file.name);
+            formData.append(`files[${index}].content`, file.content || "");
+            formData.append(`files[${index}].type`, file.type || "");
+            formData.append(
+              `files[${index}].folderId`,
+              selectedFolder?.id || ""
+            );
+            formData.append(
+              `files[${index}].math`,
+              filesWithCheckStatus.find((f) => f.id === file.id)?.isMathChecked
+                ? "true"
+                : "false"
+            );
+
             addOptimisticFiles({
-              id: uuid(),
-              name: formData.get("name") as string,
-              content: "",
-              type: null,
+              id: `temp-${index}`,
+              name: file.name,
+              content: file.content,
+              type: file.type || null,
               s3Path: null,
               folderId: selectedFolder?.id || null,
               userId: "",
               chatId: null,
-              math: false,
+              math:
+                filesWithCheckStatus.find((f) => f.id === file.id)
+                  ?.isMathChecked || false,
               createdAt: new Date(),
               updatedAt: new Date(),
             });
           });
-          // TODO: Check if math is checked and if so, call equation extract api before adding the file to the db.
           await addFile(formData);
           setOpen(false);
           state?.forEach((file) =>
@@ -120,7 +135,6 @@ const ProcessFileForm = ({
         }}
       >
         <Flex direction={"row"} justify={"center"} className="w-full">
-          {/* Left Section: Select Folder Dropdown */}
           <Box className="flex-shrink-0 mr-8">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
@@ -211,45 +225,3 @@ const ProcessFileForm = ({
 };
 
 export default ProcessFileForm;
-
-{
-  /* <Flex
-          direction={"column"}
-          align={"center"}
-          justify={"center"}
-          gap={"2"}
-        >
-          {optimisticFiles?.map((file) => (
-            <Box key={file.id}>
-              <ul>
-                <li>{file.name}</li>
-              </ul>
-            </Box>
-          ))}
-        </Flex>
-        {/* These are the files that are going to be added to the db. The optimistic files represent the files that are already there. Use isProcessing here, once submitted the useOptimistic hook should render the files being processed */
-}
-{
-  /* <Flex direction={"column"} gap={"2"} mt={"2"}>
-          <Heading size={"2"}>
-            Files to be processed if math is checked:
-          </Heading>
-
-          {filesWithCheckStatus?.map((file) => (
-            <Box key={file.id} className="flex row">
-              <Flex direction={"row"} align="center" gap={"2"}>
-                <TextFieldInput
-                  type="text"
-                  name={`file-name-${file.id}`}
-                  defaultValue={file.name}
-                />
-                <Checkbox
-                  checked={file.isMathChecked}
-                  onClick={() => handleCheckBoxClick(file.id)}
-                />
-                Math
-              </Flex>
-            </Box>
-          ))}
-        </Flex>  */
-}

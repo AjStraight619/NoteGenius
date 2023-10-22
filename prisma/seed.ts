@@ -5,9 +5,15 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Clear database
+  await prisma.user.delete({
+    where: {
+      email: "alex@prisma.io",
+    },
+  });
   await prisma.chatMessage.deleteMany({});
   await prisma.chat.deleteMany({});
   await prisma.refinedFile.deleteMany({});
+  await prisma.link.deleteMany({});
   await prisma.file.deleteMany({});
   await prisma.folder.deleteMany({});
   await prisma.tag.deleteMany({});
@@ -112,33 +118,23 @@ async function main() {
     }
   }
 
-  for (let i = 0; i < files.length; i++) {
-    if (chats[i]) {
-      await prisma.file.update({
-        where: { id: files[i].id },
-        data: { chatId: chats[i].id },
-      });
-    }
-  }
-
-  //   // Create some links connecting files to chats
-  //   for (let i = 0; i < chats.length && i < files.length; i++) {
-  //     await prisma.link.create({
-  //       data: {
-  //         chatId: chats[i].id,
-  //         fileId: files[i].id,
-  //       },
-  //     });
-  //   }
-  // }
-
-  main()
-    .then(async () => {
-      await prisma.$disconnect();
-    })
-    .catch(async (e) => {
-      console.error(e);
-      await prisma.$disconnect();
-      process.exit(1);
+  // Create some links connecting files to chats
+  for (let i = 0; i < chats.length && i < files.length; i++) {
+    await prisma.link.create({
+      data: {
+        chatId: chats[i].id,
+        fileId: files[i].id,
+      },
     });
+  }
 }
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

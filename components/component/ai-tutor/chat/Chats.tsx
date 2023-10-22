@@ -11,7 +11,6 @@ import {
   Avatar,
   Box,
   Flex,
-  Grid,
   IconButton,
   ScrollArea,
   Text,
@@ -21,6 +20,7 @@ import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ConvertFileToText } from "../add-file/ConvertFileContentToText";
+import StackButtonDialog from "../views/StackButtonDialog";
 import "./styles.css";
 
 type ChatsProps = {
@@ -32,6 +32,7 @@ type ChatsProps = {
   state: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
   folders: FolderWithFiles[] | undefined;
+  optimisticFiles: UIFile[] | undefined;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -52,6 +53,8 @@ export default function Chats({
   folders,
   state,
   dispatch,
+  addOptimisticFiles,
+  optimisticFiles,
 }: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -153,108 +156,117 @@ export default function Chats({
   };
 
   return (
-    <>
-      <Grid style={{ height: "100vh" }}>
-        <ScrollArea
-          type="always"
-          scrollbars="vertical"
-          ref={scrollContainerRef}
-          className="md:scroll-auto"
-          onScroll={handleScroll}
-        >
-          <ul className="w-full pb-12 mb-4 pr-3">
-            {displayMessages
-              .filter((msg) => msg.role !== "system")
-              .map((msg) => (
-                <li
-                  key={msg.id}
-                  className={`w-full ${
-                    msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
-                  }`}
-                >
-                  <Flex justify={"center"} align={"center"}>
-                    <Box className="w-1/3 py-5">
-                      <Flex
-                        direction="row"
-                        justify="start"
-                        align="start"
-                        className="whitespace-pre-line"
-                        gap="5"
-                      >
-                        <Avatar
-                          radius="small"
-                          variant="solid"
-                          size={"2"}
-                          color={msg.role === "user" ? "teal" : "indigo"}
-                          fallback={
-                            <Text>
-                              {msg.role === "user"
-                                ? session?.user?.name?.charAt(0) || "U"
-                                : "N"}
-                            </Text>
-                          }
-                        />
-                        <Text size={"2"}>{msg.content}</Text>
-                      </Flex>
-                    </Box>
-                  </Flex>
-                </li>
-              ))}
-          </ul>
-        </ScrollArea>
-        <Flex
-          justify={"center"}
-          bottom={"0"}
-          width={"100%"}
-          position={"absolute"}
-        >
-          <Box className="w-1/3 relative">
-            <form onSubmit={handleSubmit}>
-              <div className="container">
-                <TextArea
-                  style={{
-                    backgroundColor: "#1A1A1A",
-                    paddingLeft: "3rem",
-                    paddingTop: "1rem",
-                    fontSize: "0.9rem",
-                  }}
-                  variant="classic"
-                  placeholder=""
-                  className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
-                  size={"1"}
-                  mb={"2"}
-                  value={input}
-                  onChange={handleTextAreaChange}
-                  onInput={handleTextAreaChange}
-                  onKeyDown={handleKeyDown}
-                />
-              </div>
+    <Flex>
+      <ScrollArea
+        type="always"
+        scrollbars="vertical"
+        ref={scrollContainerRef}
+        className="md:scroll-auto"
+        onScroll={handleScroll}
+        style={{ height: "100vh" }}
+      >
+        <ul className="w-full pb-12 mb-4 pr-3">
+          {displayMessages
+            .filter((msg) => msg.role !== "system")
+            .map((msg) => (
+              <li
+                key={msg.id}
+                className={`w-full ${
+                  msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
+                }`}
+              >
+                <Flex justify={"center"} align={"center"}>
+                  <Box className="w-1/3 py-5">
+                    <Flex
+                      direction="row"
+                      justify="start"
+                      align="start"
+                      className="whitespace-pre-line"
+                      gap="5"
+                    >
+                      <Avatar
+                        radius="small"
+                        variant="solid"
+                        size={"2"}
+                        color={msg.role === "user" ? "teal" : "indigo"}
+                        fallback={
+                          <Text>
+                            {msg.role === "user"
+                              ? session?.user?.name?.charAt(0) || "U"
+                              : "N"}
+                          </Text>
+                        }
+                      />
+                      <Text size={"2"}>{msg.content}</Text>
+                    </Flex>
+                  </Box>
+                </Flex>
+              </li>
+            ))}
+        </ul>
+      </ScrollArea>
+      <Flex
+        justify={"center"}
+        bottom={"0"}
+        width={"100%"}
+        position={"absolute"}
+      >
+        <Box mr={"5"} className="flex justify-end">
+          <StackButtonDialog
+            folders={folders}
+            state={state}
+            isProcessing={isProcessing}
+            addOptimisticFiles={addOptimisticFiles}
+            optimisticFiles={optimisticFiles}
+            dispatch={dispatch}
+          />
+        </Box>
+        <Box className="w-1/3 relative">
+          <form onSubmit={handleSubmit}>
+            <div className="container">
+              <TextArea
+                style={{
+                  backgroundColor: "#1A1A1A",
+                  paddingLeft: "3rem",
+                  paddingTop: "1rem",
+                  fontSize: "0.9rem",
+                }}
+                variant="classic"
+                placeholder=""
+                className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
+                size={"1"}
+                mb={"2"}
+                value={input}
+                onChange={handleTextAreaChange}
+                onInput={handleTextAreaChange}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
 
-              {!isLoading ? (
-                <IconButton
-                  radius="medium"
-                  variant="solid"
-                  type="submit"
-                  className="right-2 bottom-5 absolute text-4"
-                  disabled={isLoading}
-                >
-                  <PaperPlaneIcon />
-                </IconButton>
-              ) : (
-                <LoadingDots className="right-2 bottom-4 absolute" />
-              )}
-            </form>
+            {!isLoading ? (
+              <IconButton
+                radius="medium"
+                variant="solid"
+                type="submit"
+                className="right-2 bottom-5 absolute text-4"
+                disabled={isLoading}
+              >
+                <PaperPlaneIcon />
+              </IconButton>
+            ) : (
+              <LoadingDots className="right-2 bottom-4 absolute" />
+            )}
+          </form>
 
-            <ConvertFileToText
-              folders={folders}
-              setIsProcessing={setIsProcessing}
-              isProcessing={isProcessing}
-              files={state}
-              dispatch={dispatch}
-            />
-          </Box>
-        </Flex>
-      </Grid>
-    </>
+          <ConvertFileToText
+            folders={folders}
+            setIsProcessing={setIsProcessing}
+            isProcessing={isProcessing}
+            files={state}
+            dispatch={dispatch}
+          />
+        </Box>
+      </Flex>
+    </Flex>
   );
 }
