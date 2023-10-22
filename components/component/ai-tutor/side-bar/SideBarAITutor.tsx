@@ -3,7 +3,6 @@ import AddChatDialog from "@/components/component/ai-tutor/add-chat/AddChatDialo
 import Chats from "@/components/component/ai-tutor/chat/Chats";
 import ChatView from "@/components/component/ai-tutor/views/ChatView";
 import Links from "@/components/component/ai-tutor/views/LinkView";
-import SearchFolders from "@/components/component/search/SearchFolders";
 import Sidebar from "@/components/side-bar/Sidebar";
 import { useChatSelection } from "@/hooks/useChatSelection";
 import useInitialMessages from "@/hooks/useInitialMessages";
@@ -238,12 +237,12 @@ const SideBarAITutor = ({
             />
           </Flex>
 
-          <SearchFolders
+          {/* <SearchFolders
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             view={view}
             setView={setView}
-          />
+          /> */}
 
           <Flex direction={"row"} justify="center" gap="3">
             <Tooltip content="View Chats">

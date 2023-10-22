@@ -164,7 +164,6 @@ export const addFile = async (formData: FormData) => {
     };
   } catch (error) {
     console.error("Error adding files:", error);
-    // Handle the error, e.g., by returning an error response or re-throwing the error
     throw error;
   }
 };

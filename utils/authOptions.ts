@@ -1,12 +1,7 @@
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import DiscordProvider from "next-auth/providers/discord";
-import InstagramProvider from "next-auth/providers/instagram";
-import AppleProvider from "next-auth/providers/apple";
 import { prisma } from "@/lib/prisma";
 import { compare } from "bcrypt";
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -51,26 +46,26 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
-    AppleProvider({
-      clientId: process.env.APPLE_CLIENT_ID as string,
-      clientSecret: process.env.APPLE_CLIENT_SECRET as string,
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    }),
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID as string,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-    }),
-    InstagramProvider({
-      clientId: process.env.INSTAGRAM_CLIENT_ID as string,
-      clientSecret: process.env.INSTAGRAM_CLIENT_SECRET as string,
-    }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID as string,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    // }),
+    // AppleProvider({
+    //   clientId: process.env.APPLE_CLIENT_ID as string,
+    //   clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+    // }),
+    // GitHubProvider({
+    //   clientId: process.env.GITHUB_CLIENT_ID as string,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    // }),
+    // DiscordProvider({
+    //   clientId: process.env.DISCORD_CLIENT_ID as string,
+    //   clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+    // }),
+    // InstagramProvider({
+    //   clientId: process.env.INSTAGRAM_CLIENT_ID as string,
+    //   clientSecret: process.env.INSTAGRAM_CLIENT_SECRET as string,
+    // }),
   ],
 
   callbacks: {
