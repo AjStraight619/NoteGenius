@@ -1,7 +1,6 @@
 "use client";
-
-import { PlusIcon } from "@radix-ui/react-icons";
-import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
+import { Cross2Icon, PlusIcon } from "@radix-ui/react-icons";
+import { Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import { AddChatForm } from "./AddChatForm";
 
@@ -19,7 +18,7 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
           <PlusIcon />
         </Button>
       </Dialog.Trigger>
-      <Dialog.Content>
+      <Dialog.Content className="relative">
         <Flex direction={"column"} align={"center"} justify={"center"}>
           <Dialog.Title mb={"2"}>Create a New Chat</Dialog.Title>
           <AddChatForm
@@ -27,8 +26,17 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
             addOptimisticChats={addOptimisticChats}
           />
         </Flex>
+
+        <Dialog.Close>
+          <IconButton
+            variant="ghost"
+            className="absolute top-2 right-2"
+            onClick={handleClose}
+          >
+            <Cross2Icon />
+          </IconButton>
+        </Dialog.Close>
       </Dialog.Content>
-      <Dialog.Close></Dialog.Close>
     </Dialog.Root>
   );
 };

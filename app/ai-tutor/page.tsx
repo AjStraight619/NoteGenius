@@ -36,8 +36,6 @@ const ChatPage = async () => {
     }))
   );
 
-  // console.log("These are the files related to a folder", filesWithFolderInfo);
-
   return (
     <SideBarAITutor
       chats={chats}
