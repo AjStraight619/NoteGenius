@@ -1,10 +1,9 @@
 "use client";
-// Importing necessary libraries and components
+
 import { Button, Flex } from "@radix-ui/themes";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-// Define interfaces for the pod and subpod objects
 interface ImageInfo {
   src: string;
   [key: string]: any; // This line is optional, to allow for additional, unknown properties

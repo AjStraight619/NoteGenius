@@ -15,8 +15,10 @@ type Pod = {
   subpods: Subpod[];
   [key: string]: any; // This line is optional
 };
+// TODO: Add type for equations
+// Use SWR for client side data fetching
 
-export default function Math(equations: string[]) {
+export default function MathInitialInputForGPT(equations: string[]) {
   const [images, setImages] = useState<string[]>([]); // Specify type for useState
   useEffect(() => {
     const fetchData = async () => {

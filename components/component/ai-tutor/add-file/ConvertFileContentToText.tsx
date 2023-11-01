@@ -61,15 +61,13 @@ export const ConvertFileToText = ({
         selectedFiles.push({
           id: uuid(),
           name: file.name,
-          content: content || null,
+          content: content || undefined,
           type: jpegFile ? "image/jpeg" : null,
           s3Path: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           folderId: null,
-          math: false,
           userId: "",
-          chatId: "",
         });
       }
       dispatch({ type: "ADD_FILE", payload: selectedFiles });

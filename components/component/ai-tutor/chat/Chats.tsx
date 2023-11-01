@@ -78,6 +78,8 @@ export default function Chats({
   } = useChat({
     api: "api/chat",
     id: selectedChatId,
+    // If a math problem is specified, use the wolfram alpha response as the initial input
+    initialInput: "hello",
 
     onFinish: async () => {
       const messageData = {
