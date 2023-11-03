@@ -162,7 +162,7 @@ const SideBarAITutor = ({
         return (
           <>
             <Text size={"1"} color="gray">
-              {selectedFolder?.name || "Select Folder"}
+              {selectedFolder?.name || "Select Folderr"}
             </Text>
             <Box width={"100%"} pb={"2"}>
               <Separator size={"4"} />
