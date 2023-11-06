@@ -18,6 +18,7 @@ type ConvertFileContentToTextProps = {
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
   folders: FolderWithFiles[] | undefined;
+  selectedFolder: FolderWithFiles | undefined;
 };
 export const ConvertFileToText = ({
   setIsProcessing,

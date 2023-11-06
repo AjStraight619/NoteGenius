@@ -23,6 +23,10 @@ type ProcessFileFormProps = {
   folders: FolderWithFiles[] | undefined;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   dispatch: React.Dispatch<any>;
+  selectedFolder: FolderWithFiles | undefined;
+  setSelectedFolder: React.Dispatch<
+    React.SetStateAction<FolderWithFiles | undefined>
+  >;
 };
 type MathFile = {
   isMathChecked: boolean;
@@ -39,14 +43,16 @@ const ProcessFileForm = ({
   folders,
   setOpen,
   dispatch,
+  selectedFolder,
+  setSelectedFolder,
 }: ProcessFileFormProps) => {
-  const [selectedFolder, setSelectedFolder] = useState<
-    FolderWithFiles | undefined
-  >(undefined);
-
   const [filesToDisplay, setFilesToDisplay] = useState<UIFile[] | undefined>(
     undefined
   );
+
+  useEffect(() => {
+    console.log("this is the current selected folder", selectedFolder);
+  }, [selectedFolder]);
 
   const initialFilesWithCheckStatus: FileWithCheckStatus[] =
     state?.map((file) => ({
@@ -58,16 +64,6 @@ const ProcessFileForm = ({
   >(initialFilesWithCheckStatus);
 
   const fileInputRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    const checkedFiles = filesWithCheckStatus.filter(
-      (file) => file.isMathChecked
-    );
-
-    if (checkedFiles.length > 0) {
-      console.log("The following files are checked:", checkedFiles);
-    }
-  }, [filesWithCheckStatus]);
 
   useEffect(() => {
     const currentFilesToDisplay = folders?.find(
@@ -85,8 +81,6 @@ const ProcessFileForm = ({
           : file
       )
     );
-    console.log("This is the fileId", fileId);
-    console.log("This is the filesWithCheckStatus state", filesWithCheckStatus);
   };
 
   return (

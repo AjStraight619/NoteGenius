@@ -18,7 +18,7 @@ export const addChat = async (formData: FormData) => {
     },
   });
 
-  revalidatePath("/'ai-tutor'");
+  revalidatePath("/ai-tutor");
   return {
     addedChat,
   };
@@ -124,15 +124,35 @@ export const getFolders = async () => {
 
 export const addFile = async (formData: FormData) => {
   const userId = (await getSession()) as unknown as string;
+
+  if (!userId) throw new Error("No user session found.");
+
   const fileCount = Number(formData.get("fileCount"));
-  const fileCreationPromises = [];
+  const fileCreationPromises: Promise<any>[] = [];
 
   for (let i = 0; i < fileCount; i++) {
     const name = formData.get(`files[${i}].name`) as string;
     const type = formData.get(`files[${i}].type`) as string;
     const content = formData.get(`files[${i}].content`) as string;
-    const folderId = formData.get(`files[${i}].folderId`) as string;
+    let folderId = formData.get(`files[${i}].folderId`) as string | null;
     const math = formData.get(`files[${i}].math`) === "true";
+
+    if (!folderId) {
+      // Create a new folder and use the result directly
+      const createdFolder = await prisma.folder.create({
+        data: {
+          name: "New Folder",
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+      folderId = createdFolder.id;
+    }
+
+    console.log("folderId", folderId);
 
     const fileCreationPromise = prisma.file.create({
       data: {
@@ -140,11 +160,7 @@ export const addFile = async (formData: FormData) => {
         type,
         content,
         math,
-        folder: {
-          connect: {
-            id: folderId,
-          },
-        },
+        folder: folderId ? { connect: { id: folderId } } : undefined, // Only connect if folderId is not null
         user: {
           connect: {
             id: userId,
@@ -158,13 +174,14 @@ export const addFile = async (formData: FormData) => {
 
   try {
     const addedFiles = await Promise.all(fileCreationPromises);
+    // Presumably, revalidatePath is a function you have defined elsewhere to refresh some data.
     revalidatePath("/ai-tutor");
     return {
       addedFiles,
     };
   } catch (error) {
     console.error("Error adding files:", error);
-    throw error;
+    throw new Error("Failed to add files.");
   }
 };
 
@@ -209,4 +226,25 @@ export const getAllChatsWithFiles = async () => {
   revalidatePath("/ai-tutor");
 
   return links;
+};
+
+export const addFolder = async (formData: FormData) => {
+  const userId = (await getSession()) as unknown as string;
+  const name = formData.get("name") as string;
+
+  const addedFolder = await prisma.folder.create({
+    data: {
+      name,
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/ai-tutor");
+  return {
+    addedFolder,
+  };
 };

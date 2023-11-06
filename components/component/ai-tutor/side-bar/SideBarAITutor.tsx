@@ -22,7 +22,6 @@ import {
   Text,
   Tooltip,
 } from "@radix-ui/themes";
-import { useRouter } from "next/navigation";
 import {
   experimental_useOptimistic as useOptimistic,
   useReducer,
@@ -46,7 +45,6 @@ type sideBarAITutorProps = {
 };
 
 function reducer(state: FileState, action: FileAction): FileState {
-  console.log("Called dispatch for adding a file, this is the state", state);
   switch (action.type) {
     case "ADD_FILE":
       return {
@@ -107,7 +105,6 @@ const SideBarAITutor = ({
   mostRecentFile,
   links,
 }: sideBarAITutorProps) => {
-  const router = useRouter();
   const [view, setView] = useState("chats");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -118,18 +115,9 @@ const SideBarAITutor = ({
   >(undefined);
   const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
   const { selectedFile, selectFile } = useFileSelection(files, mostRecentFile);
-  // const { manageData } = useManageData();
-
-  console.log("These are the current folders", folders);
-  const filesInFolders = folders?.map((folder) => folder.files) || [];
-  console.log("These are the files in folders", filesInFolders);
 
   const initialState: any = { files: [], processing: false };
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const filenames =
-    folders?.map((folder) => folder.files.map((file) => file.name)).flat() ||
-    [];
 
   const { initialMessages } = useInitialMessages({
     chatId: selectedChat?.id,
@@ -142,8 +130,6 @@ const SideBarAITutor = ({
       return [newChat, ...state];
     }
   );
-
-  console.log("These are the links", links);
 
   const [optimisticFiles, addOptimisticFiles] = useOptimistic(
     files,
@@ -237,13 +223,6 @@ const SideBarAITutor = ({
             />
           </Flex>
 
-          {/* <SearchFolders
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            view={view}
-            setView={setView}
-          /> */}
-
           <Flex direction={"row"} justify="center" gap="3">
             <Tooltip content="View Chats">
               <IconButton
@@ -280,6 +259,9 @@ const SideBarAITutor = ({
             key={selectedChat?.id || mostRecentChat?.id}
             folders={folders}
             selectedChatId={selectedChat?.id || mostRecentChat?.id}
+            selectedFolder={selectedFolder}
+            selectedFile={selectedFile}
+            setSelectedFolder={setSelectedFolder}
             initialMessages={initialMessages || mostRecentChat}
             isProcessing={isProcessing}
             setIsProcessing={setIsProcessing}
@@ -287,6 +269,7 @@ const SideBarAITutor = ({
             state={state.files}
             dispatch={dispatch}
             optimisticFiles={optimisticFiles}
+            links={links}
           />
         </Flex>
       </Flex>
