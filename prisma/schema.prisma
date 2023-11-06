@@ -92,7 +92,7 @@ model Chat {
 model File {
   id          String       @id @default(uuid())
   name        String
-  content     String?
+  content     String?      @db.LongText
   type        String?
   s3Path      String?
   createdAt   DateTime     @default(now())

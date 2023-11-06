@@ -18,6 +18,7 @@ type ConvertFileContentToTextProps = {
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
   folders: FolderWithFiles[] | undefined;
+  selectedFolder: FolderWithFiles | undefined;
 };
 export const ConvertFileToText = ({
   setIsProcessing,
@@ -61,13 +62,15 @@ export const ConvertFileToText = ({
         selectedFiles.push({
           id: uuid(),
           name: file.name,
-          content: content || undefined,
+          content: content || "",
           type: jpegFile ? "image/jpeg" : null,
           s3Path: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           folderId: null,
           userId: "",
+          chatId: null,
+          math: false,
         });
       }
       dispatch({ type: "ADD_FILE", payload: selectedFiles });

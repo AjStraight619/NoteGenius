@@ -14,7 +14,6 @@ type FileViewProps = {
 const FileView = ({
   selectedFolder,
   selectedFileId,
-
   onSelectFile,
 }: FileViewProps) => {
   const allFiles = selectedFolder ? selectedFolder.files : [];
@@ -67,3 +66,61 @@ const FileView = ({
 };
 
 export default FileView;
+
+{
+  /* <ul className="w-full pb-12 mb-4 pr-3">
+          {selectedFile?.content && (
+            <li className="w-full p-4 bg-white shadow rounded-lg my-4">
+              <Flex justify={"center"} align={"center"}>
+                <Box className="p-4 border border-gray-300 rounded-lg overflow-auto">
+                  <Text size={"2"} className="break-words whitespace-pre-wrap">
+                    {selectedFile.content}
+                  </Text>
+                </Box>
+              </Flex>
+            </li>
+          )}
+          {displayMessages
+            .filter((msg) => msg.role !== "system")
+            .map((msg) => (
+              <li
+                key={msg.id}
+                className={`flex justify-center items-center w-full ${
+                  msg.role === "assistant" ? "bg-gray-300" : "bg-gray-100"
+                } my-4 rounded-lg`}
+              >
+                <Box className="w-1/3 py-5 px-4">
+                  <Flex
+                    direction="row"
+                    justify="start"
+                    align="start"
+                    className="whitespace-pre-line"
+                    gap="5"
+                  >
+                    <Avatar
+                      radius="small"
+                      variant="solid"
+                      size={"2"}
+                      color={msg.role === "user" ? "teal" : "indigo"}
+                      fallback={
+                        <Text>
+                          {msg.role === "user"
+                            ? session?.user?.name?.charAt(0) || "U"
+                            : "A"}
+                        </Text>
+                      }
+                    />
+                    <Text
+                      size={"2"}
+                      className={`break-words ${
+                        msg.role === "assistant" ? "text-white" : "text-black"
+                      }`}
+                    >
+                      {msg.content}
+                    </Text>
+                  </Flex>
+                </Box>
+              </li>
+            ))}
+        </ul> */
+}

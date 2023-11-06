@@ -21,7 +21,6 @@ export interface Chat extends PrismaChat {
 }
 
 export type UIFile = PrismaFile & {
-  content?: string;
   processing?: boolean;
   file?: File;
   folderName?: string;

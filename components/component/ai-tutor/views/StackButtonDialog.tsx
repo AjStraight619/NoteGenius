@@ -12,6 +12,10 @@ type StackButtonDialogProps = {
   optimisticFiles: UIFile[] | undefined;
   folders: FolderWithFiles[] | undefined;
   dispatch: React.Dispatch<any>;
+  selectedFolder: FolderWithFiles | undefined;
+  setSelectedFolder: React.Dispatch<
+    React.SetStateAction<FolderWithFiles | undefined>
+  >;
 };
 
 const StackButtonDialog = ({
@@ -21,6 +25,8 @@ const StackButtonDialog = ({
   optimisticFiles,
   folders,
   dispatch,
+  selectedFolder,
+  setSelectedFolder,
 }: StackButtonDialogProps) => {
   const [open, setOpen] = useState(false);
 
@@ -53,6 +59,8 @@ const StackButtonDialog = ({
           folders={folders}
           setOpen={setOpen}
           dispatch={dispatch}
+          setSelectedFolder={setSelectedFolder}
+          selectedFolder={selectedFolder}
         />
 
         <Dialog.Close>

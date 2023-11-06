@@ -1,6 +1,8 @@
 "use client";
 import LoadingDots from "@/components/loading/LoadingDots";
+import { AssistantAvatar, UserAvatar } from "@/components/ui/Avatars";
 import {
+  ChatFileLink,
   ChatWithMessages,
   FileAction,
   FolderWithFiles,
@@ -8,7 +10,6 @@ import {
 } from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import {
-  Avatar,
   Box,
   Flex,
   IconButton,
@@ -25,6 +26,10 @@ import "./styles.css";
 
 type ChatsProps = {
   selectedChatId: string | undefined;
+  selectedFolder: FolderWithFiles | undefined;
+  setSelectedFolder: React.Dispatch<
+    React.SetStateAction<FolderWithFiles | undefined>
+  >;
   initialMessages: ChatWithMessages | undefined;
   isProcessing: boolean;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,6 +38,8 @@ type ChatsProps = {
   dispatch: React.Dispatch<FileAction>;
   folders: FolderWithFiles[] | undefined;
   optimisticFiles: UIFile[] | undefined;
+  selectedFile: UIFile | undefined;
+  links: ChatFileLink | undefined;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -47,6 +54,8 @@ function adjustTextAreaHeight(textArea: any) {
 
 export default function Chats({
   selectedChatId,
+  selectedFolder,
+  setSelectedFolder,
   initialMessages,
   isProcessing,
   setIsProcessing,
@@ -55,10 +64,14 @@ export default function Chats({
   dispatch,
   addOptimisticFiles,
   optimisticFiles,
+  selectedFile,
+  links,
 }: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+
+  const linkedFile = links?.find((link) => link.fileId === selectedFile?.id);
 
   useEffect(() => {
     if (isAutoScrollEnabled && scrollContainerRef.current) {
@@ -168,41 +181,48 @@ export default function Chats({
         style={{ height: "100vh" }}
       >
         <ul className="w-full pb-12 mb-4 pr-3">
+          {selectedFile?.content && (
+            <li className="w-full p-4  my-4">
+              <Flex justify={"center"} align={"center"}>
+                <Box className="p-4 border border-gray-3 rounded-lg overflow-auto bg-gray-5">
+                  <Text size={"2"} className="break-words whitespace-pre-wrap">
+                    {selectedFile.content}
+                  </Text>
+                </Box>
+              </Flex>
+            </li>
+          )}
           {displayMessages
             .filter((msg) => msg.role !== "system")
             .map((msg) => (
               <li
                 key={msg.id}
-                className={`w-full ${
+                className={`flex justify-center items-center w-full my-4  ${
                   msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
                 }`}
               >
-                <Flex justify={"center"} align={"center"}>
-                  <Box className="w-1/3 py-5">
-                    <Flex
-                      direction="row"
-                      justify="start"
-                      align="start"
-                      className="whitespace-pre-line"
-                      gap="5"
+                <Box className="w-1/3 py-5 px-4">
+                  <Flex
+                    direction="row"
+                    justify="start"
+                    align="start"
+                    className="whitespace-pre-line"
+                    gap="5"
+                  >
+                    <div
+                      className="shadow-5"
+                      style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
                     >
-                      <Avatar
-                        radius="small"
-                        variant="solid"
-                        size={"2"}
-                        color={msg.role === "user" ? "teal" : "indigo"}
-                        fallback={
-                          <Text>
-                            {msg.role === "user"
-                              ? session?.user?.name?.charAt(0) || "U"
-                              : "N"}
-                          </Text>
-                        }
-                      />
-                      <Text size={"2"}>{msg.content}</Text>
-                    </Flex>
-                  </Box>
-                </Flex>
+                      {msg.role === "user" ? (
+                        <UserAvatar name={session?.user?.name} />
+                      ) : (
+                        <AssistantAvatar />
+                      )}
+                    </div>
+
+                    <Text size={"2"}>{msg.content}</Text>
+                  </Flex>
+                </Box>
               </li>
             ))}
         </ul>
@@ -212,17 +232,40 @@ export default function Chats({
         bottom={"0"}
         width={"100%"}
         position={"absolute"}
+        gap={"2"}
       >
-        <Box mr={"5"} className="flex justify-end">
-          <StackButtonDialog
-            folders={folders}
-            state={state}
-            isProcessing={isProcessing}
-            addOptimisticFiles={addOptimisticFiles}
-            optimisticFiles={optimisticFiles}
-            dispatch={dispatch}
-          />
-        </Box>
+        <Flex gap={"3"} mt={"2"} pr={"3"}>
+          <IconButton variant="ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
+              />
+            </svg>
+          </IconButton>
+
+          <Box mr={"3"}>
+            <StackButtonDialog
+              folders={folders}
+              state={state}
+              isProcessing={isProcessing}
+              addOptimisticFiles={addOptimisticFiles}
+              optimisticFiles={optimisticFiles}
+              dispatch={dispatch}
+              setSelectedFolder={setSelectedFolder || undefined}
+              selectedFolder={selectedFolder}
+            />
+          </Box>
+        </Flex>
+
         <Box className="w-1/3 relative">
           <form onSubmit={handleSubmit}>
             <div className="container">
@@ -266,6 +309,7 @@ export default function Chats({
             isProcessing={isProcessing}
             files={state}
             dispatch={dispatch}
+            selectedFolder={selectedFolder}
           />
         </Box>
       </Flex>
