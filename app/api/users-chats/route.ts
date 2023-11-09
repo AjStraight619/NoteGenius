@@ -138,6 +138,7 @@ export async function PUT(req: NextRequest) {
         chatMessages: {
           create: newMessages.map((message: any) => ({
             content: message.content,
+            role: message.role,
           })),
         },
       },
