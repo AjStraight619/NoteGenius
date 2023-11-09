@@ -7,6 +7,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 export const SubmitButton = ({ children }: { children: ReactNode }) => {
   const { pending } = useFormStatus();
+
   return (
     <Button type="submit" disabled={pending}>
       {pending ? <SymbolIcon className="animate-spin" /> : children}
