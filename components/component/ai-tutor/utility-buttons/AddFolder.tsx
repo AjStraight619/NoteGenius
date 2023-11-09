@@ -10,13 +10,12 @@ import {
   IconButton,
   TextFieldInput,
 } from "@radix-ui/themes";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const AddFolder = ({ folders }: any) => {
   const [open, setOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
 
   const handleClose = () => {
     setFolderName("");
@@ -65,7 +64,9 @@ const AddFolder = ({ folders }: any) => {
               name="title"
               placeholder="New Folder"
               value={folderName}
-              onChange={(e) => setFolderName(e.target.value)}
+              onChange={(e) => {
+                setFolderName(e.target.value), setError("");
+              }}
             />
             <Box className="flex justify-center pt-2">
               <SubmitButton>Add Folder</SubmitButton>
