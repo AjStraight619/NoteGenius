@@ -5,11 +5,16 @@ import { Button } from "@radix-ui/themes";
 import { ReactNode } from "react";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
-export const SubmitButton = ({ children }: { children: ReactNode }) => {
+type SubmitButtonProps = {
+  children: ReactNode;
+  className?: string;
+};
+
+export const SubmitButton = ({ children, className }: SubmitButtonProps) => {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending}>
+    <Button className={`${className}`} type="submit" disabled={pending}>
       {pending ? <SymbolIcon className="animate-spin" /> : children}
     </Button>
   );

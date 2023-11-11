@@ -6,9 +6,10 @@ import {
   getMostRecentFile,
 } from "@/actions/actions";
 import SideBarAITutor from "@/components/component/ai-tutor/side-bar/SideBarAITutor";
-import { ChatWithMessages, UIFile } from "@/types/otherTypes";
+import { ChatWithMessages, Link, UIFile } from "@/types/otherTypes";
 import { getSession } from "@/utils/getSession";
 import { redirect } from "next/navigation";
+import { ChatSelectionProvider } from "../contexts/ChatSelectionProvider";
 
 const ChatPage = async () => {
   const session = await getSession();
@@ -21,13 +22,11 @@ const ChatPage = async () => {
 
   let chats;
   let folders;
-  let links;
-
   chats = await getChats();
   folders = await getFolders();
-  links = await getAllChatsWithFiles();
-
-  console.log("These are the chats with associated links", links);
+  const chatsWithFiles = await getAllChatsWithFiles();
+  const links = transformToLinks(chatsWithFiles);
+  console.log("links", links);
 
   const filesWithFolderInfo: UIFile[] | undefined = folders?.flatMap((folder) =>
     folder.files.map((file) => ({
@@ -37,15 +36,29 @@ const ChatPage = async () => {
   );
 
   return (
-    <SideBarAITutor
-      chats={chats}
-      mostRecentChat={mostRecentChat}
-      folders={folders}
-      files={filesWithFolderInfo}
-      mostRecentFile={mostRecentFile}
-      links={links}
-    />
+    <ChatSelectionProvider chats={chats} initialChat={mostRecentChat}>
+      <SideBarAITutor
+        chats={chats}
+        mostRecentChat={mostRecentChat}
+        folders={folders}
+        files={filesWithFolderInfo}
+        mostRecentFile={mostRecentFile}
+        links={links}
+      />
+    </ChatSelectionProvider>
   );
 };
 
 export default ChatPage;
+
+const transformToLinks = (chats: ChatWithMessages[]): Link[] => {
+  return chats.flatMap((chat) =>
+    chat.files.map((file) => ({
+      id: `${chat.id}-${file.id}`, // Create a composite ID, for example
+      chatId: chat.id,
+      fileId: file.id,
+      chat,
+      file,
+    }))
+  );
+};

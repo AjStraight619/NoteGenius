@@ -1,21 +1,25 @@
-import { FilePlusIcon } from "@radix-ui/react-icons";
+import { PaperClipIcon } from "@heroicons/react/24/solid";
 import { IconButton, Tooltip } from "@radix-ui/themes";
 
 type AddFileButtonProps = {
   onClick: () => void;
+  className?: string;
 };
 
-export default function AddFileButton({ onClick }: AddFileButtonProps) {
+export default function AddFileButton({
+  onClick,
+  className,
+}: AddFileButtonProps) {
   return (
     <Tooltip content="Add file">
       <IconButton
         radius="medium"
-        variant="outline"
-        className="left-2 bottom-6 absolute"
+        variant="ghost"
+        className={`${className}`}
         size={"1"}
         onClick={onClick}
       >
-        <FilePlusIcon />
+        <PaperClipIcon className="h-6 w-6" />
       </IconButton>
     </Tooltip>
   );

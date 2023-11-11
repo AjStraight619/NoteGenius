@@ -4,12 +4,11 @@ import Chats from "@/components/component/ai-tutor/chat/Chats";
 import ChatView from "@/components/component/ai-tutor/views/ChatView";
 import Links from "@/components/component/ai-tutor/views/LinkView";
 import Sidebar from "@/components/side-bar/Sidebar";
-import { useChatSelection } from "@/hooks/useChatSelection";
 import useInitialMessages from "@/hooks/useInitialMessages";
 import {
-  ChatFileLink,
   ChatWithMessages,
   FolderWithFiles,
+  Link,
   UIFile,
 } from "@/types/otherTypes";
 import { ChatBubbleIcon, Link1Icon } from "@radix-ui/react-icons";
@@ -30,6 +29,7 @@ import SideBarToggle from "../../sidebar-buttons/SideBarToggle";
 
 import { useFileSelection } from "@/hooks/useFileSelection";
 // import useManageData from "@/hooks/useManageData";
+import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
 import { FileAction, FileState } from "@/types/otherTypes";
 import FileView from "../views/FileView";
 import FolderDropDown from "../views/FolderDropDown";
@@ -40,7 +40,12 @@ type sideBarAITutorProps = {
   mostRecentChat: ChatWithMessages | undefined;
   files: UIFile[] | undefined;
   mostRecentFile: UIFile | undefined;
-  links: ChatFileLink | undefined;
+  links: Link[] | undefined;
+};
+
+export type SelectChatProps = {
+  title: string;
+  id: string;
 };
 
 function reducer(state: FileState, action: FileAction): FileState {
@@ -65,7 +70,7 @@ function reducer(state: FileState, action: FileAction): FileState {
     case "ADD_LINK":
       return {
         ...state,
-        links: [...state.links, action.payload],
+        links: [...(state.links || []), ...action.payload],
       };
     case "REMOVE_LINK":
       return {
@@ -112,7 +117,7 @@ const SideBarAITutor = ({
   const [selectedFolder, setSelectedFolder] = useState<
     FolderWithFiles | undefined
   >(undefined);
-  const { selectedChat, selectChat } = useChatSelection(chats, mostRecentChat);
+  const { selectedChat, selectChat } = useChatSelectionContext();
   const { selectedFile, selectFile } = useFileSelection(files, mostRecentFile);
 
   const initialState: any = { files: [], processing: false };
@@ -269,6 +274,7 @@ const SideBarAITutor = ({
             dispatch={dispatch}
             optimisticFiles={optimisticFiles}
             links={links}
+            chats={optimisticChats}
           />
         </Flex>
       </Flex>

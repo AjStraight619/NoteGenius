@@ -10,7 +10,7 @@ export const runtime = "edge";
 export async function POST(req: Request) {
   const { messages } = await req.json();
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4-1106-preview",
     messages: messages,
     stream: true,
   });

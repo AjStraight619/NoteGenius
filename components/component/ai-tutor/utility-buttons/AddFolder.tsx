@@ -3,12 +3,14 @@ import { addFolder } from "@/actions/actions";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { FolderPlusIcon } from "@heroicons/react/24/solid";
 import { Cross2Icon } from "@radix-ui/react-icons";
+
 import {
   Box,
   Dialog,
   Flex,
   IconButton,
   TextFieldInput,
+  Tooltip,
 } from "@radix-ui/themes";
 import { useState } from "react";
 
@@ -23,7 +25,6 @@ const AddFolder = ({ folders }: any) => {
   };
 
   const checkIsValidFolderName = () => {
-    console.log("in checkIsValidFolderName", folderName);
     if (folders?.find((folder: any) => folder.name === folderName)) {
       setError("Folder name already exists");
       return false;
@@ -37,11 +38,13 @@ const AddFolder = ({ folders }: any) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>
-        <IconButton variant={"ghost"}>
-          <FolderPlusIcon className="w-6 h-6" />
-        </IconButton>
-      </Dialog.Trigger>
+      <Tooltip content="Add Folder">
+        <Dialog.Trigger>
+          <IconButton radius={"medium"} variant={"ghost"}>
+            <FolderPlusIcon className="w-6 h-6" />
+          </IconButton>
+        </Dialog.Trigger>
+      </Tooltip>
       <Dialog.Content className="relative py-4">
         <Flex
           direction={"column"}

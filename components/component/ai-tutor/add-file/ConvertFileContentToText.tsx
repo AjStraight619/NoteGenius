@@ -9,22 +9,22 @@ import {
 import { useRef } from "react";
 import { v4 as uuid } from "uuid";
 
-import { FileAction, FolderWithFiles, UIFile } from "@/types/otherTypes";
+import { FileAction, UIFile } from "@/types/otherTypes";
 import AddFileButton from "./AddFileButton";
 
 type ConvertFileContentToTextProps = {
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
-  isProcessing: boolean;
   files: UIFile[] | undefined;
   dispatch: React.Dispatch<FileAction>;
-  folders: FolderWithFiles[] | undefined;
-  selectedFolder: FolderWithFiles | undefined;
+  state: UIFile[] | undefined;
+  className?: string;
 };
 export const ConvertFileToText = ({
   setIsProcessing,
-  isProcessing,
   dispatch,
   files,
+  className,
+  state,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputRefForm = useRef<HTMLFormElement>(null);
@@ -34,7 +34,7 @@ export const ConvertFileToText = ({
       const selectedFiles: UIFile[] = [];
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        if (files && isDuplicateFile(file, files)) continue;
+        if (files && isDuplicateFile(file, state || [])) continue;
 
         let content = "";
         let jpegFile: File | null = null;
@@ -69,7 +69,7 @@ export const ConvertFileToText = ({
           updatedAt: new Date(),
           folderId: null,
           userId: "",
-          chatId: null,
+
           math: false,
         });
       }
@@ -175,7 +175,7 @@ export const ConvertFileToText = ({
         onChange={handleFileChange}
       />
 
-      <AddFileButton onClick={handleUploadButtonClick} />
+      <AddFileButton onClick={handleUploadButtonClick} className={className} />
     </>
   );
 };

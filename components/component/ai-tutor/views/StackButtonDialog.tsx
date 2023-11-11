@@ -1,9 +1,12 @@
 "use client";
-import { FolderWithFiles, UIFile } from "@/types/otherTypes";
+import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
+import { ChatWithMessages, FolderWithFiles, UIFile } from "@/types/otherTypes";
 import { Cross2Icon, StackIcon } from "@radix-ui/react-icons";
-import { Box, Dialog, IconButton, Text } from "@radix-ui/themes";
+import { Box, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { useState } from "react";
+import { ConvertFileToText } from "../add-file/ConvertFileContentToText";
 import ProcessFileForm from "../add-file/ProcessFileForm";
+import AddFolder from "../utility-buttons/AddFolder";
 
 type StackButtonDialogProps = {
   state: UIFile[] | undefined;
@@ -16,6 +19,9 @@ type StackButtonDialogProps = {
   setSelectedFolder: React.Dispatch<
     React.SetStateAction<FolderWithFiles | undefined>
   >;
+
+  chats: ChatWithMessages[] | undefined;
+  setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const StackButtonDialog = ({
@@ -27,6 +33,9 @@ const StackButtonDialog = ({
   dispatch,
   selectedFolder,
   setSelectedFolder,
+
+  chats,
+  setIsProcessing,
 }: StackButtonDialogProps) => {
   const [open, setOpen] = useState(false);
 
@@ -34,8 +43,10 @@ const StackButtonDialog = ({
     setOpen(false);
   };
 
+  const { selectChat, selectedChat } = useChatSelectionContext();
+
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={setOpen} key={state?.length}>
       <Dialog.Trigger>
         <IconButton variant="ghost" className="relative">
           <StackIcon width={"25px"} height={"25px"} />
@@ -47,7 +58,7 @@ const StackButtonDialog = ({
       <Dialog.Content className="relative">
         <Dialog.Title>
           <Box className="flex justify-center align-text-top w-auto">
-            Select a File
+            File Options
           </Box>
         </Dialog.Title>
 
@@ -61,6 +72,8 @@ const StackButtonDialog = ({
           dispatch={dispatch}
           setSelectedFolder={setSelectedFolder}
           selectedFolder={selectedFolder}
+          chats={chats}
+          setIsProcessing={setIsProcessing}
         />
 
         <Dialog.Close>
@@ -72,6 +85,16 @@ const StackButtonDialog = ({
             <Cross2Icon />
           </IconButton>
         </Dialog.Close>
+        <Flex gap={"2"}>
+          <AddFolder folders={folders} />
+          <ConvertFileToText
+            setIsProcessing={setIsProcessing}
+            files={optimisticFiles}
+            dispatch={dispatch}
+            state={state}
+            className=""
+          />
+        </Flex>
       </Dialog.Content>
     </Dialog.Root>
   );

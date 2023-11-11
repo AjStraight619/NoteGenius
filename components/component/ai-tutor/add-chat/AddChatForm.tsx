@@ -27,6 +27,7 @@ export const AddChatForm = ({
             userId: uuid(),
             title: formData.get("title") as string,
             chatMessages: [],
+            files: [],
             createdAt: new Date(),
             updatedAt: new Date(),
           });

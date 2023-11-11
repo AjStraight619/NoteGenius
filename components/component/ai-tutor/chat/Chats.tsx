@@ -1,6 +1,8 @@
 "use client";
+import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
 import LoadingDots from "@/components/loading/LoadingDots";
 import { AssistantAvatar, UserAvatar } from "@/components/ui/Avatars";
+import useMathResponse, { MathResponseProps } from "@/hooks/useMathResponse";
 import {
   ChatFileLink,
   ChatWithMessages,
@@ -41,6 +43,7 @@ type ChatsProps = {
   optimisticFiles: UIFile[] | undefined;
   selectedFile: UIFile | undefined;
   links: ChatFileLink | undefined;
+  chats: ChatWithMessages[] | undefined;
 };
 
 function adjustTextAreaHeight(textArea: any) {
@@ -67,12 +70,15 @@ export default function Chats({
   optimisticFiles,
   selectedFile,
   links,
+
+  chats,
 }: ChatsProps) {
   const { data: session } = useSession();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
-
-  const linkedFile = links?.find((link) => link.fileId === selectedFile?.id);
+  const [mathEquations, setMathEquations] = useState<MathResponseProps>({
+    equations: [],
+  });
 
   useEffect(() => {
     if (isAutoScrollEnabled && scrollContainerRef.current) {
@@ -80,6 +86,14 @@ export default function Chats({
       scrollContainerRef.current.scrollTop = scrollHeight;
     }
   }, [isAutoScrollEnabled]);
+
+  const currentLink = useMemo(() => {
+    return links?.find((link) => link.fileId === selectedChatId);
+  }, [links, selectedChatId]);
+
+  const { mathResponse, isLoadingMath } = useMathResponse(mathEquations);
+
+  const { selectChat, selectedChat } = useChatSelectionContext();
 
   const {
     messages,
@@ -93,7 +107,13 @@ export default function Chats({
     api: "api/chat",
     id: selectedChatId,
     // If a math problem is specified, use the wolfram alpha response as the initial input
-    initialInput: "hello",
+    initialMessages: [
+      {
+        id: "",
+        role: "system",
+        content: currentLink?.file.content || "",
+      },
+    ],
 
     onFinish: async () => {
       const messageData = {
@@ -125,10 +145,6 @@ export default function Chats({
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
-
-  useEffect(() => {
-    console.log("component is re rendering");
-  }, [input]);
 
   useEffect(() => {
     return () => {
@@ -181,18 +197,18 @@ export default function Chats({
         onScroll={handleScroll}
         style={{ height: "100vh" }}
       >
+        {currentLink && (
+          <div className="w-full p-4  my-4">
+            <Flex justify={"center"} align={"center"}>
+              <Box className="p-4 border border-gray-3 rounded-lg overflow-auto bg-gray-5">
+                <Text size={"2"} className="break-words whitespace-pre-wrap">
+                  {currentLink?.file.content}
+                </Text>
+              </Box>
+            </Flex>
+          </div>
+        )}
         <ul className="w-full pb-12 mb-4 pr-3">
-          {selectedFile?.content && (
-            <li className="w-full p-4  my-4">
-              <Flex justify={"center"} align={"center"}>
-                <Box className="p-4 border border-gray-3 rounded-lg overflow-auto bg-gray-5">
-                  <Text size={"2"} className="break-words whitespace-pre-wrap">
-                    {selectedFile.content}
-                  </Text>
-                </Box>
-              </Flex>
-            </li>
-          )}
           {displayMessages
             .filter((msg) => msg.role !== "system")
             .map((msg) => (
@@ -208,7 +224,7 @@ export default function Chats({
                     justify="start"
                     align="start"
                     className="whitespace-pre-line"
-                    gap="5"
+                    gap="3"
                   >
                     <div
                       className="shadow-5"
@@ -248,6 +264,8 @@ export default function Chats({
               dispatch={dispatch}
               setSelectedFolder={setSelectedFolder || undefined}
               selectedFolder={selectedFolder}
+              chats={chats}
+              setIsProcessing={setIsProcessing}
             />
           </Box>
         </Flex>
@@ -258,9 +276,9 @@ export default function Chats({
               <TextArea
                 style={{
                   backgroundColor: "#1A1A1A",
-                  paddingLeft: "3rem",
+                  paddingLeft: "2.1rem",
                   paddingTop: "1rem",
-                  fontSize: "0.9rem",
+                  fontSize: "0.7rem",
                 }}
                 variant="classic"
                 placeholder=""
@@ -290,12 +308,11 @@ export default function Chats({
           </form>
 
           <ConvertFileToText
-            folders={folders}
             setIsProcessing={setIsProcessing}
-            isProcessing={isProcessing}
             files={state}
             dispatch={dispatch}
-            selectedFolder={selectedFolder}
+            className="left-2 bottom-6 absolute"
+            state={state}
           />
         </Box>
       </Flex>

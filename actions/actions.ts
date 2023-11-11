@@ -75,6 +75,7 @@ export const getMostRecentChatMessages = async () => {
           createdAt: "desc",
         },
       },
+      files: true,
     },
   });
 
@@ -115,6 +116,9 @@ export const getFolders = async () => {
     include: {
       files: true,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   revalidatePath("/ai-tutor");
@@ -129,6 +133,7 @@ export const addFile = async (formData: FormData) => {
 
   const fileCount = Number(formData.get("fileCount"));
   const fileCreationPromises: Promise<any>[] = [];
+  const chatId = formData.get("chatId") as string | null;
 
   for (let i = 0; i < fileCount; i++) {
     const name = formData.get(`files[${i}].name`) as string;
@@ -160,6 +165,7 @@ export const addFile = async (formData: FormData) => {
         type,
         content,
         math,
+        chats: chatId ? { connect: { id: chatId } } : undefined, // Only connect if chatId is not null
         folder: folderId ? { connect: { id: folderId } } : undefined, // Only connect if folderId is not null
         user: {
           connect: {
@@ -203,31 +209,6 @@ export const getMostRecentFile = async () => {
   return file;
 };
 
-export const getAllChatsWithFiles = async () => {
-  const userId = (await getSession()) as unknown as string;
-  const links = await prisma.link.findMany({
-    where: {
-      AND: [{ chat: { userId: userId } }],
-    },
-    include: {
-      chat: {
-        include: {
-          chatMessages: {
-            orderBy: {
-              createdAt: "asc",
-            },
-          },
-        },
-      },
-      file: true,
-    },
-  });
-
-  revalidatePath("/ai-tutor");
-
-  return links;
-};
-
 export const addFolder = async (formData: FormData) => {
   const userId = (await getSession()) as unknown as string;
   const name = formData.get("name") as string;
@@ -247,4 +228,20 @@ export const addFolder = async (formData: FormData) => {
   return {
     addedFolder,
   };
+};
+
+export const getAllChatsWithFiles = async () => {
+  const userId = (await getSession()) as unknown as string;
+  const chats = await prisma.chat.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      chatMessages: true, // Include chat messages
+      files: true, // Include linked files
+    },
+  });
+
+  revalidatePath("/ai-tutor");
+  return chats;
 };
