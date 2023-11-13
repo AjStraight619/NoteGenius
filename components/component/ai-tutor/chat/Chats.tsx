@@ -19,7 +19,8 @@ import {
   Text,
   TextArea,
 } from "@radix-ui/themes";
-import { Message, useChat } from "ai/react";
+import { Message } from "ai";
+import { useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AddFolder from "../utility-buttons/AddFolder";
@@ -132,6 +133,8 @@ export default function Chats({
           },
         });
 
+        const data = await res.json();
+
         if (!res.ok) {
           console.error("Failed to update messages in chat:", await res.json());
         } else {
@@ -146,11 +149,8 @@ export default function Chats({
   const messagesRef = useRef<Message[]>(messages);
   useEffect(() => {
     messagesRef.current = messages;
+    console.log("Message in the message ref", messagesRef.current[0]);
   }, [messages]);
-
-  useEffect(() => {
-    console.log("component Chats re rendered re rendered");
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -162,6 +162,29 @@ export default function Chats({
   const displayMessages = useMemo(() => {
     return [...(initialMessages?.chatMessages || []), ...messages];
   }, [initialMessages, messages]);
+
+  useEffect(() => {
+    console.log("These are the display messages", displayMessages);
+  }, [displayMessages]);
+
+  // const { data, isError } = useData(
+  //   `api/users-chats?chatId=${selectedChatId}`,
+  //   {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
+
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log("data", data);
+  //     const { chatMessages } = data.chat;
+  //     console.log("chatMessages", chatMessages);
+
+  //   }
+  // }, [data, setMessages]);
 
   useEffect(() => {
     if (isAutoScrollEnabled && scrollContainerRef.current) {

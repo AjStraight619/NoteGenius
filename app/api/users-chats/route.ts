@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/utils/authOptions";
 import { User } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidV4 } from "uuid";
 
@@ -22,7 +21,7 @@ export async function GET(req: NextRequest) {
   const userId = user.id;
 
   const chatId = req.nextUrl.searchParams.get("chatId");
-  console.log("user id: " + userId, "chatId: " + chatId);
+
   if (!chatId) {
     return NextResponse.json({ error: "No chatId provided" });
   }
@@ -147,7 +146,7 @@ export async function PUT(req: NextRequest) {
   }
 
   // Respond with the chat data
-  revalidatePath("/ai-tutor");
+
   return new NextResponse(JSON.stringify({ newMessages }));
 }
 
