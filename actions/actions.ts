@@ -165,6 +165,7 @@ export const addFile = async (formData: FormData) => {
         type,
         content,
         math,
+
         chats: chatId ? { connect: { id: chatId } } : undefined, // Only connect if chatId is not null
         folder: folderId ? { connect: { id: folderId } } : undefined, // Only connect if folderId is not null
         user: {

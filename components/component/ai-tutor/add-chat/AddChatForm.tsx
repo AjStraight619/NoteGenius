@@ -3,7 +3,6 @@ import { addChat } from "@/actions/actions";
 import { ChatWithMessages } from "@/types/otherTypes";
 import { Button, Flex, TextFieldInput } from "@radix-ui/themes";
 import { useRef } from "react";
-import { v4 as uuid } from "uuid";
 
 type AddChatFormProps = {
   onClose: () => void;
@@ -23,8 +22,9 @@ export const AddChatForm = ({
         action={async (formData) => {
           chatTitleRef.current?.reset();
           addOptimisticChats({
-            id: uuid(),
-            userId: uuid(),
+            id: "",
+            userId: "",
+            noteId: "",
             title: formData.get("title") as string,
             chatMessages: [],
             files: [],
