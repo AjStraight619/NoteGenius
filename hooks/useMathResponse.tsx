@@ -1,22 +1,27 @@
-import { fetcher } from "@/lib/fetcher";
+import { WolframAlphaResponse } from "@/types/wolframAlphaTypes";
+
 import { useEffect, useReducer } from "react";
-import useSWR from "swr";
 
 export type MathResponseProps = {
   equations: string[];
 };
 
 type MathState = {
-  mathResponse: string;
+  mathResponse: WolframAlphaResponse;
   isMathChecked: boolean;
   isMathCorrect: boolean;
   isMathLoading: boolean;
   isMathError: boolean;
   mathError: string;
+  equations: string[];
+  answer: string;
+  steps: string;
 };
 
 type MathAction =
-  | { type: "MATH_RESPONSE"; payload: string }
+  | { type: "ADD_EQUATION"; payload: string }
+  | { type: "MATH_RESPONSE"; payload: WolframAlphaResponse }
+  | { type: "REMOVE_EQUATION"; payload: string }
   | { type: "IS_MATH_CHECKED"; payload: boolean }
   | { type: "IS_MATH_CORRECT"; payload: boolean }
   | { type: "IS_MATH_LOADING"; payload: boolean }
@@ -24,20 +29,36 @@ type MathAction =
   | { type: "MATH_ERROR"; payload: string };
 
 const initialState: MathState = {
-  mathResponse: "",
+  mathResponse: {} as WolframAlphaResponse,
   isMathChecked: false,
   isMathCorrect: false,
   isMathLoading: false,
   isMathError: false,
   mathError: "",
+  equations: [],
+  answer: "",
+  steps: "",
 };
 
 function mathReducer(state: MathState, action: MathAction): MathState {
   switch (action.type) {
+    case "ADD_EQUATION":
+      return {
+        ...state,
+        equations: [...state.equations, action.payload],
+      };
     case "MATH_RESPONSE":
+      const { answer, steps } = extractAnswerAndSteps(action.payload);
       return {
         ...state,
         mathResponse: action.payload,
+        answer,
+        steps,
+      };
+    case "REMOVE_EQUATION":
+      return {
+        ...state,
+        equations: state.equations.filter((eq) => eq !== action.payload),
       };
     case "IS_MATH_CHECKED":
       return {
@@ -69,35 +90,62 @@ function mathReducer(state: MathState, action: MathAction): MathState {
   }
 }
 
-const useMathResponse = ({ equations }: MathResponseProps) => {
-  // use a queue for the math content?
-  const queryString = equations
-    .map((eq) => `equation=${encodeURIComponent(eq)}`)
-    .join("&");
+function extractAnswerAndSteps(response: WolframAlphaResponse): {
+  answer: string;
+  steps: string;
+} {
+  let answer = "";
+  let steps = "";
 
-  const { data, error, isLoading } = useSWR(
-    equations.length > 0 ? `/api/wolfram-alpha?${queryString}` : null,
-    fetcher
-  );
+  response.queryresult.pods.forEach((pod) => {
+    if (pod.title === "Solutions") {
+      answer = pod.subpods.map((subpod) => subpod.plaintext).join("\n");
+    }
+    if (pod.title === "Step-by-step solution") {
+      steps = pod.subpods.map((subpod) => subpod.plaintext).join("\n");
+    }
+  });
 
-  const [mathState, mathDispatch] = useReducer(mathReducer, initialState);
+  return { answer, steps };
+}
+const useMathResponse = () => {
+  const [mathState, mathDispatch] = useReducer(mathReducer, {
+    ...initialState,
+  });
 
   useEffect(() => {
-    // Update loading state
-    mathDispatch({ type: "IS_MATH_LOADING", payload: isLoading });
+    const fetchMathData = async (equation: string) => {
+      if (!equation) {
+        return;
+      }
+      mathDispatch({ type: "IS_MATH_LOADING", payload: true });
 
-    if (error) {
-      // Update error state
-      mathDispatch({ type: "IS_MATH_ERROR", payload: true });
-      mathDispatch({ type: "MATH_ERROR", payload: error.message });
-    }
+      try {
+        const response = await fetch(
+          `/api/wolfram-alpha?equation=${encodeURIComponent(equation)}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data: WolframAlphaResponse = await response.json();
+        mathDispatch({ type: "MATH_RESPONSE", payload: data });
+        mathDispatch({ type: "REMOVE_EQUATION", payload: equation });
+      } catch (err) {
+        mathDispatch({ type: "IS_MATH_ERROR", payload: true });
+        mathDispatch({
+          type: "MATH_ERROR",
+          payload: "An error occurred while retrieving calculations",
+        });
+      } finally {
+        mathDispatch({ type: "IS_MATH_LOADING", payload: false });
+      }
+    };
 
-    if (data) {
-      // Update math response state
-      mathDispatch({ type: "MATH_RESPONSE", payload: data });
-      // Here, you might want to add additional logic to format the response
+    if (mathState.equations.length > 0) {
+      const equationToProcess = mathState.equations[0];
+      fetchMathData(equationToProcess);
     }
-  }, [data, error, isLoading, equations]);
+  }, [mathState.equations]);
 
   return {
     mathState,
@@ -105,6 +153,8 @@ const useMathResponse = ({ equations }: MathResponseProps) => {
     isLoadingMath: mathState.isMathLoading,
     isError: mathState.isMathError,
     mathResponse: mathState.mathResponse,
+    answer: mathState.answer,
+    steps: mathState.steps,
   };
 };
 

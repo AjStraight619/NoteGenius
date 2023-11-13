@@ -1,13 +1,12 @@
 "use client";
-import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
+import { useFileContext } from "@/app/contexts/FileSelectionProvider";
 import LoadingDots from "@/components/loading/LoadingDots";
 import { AssistantAvatar, UserAvatar } from "@/components/ui/Avatars";
 import useMathResponse, { MathResponseProps } from "@/hooks/useMathResponse";
 import {
-  ChatFileLink,
   ChatWithMessages,
-  FileAction,
   FolderWithFiles,
+  Link,
   UIFile,
 } from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
@@ -27,6 +26,11 @@ import AddFolder from "../utility-buttons/AddFolder";
 import StackButtonDialog from "../views/StackButtonDialog";
 import "./styles.css";
 
+export type GPTInitialMessage = {
+  answer: string;
+  steps: string;
+};
+
 type ChatsProps = {
   selectedChatId: string | undefined;
   selectedFolder: FolderWithFiles | undefined;
@@ -37,12 +41,11 @@ type ChatsProps = {
   isProcessing: boolean;
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
   addOptimisticFiles: (newFile: UIFile) => void;
-  state: UIFile[] | undefined;
-  dispatch: React.Dispatch<FileAction>;
+
   folders: FolderWithFiles[] | undefined;
   optimisticFiles: UIFile[] | undefined;
-  selectedFile: UIFile | undefined;
-  links: ChatFileLink | undefined;
+
+  links: Link[] | undefined;
   chats: ChatWithMessages[] | undefined;
 };
 
@@ -64,13 +67,9 @@ export default function Chats({
   isProcessing,
   setIsProcessing,
   folders,
-  state,
-  dispatch,
   addOptimisticFiles,
   optimisticFiles,
-  selectedFile,
   links,
-
   chats,
 }: ChatsProps) {
   const { data: session } = useSession();
@@ -91,9 +90,10 @@ export default function Chats({
     return links?.find((link) => link.fileId === selectedChatId);
   }, [links, selectedChatId]);
 
-  const { mathResponse, isLoadingMath } = useMathResponse(mathEquations);
+  const { dispatch, state } = useFileContext();
 
-  const { selectChat, selectedChat } = useChatSelectionContext();
+  const { mathState, mathDispatch, mathResponse, isLoadingMath } =
+    useMathResponse();
 
   const {
     messages,
@@ -111,7 +111,7 @@ export default function Chats({
       {
         id: "",
         role: "system",
-        content: currentLink?.file.content || "",
+        content: "", // This is where the initial input for gpt will go, it will include the iniital problem, and the necessary information from the wolfram alpha response, i.e the answer, and the steps to solve the problem
       },
     ],
 
@@ -145,6 +145,10 @@ export default function Chats({
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
+
+  useEffect(() => {
+    console.log("component Chats re rendered re rendered");
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -202,7 +206,7 @@ export default function Chats({
             <Flex justify={"center"} align={"center"}>
               <Box className="p-4 border border-gray-3 rounded-lg overflow-auto bg-gray-5">
                 <Text size={"2"} className="break-words whitespace-pre-wrap">
-                  {currentLink?.file.content}
+                  {currentLink?.file?.content}
                 </Text>
               </Box>
             </Flex>
@@ -257,7 +261,6 @@ export default function Chats({
           <Box mr={"3"}>
             <StackButtonDialog
               folders={folders}
-              state={state}
               isProcessing={isProcessing}
               addOptimisticFiles={addOptimisticFiles}
               optimisticFiles={optimisticFiles}
@@ -278,7 +281,8 @@ export default function Chats({
                   backgroundColor: "#1A1A1A",
                   paddingLeft: "2.1rem",
                   paddingTop: "1rem",
-                  fontSize: "0.7rem",
+                  fontSize: "0.8rem",
+                  paddingRight: "2.6rem",
                 }}
                 variant="classic"
                 placeholder=""
@@ -309,10 +313,10 @@ export default function Chats({
 
           <ConvertFileToText
             setIsProcessing={setIsProcessing}
-            files={state}
+            state={state}
             dispatch={dispatch}
             className="left-2 bottom-6 absolute"
-            state={state}
+            files={state.files}
           />
         </Box>
       </Flex>

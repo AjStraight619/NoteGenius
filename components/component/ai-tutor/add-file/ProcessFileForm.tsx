@@ -1,6 +1,7 @@
 "use client";
 import { addFile } from "@/actions/actions";
 import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
+import { useFileContext } from "@/app/contexts/FileSelectionProvider";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ChatWithMessages, FolderWithFiles, UIFile } from "@/types/otherTypes";
 import {
@@ -30,19 +31,18 @@ type SelectedChat = {
 };
 
 type ProcessFileFormProps = {
-  state: UIFile[] | undefined;
   isProcessing: boolean;
   addOptimisticFiles: (newFile: UIFile) => void;
   optimisticFiles: UIFile[] | undefined;
   folders: FolderWithFiles[] | undefined;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  dispatch: React.Dispatch<any>;
   selectedFolder: FolderWithFiles | undefined;
   setSelectedFolder: React.Dispatch<
     React.SetStateAction<FolderWithFiles | undefined>
   >;
 
   chats: ChatWithMessages[] | undefined;
+  files: UIFile[] | undefined;
 
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -59,16 +59,13 @@ type LinkedFileInfo = {
 };
 
 const ProcessFileForm = ({
-  state,
   addOptimisticFiles,
-  optimisticFiles,
   folders,
   setOpen,
-  dispatch,
   selectedFolder,
   setSelectedFolder,
   chats,
-  setIsProcessing,
+  files,
 }: ProcessFileFormProps) => {
   const [filesToDisplay, setFilesToDisplay] = useState<UIFile[] | undefined>(
     undefined
@@ -76,8 +73,14 @@ const ProcessFileForm = ({
 
   const [linkedFiles, setLinkedFiles] = useState<LinkedFileInfo[]>([]);
 
+  const [popoverOpenStates, setPopoverOpenStates] = useState<
+    Record<string, boolean>
+  >({});
+
   const { selectedChat } = useChatSelectionContext();
   const [openOptions, setOpenOptions] = useState(false);
+
+  const { dispatch, state } = useFileContext();
 
   const [selectedChatToLink, setSelectedChatToLink] = useState<SelectedChat>({
     id: selectedChat?.id || "",
@@ -97,18 +100,27 @@ const ProcessFileForm = ({
 
       dispatch({
         type: "ADD_LINK",
-        payload: [{ chatId: selectedChatToLink.id, fileId: fileId }],
+        payload: [
+          {
+            id: `temp-${linkedFiles.length}`,
+            chatId: selectedChatToLink.id,
+            fileId: fileId,
+            chat: linkedChat,
+            file: files?.find((file) => file.id === fileId),
+          },
+        ],
       });
+
       setOpenOptions(false);
     }
   };
 
-  useEffect(() => {
-    console.log("This is the selected chat", selectedChatToLink);
-  }, [selectedChat?.id, selectedChatToLink]);
+  const togglePopover = (fileId: string, isOpen: boolean) => {
+    setPopoverOpenStates((prev) => ({ ...prev, [fileId]: isOpen }));
+  };
 
   const initialFilesWithCheckStatus: FileWithCheckStatus[] =
-    state?.map((file) => ({
+    state?.files.map((file) => ({
       ...file,
       isMathChecked: false,
     })) || [];
@@ -136,6 +148,8 @@ const ProcessFileForm = ({
     );
   };
 
+  // Extract files from the current state
+
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     console.log("in handle delete, deleting file", e.currentTarget.id);
     e.preventDefault();
@@ -149,13 +163,15 @@ const ProcessFileForm = ({
     const chatName =
       chats?.find((chat) => chat.id === chatId)?.title || "Unknown Chat";
     const fileName =
-      state?.find((file) => file.id === fileId)?.name || "Unknown File";
+      state?.files.find((file) => file.id === fileId)?.name || "Unknown File";
 
     return {
       chatName,
       fileName,
     };
   };
+
+  // Next new server action. Add files to db and revalidate UI
 
   return (
     <Flex width={"100%"} direction={"column"} gap={"2"}>
@@ -164,8 +180,8 @@ const ProcessFileForm = ({
         action={async (formData) => {
           fileInputRef.current?.reset();
           formData.append("chatId", selectedChatToLink.id || "");
-          formData.append("fileCount", (state?.length || 0).toString());
-          state?.forEach((file, index) => {
+          formData.append("fileCount", (state?.files.length || 0).toString());
+          state?.files.forEach((file, index) => {
             formData.append(`files[${index}].name`, file.name);
             formData.append(`files[${index}].content`, file.content || "");
             formData.append(`files[${index}].type`, file.type || "");
@@ -180,9 +196,9 @@ const ProcessFileForm = ({
                 ? "true"
                 : "false"
             );
-
+            // this is not good
             addOptimisticFiles({
-              id: `temp-${index}`,
+              id: file.id,
               name: file.name,
               content: file.content,
               type: file.type || null,
@@ -195,11 +211,13 @@ const ProcessFileForm = ({
                   ?.isMathChecked || false,
               createdAt: new Date(),
               updatedAt: new Date(),
+              processed: null,
+              noteId: null,
             });
           });
           await addFile(formData);
           setOpen(false);
-          state?.forEach((file) =>
+          state?.files.forEach((file) =>
             dispatch({ type: "REMOVE_FILE", payload: { id: file.id } })
           );
         }}
@@ -265,7 +283,7 @@ const ProcessFileForm = ({
           justify={"center"}
           gap={"2"}
         >
-          {filesWithCheckStatus?.map((file) => (
+          {filesWithCheckStatus.map((file) => (
             <Flex
               key={file.id}
               position={"relative"}
@@ -279,7 +297,10 @@ const ProcessFileForm = ({
                 defaultValue={file.name}
               />
 
-              <Popover.Root open={openOptions} onOpenChange={setOpenOptions}>
+              <Popover.Root
+                open={popoverOpenStates[file.id] || false}
+                onOpenChange={(isOpen) => togglePopover(file.id, isOpen)}
+              >
                 <Popover.Trigger>
                   <IconButton radius={"medium"} variant={"ghost"}>
                     <DotsHorizontalIcon />
@@ -316,10 +337,7 @@ const ProcessFileForm = ({
               </Popover.Root>
 
               <Box className="flex-row gap-1">
-                <Checkbox
-                  checked={file.isMathChecked}
-                  onClick={() => handleCheckBoxClick(file.id)}
-                />
+                <Checkbox onClick={() => handleCheckBoxClick(file.id)} />
                 <Text ml={"1"}>Math</Text>
               </Box>
             </Flex>

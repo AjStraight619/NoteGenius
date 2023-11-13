@@ -1,38 +1,46 @@
-import { useEffect, useState } from "react";
+// "use client";
+// import useMathResponse from "@/hooks/useMathResponse";
+// import { Pod, Subpod } from "@/types/wolframAlphaTypes";
 
-// Define interfaces for the pod and subpod objects
-type ImageInfo = {
-  src: string;
-  [key: string]: any; // This line is optional, to allow for additional, unknown properties
-};
+// const TestComponent = () => {
+//   const { mathState, isLoadingMath, isError, mathResponse } = useMathResponse({
+//     equations: ["x^2 + y^2 = 1"],
+//   });
 
-type Subpod = {
-  img: ImageInfo;
-  [key: string]: any; // This line is optional
-};
+//   if (isLoadingMath) {
+//     return <div>Loading...</div>;
+//   }
 
-type Pod = {
-  subpods: Subpod[];
-  [key: string]: any; // This line is optional
-};
-// TODO: Add type for equations
-// Use SWR for client side data fetching
+//   if (
+//     isError ||
+//     !mathResponse ||
+//     !mathResponse.queryresult ||
+//     !mathResponse.queryresult.pods
+//   ) {
+//     return <div>Error: Could not load data</div>;
+//   }
 
-export default function MathInitialInputForGPT(equations: string[]) {
-  const [images, setImages] = useState<string[]>([]); // Specify type for useState
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/api/wolfram-alpha", {
-        method: "GET",
-        body: JSON.stringify(equations),
-      });
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      } else {
-      }
-    };
-    fetchData();
-  }, [equations]);
+//   return (
+//     <div>
+//       <h2>Math Response</h2>
+//       <pre>{JSON.stringify(mathResponse, null, 2)}</pre>
+//       {mathResponse.queryresult.pods.length > 0 ? (
+//         mathResponse.queryresult.pods.map((pod: Pod, index: number) => (
+//           <div key={`${pod.title}-${index}`}>
+//             <h3>{pod.title}</h3>
+//             {pod.subpods.map((subpod: Subpod, subIndex: number) => (
+//               <div key={subIndex}>
+//                 <img src={subpod.img.src} alt={subpod.img.alt} />
+//                 <p>{subpod.plaintext}</p>
+//               </div>
+//             ))}
+//           </div>
+//         ))
+//       ) : (
+//         <div>No data available</div>
+//       )}
+//     </div>
+//   );
+// };
 
-  return <div>Math</div>;
-}
+// export default TestComponent;

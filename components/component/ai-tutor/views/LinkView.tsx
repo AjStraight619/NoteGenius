@@ -1,17 +1,14 @@
-import { ChatFileLink, UIFile } from "@/types/otherTypes";
+import { Link, UIFile } from "@/types/otherTypes";
 import { Chat } from "@prisma/client";
 import { Box, DropdownMenu } from "@radix-ui/themes";
 
 type LinksProps = {
-  selectedFile: UIFile | undefined;
-  selectedChat: Chat | undefined;
-  links: ChatFileLink | undefined;
+  links: Link[] | undefined;
   files: UIFile[] | undefined;
   chats: Chat[] | undefined;
-  dispatch: React.Dispatch<any>;
 };
 
-const LinkView = ({ links, files, chats, dispatch }: LinksProps) => {
+const LinkView = ({ links, files, chats }: LinksProps) => {
   const getLinkedFiles = (chatId: string) => {
     return links?.filter((link) => link.chatId === chatId) || [];
   };

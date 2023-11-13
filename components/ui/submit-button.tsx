@@ -8,9 +8,14 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 type SubmitButtonProps = {
   children: ReactNode;
   className?: string;
+  color?: string; // new prop for color
 };
 
-export const SubmitButton = ({ children, className }: SubmitButtonProps) => {
+export const SubmitButton = ({
+  children,
+  className,
+  color,
+}: SubmitButtonProps) => {
   const { pending } = useFormStatus();
 
   return (

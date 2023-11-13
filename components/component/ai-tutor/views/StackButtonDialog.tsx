@@ -1,15 +1,14 @@
 "use client";
-import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
+import { useFileContext } from "@/app/contexts/FileSelectionProvider";
+import FileSelection from "@/components/process-files/FileSelection";
+import ProcessFilesForm from "@/components/process-files/ProcessFilesForm";
 import { ChatWithMessages, FolderWithFiles, UIFile } from "@/types/otherTypes";
 import { Cross2Icon, StackIcon } from "@radix-ui/react-icons";
 import { Box, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
-import { useState } from "react";
-import { ConvertFileToText } from "../add-file/ConvertFileContentToText";
-import ProcessFileForm from "../add-file/ProcessFileForm";
+import { useEffect, useState } from "react";
 import AddFolder from "../utility-buttons/AddFolder";
 
 type StackButtonDialogProps = {
-  state: UIFile[] | undefined;
   isProcessing: boolean;
   addOptimisticFiles: (newFile: UIFile) => void;
   optimisticFiles: UIFile[] | undefined;
@@ -25,15 +24,13 @@ type StackButtonDialogProps = {
 };
 
 const StackButtonDialog = ({
-  state,
   isProcessing,
   addOptimisticFiles,
   optimisticFiles,
   folders,
-  dispatch,
+
   selectedFolder,
   setSelectedFolder,
-
   chats,
   setIsProcessing,
 }: StackButtonDialogProps) => {
@@ -43,38 +40,52 @@ const StackButtonDialog = ({
     setOpen(false);
   };
 
-  const { selectChat, selectedChat } = useChatSelectionContext();
+  useEffect(() => {
+    console.log("component Chats re rendered re rendered");
+  }, []);
+
+  const { state, dispatch } = useFileContext();
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen} key={state?.length}>
+    <Dialog.Root open={open} onOpenChange={setOpen} key={state?.files.length}>
       <Dialog.Trigger>
         <IconButton variant="ghost" className="relative">
           <StackIcon width={"25px"} height={"25px"} />
           <Box className="absolute left-7 bottom-5 bg-indigo-3 rounded-l-3 rounded-r-3 rounded-t-3 rounded-b-3 p-1.5  min-w-4 flex items-center justify-center">
-            <Text size="1">{state?.length}</Text>
+            <Text size="1">{state?.files.length}</Text>
           </Box>
         </IconButton>
       </Dialog.Trigger>
-      <Dialog.Content className="relative">
-        <Dialog.Title>
-          <Box className="flex justify-center align-text-top w-auto">
-            File Options
-          </Box>
-        </Dialog.Title>
-
-        <ProcessFileForm
+      <Dialog.Content className="relative" style={{ minHeight: "250px" }}>
+        <Flex
+          justify={"center"}
+          align={"center"}
+          width={"100%"}
+          height={"100%"}
+          direction={"column"}
+        >
+          <Dialog.Title>File Options</Dialog.Title>
+          {/* <ProcessFileForm
+          key={state?.files.length}
           addOptimisticFiles={addOptimisticFiles}
           optimisticFiles={optimisticFiles}
-          state={state}
           isProcessing={isProcessing}
           folders={folders}
           setOpen={setOpen}
-          dispatch={dispatch}
           setSelectedFolder={setSelectedFolder}
           selectedFolder={selectedFolder}
           chats={chats}
           setIsProcessing={setIsProcessing}
-        />
+          files={state?.files}
+        /> */}
+
+          <ProcessFilesForm
+            selectedFolder={selectedFolder}
+            chats={chats}
+            setOpen={setOpen}
+            files={state.files}
+          />
+        </Flex>
 
         <Dialog.Close>
           <IconButton
@@ -85,15 +96,22 @@ const StackButtonDialog = ({
             <Cross2Icon />
           </IconButton>
         </Dialog.Close>
-        <Flex gap={"2"}>
+
+        <Flex
+          gap={"2"}
+          width={"min-content"}
+          position={"absolute"}
+          className="bottom-2 left-4"
+        >
           <AddFolder folders={folders} />
-          <ConvertFileToText
+          <FileSelection />
+          {/* <ConvertFileToText
             setIsProcessing={setIsProcessing}
             files={optimisticFiles}
             dispatch={dispatch}
             state={state}
             className=""
-          />
+          /> */}
         </Flex>
       </Dialog.Content>
     </Dialog.Root>

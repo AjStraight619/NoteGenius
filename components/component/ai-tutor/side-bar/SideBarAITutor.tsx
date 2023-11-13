@@ -21,18 +21,19 @@ import {
   Tooltip,
 } from "@radix-ui/themes";
 import {
+  useEffect,
   experimental_useOptimistic as useOptimistic,
-  useReducer,
   useState,
 } from "react";
 import SideBarToggle from "../../sidebar-buttons/SideBarToggle";
 
-import { useFileSelection } from "@/hooks/useFileSelection";
 // import useManageData from "@/hooks/useManageData";
 import { useChatSelectionContext } from "@/app/contexts/ChatSelectionProvider";
-import { FileAction, FileState } from "@/types/otherTypes";
 import FileView from "../views/FileView";
 import FolderDropDown from "../views/FolderDropDown";
+
+import { useFileContext } from "@/app/contexts/FileSelectionProvider";
+import { useFileSelection } from "@/hooks/useFileSelection";
 
 type sideBarAITutorProps = {
   chats: ChatWithMessages[] | undefined;
@@ -47,59 +48,6 @@ export type SelectChatProps = {
   title: string;
   id: string;
 };
-
-function reducer(state: FileState, action: FileAction): FileState {
-  switch (action.type) {
-    case "ADD_FILE":
-      return {
-        ...state,
-        files: [...state.files, ...action.payload],
-      };
-    case "REMOVE_FILE":
-      return {
-        ...state,
-        files: state.files.filter((file) => file.id !== action.payload.id),
-      };
-    case "UPDATE_FILE":
-      return {
-        ...state,
-        files: state.files.map((file) =>
-          file.id === action.payload.id ? action.payload : file
-        ),
-      };
-    case "ADD_LINK":
-      return {
-        ...state,
-        links: [...(state.links || []), ...action.payload],
-      };
-    case "REMOVE_LINK":
-      return {
-        ...state,
-        links: state.links.filter(
-          (link) =>
-            link.chatId !== action.payload.chatId ||
-            link.fileId !== action.payload.fileId
-        ),
-      };
-    case "UPDATE_LINK":
-      return {
-        ...state,
-        links: state.links.map((link) =>
-          link.chatId === action.payload.oldLink.chatId &&
-          link.fileId === action.payload.oldLink.fileId
-            ? action.payload.newLink
-            : link
-        ),
-      };
-    case "PROCESSING_FILE":
-      return {
-        ...state,
-        processing: action.payload,
-      };
-    default:
-      return state;
-  }
-}
 
 const SideBarAITutor = ({
   chats,
@@ -118,15 +66,19 @@ const SideBarAITutor = ({
     FolderWithFiles | undefined
   >(undefined);
   const { selectedChat, selectChat } = useChatSelectionContext();
-  const { selectedFile, selectFile } = useFileSelection(files, mostRecentFile);
 
-  const initialState: any = { files: [], processing: false };
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const { state, dispatch } = useFileContext();
 
   const { initialMessages } = useInitialMessages({
     chatId: selectedChat?.id,
     messages: selectedChat,
   });
+
+  useEffect(() => {
+    console.log("component sidebar ai-tutor re rendered re rendered");
+  }, []);
+
+  const { selectFile, selectedFile } = useFileSelection(files, mostRecentFile);
 
   const [optimisticChats, addOptimisticChats] = useOptimistic(
     chats,
@@ -173,14 +125,7 @@ const SideBarAITutor = ({
             <Box width={"100%"} pb={"2"}>
               <Separator size={"4"} />
             </Box>
-            <Links
-              selectedFile={selectedFile}
-              selectedChat={selectedChat}
-              dispatch={dispatch}
-              links={links}
-              files={files}
-              chats={chats}
-            />
+            <Links links={links} files={files} chats={chats} />
           </>
         );
       default:
@@ -264,14 +209,11 @@ const SideBarAITutor = ({
             folders={folders}
             selectedChatId={selectedChat?.id || mostRecentChat?.id}
             selectedFolder={selectedFolder}
-            selectedFile={selectedFile}
             setSelectedFolder={setSelectedFolder}
             initialMessages={initialMessages || mostRecentChat}
             isProcessing={isProcessing}
             setIsProcessing={setIsProcessing}
             addOptimisticFiles={addOptimisticFiles}
-            state={state.files}
-            dispatch={dispatch}
             optimisticFiles={optimisticFiles}
             links={links}
             chats={optimisticChats}

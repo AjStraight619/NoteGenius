@@ -18,7 +18,7 @@ export type Link = {
   chatId: string;
   fileId: string;
   chat: ChatWithMessages; // Chat including its messages
-  file: UIFile; // File details
+  file?: UIFile; // Optional file
 };
 
 export interface ChatMessage extends PrismaChatMessage {}
@@ -43,7 +43,7 @@ export type FolderWithFiles = Folder & { files: UIFile[] };
 export type FileState = {
   files: UIFile[];
   processing: boolean;
-  links: Link[];
+  links?: Link[]; // Optional links on FileState
 };
 
 export type FileAction =

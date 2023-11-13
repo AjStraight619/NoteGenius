@@ -9,22 +9,23 @@ import {
 import { useRef } from "react";
 import { v4 as uuid } from "uuid";
 
-import { FileAction, UIFile } from "@/types/otherTypes";
+import { FileAction, FileState, UIFile } from "@/types/otherTypes";
 import AddFileButton from "./AddFileButton";
 
 type ConvertFileContentToTextProps = {
+  // This is not necessary
   setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
-  files: UIFile[] | undefined;
+  files: UIFile[] | undefined; // same
   dispatch: React.Dispatch<FileAction>;
-  state: UIFile[] | undefined;
+  state: FileState | undefined; // same
   className?: string;
 };
 export const ConvertFileToText = ({
   setIsProcessing,
   dispatch,
-  files,
-  className,
   state,
+  className,
+  files,
 }: ConvertFileContentToTextProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileInputRefForm = useRef<HTMLFormElement>(null);
@@ -34,7 +35,7 @@ export const ConvertFileToText = ({
       const selectedFiles: UIFile[] = [];
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        if (files && isDuplicateFile(file, state || [])) continue;
+        if (files && isDuplicateFile(file, state?.files || [])) continue;
 
         let content = "";
         let jpegFile: File | null = null;
@@ -69,8 +70,9 @@ export const ConvertFileToText = ({
           updatedAt: new Date(),
           folderId: null,
           userId: "",
-
           math: false,
+          processed: null,
+          noteId: null,
         });
       }
       dispatch({ type: "ADD_FILE", payload: selectedFiles });
@@ -111,13 +113,8 @@ export const ConvertFileToText = ({
   };
 
   const extractTextFromPdf = async (file: File): Promise<string> => {
-    console.log("Uploaded file:", file);
-
     const formData = new FormData();
     formData.append("file", file);
-
-    // Log the content of the FormData to ensure the file has been appended correctly
-    console.log("FormData contents:", [...formData.entries()]);
 
     let res: Response;
     try {

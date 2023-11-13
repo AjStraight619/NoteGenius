@@ -202,6 +202,7 @@ export const getMostRecentFile = async () => {
     },
     include: {
       folder: true,
+      chats: true,
     },
   });
 
@@ -244,4 +245,38 @@ export const getAllChatsWithFiles = async () => {
 
   revalidatePath("/ai-tutor");
   return chats;
+};
+
+export const getAllNotesWithFilesAndChats = async () => {
+  const userId = (await getSession()) as unknown as string;
+  const notes = await prisma.note.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      files: true,
+      chats: true,
+    },
+  });
+
+  revalidatePath("/ai-tutor");
+  return notes;
+};
+
+export const getMathResponses = async () => {
+  const userId = (await getSession()) as unknown as string;
+  const mathResponses = await prisma.mathResponse.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      chat: true,
+      file: true,
+    },
+  });
+
+  console.log("mathResponses", mathResponses);
+
+  revalidatePath("/ai-tutor");
+  return mathResponses;
 };
