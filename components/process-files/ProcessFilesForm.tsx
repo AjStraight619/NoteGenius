@@ -55,9 +55,6 @@ const ProcessFilesForm = ({
     title: selectedChat?.title || "",
   });
   const [linkedFiles, setLinkedFiles] = useState<LinkedFileInfo[]>([]);
-  const [popoverOpenStates, setPopoverOpenStates] = useState<
-    Record<string, boolean>
-  >({});
   const togglePopover = (fileId: string, isOpen: boolean) => {
     setCurrentOpenPopoverId(isOpen ? fileId : null);
   };
@@ -65,8 +62,6 @@ const ProcessFilesForm = ({
   const [currentOpenPopoverId, setCurrentOpenPopoverId] = useState<
     string | null
   >(null);
-
-  const [openOptions, setOpenOptions] = useState(false);
 
   const initialFilesWithCheckStatus: FileWithCheckStatus[] =
     state?.files.map((file) => ({
@@ -92,9 +87,6 @@ const ProcessFilesForm = ({
       chats?.find((chat) => chat.id === chatId)?.title || "Unknown Chat";
     const fileName =
       state.files.find((file) => file.id === fileId)?.name || "Unknown File";
-
-    console.log("chatName", chatName);
-    console.log("fileName", fileName);
 
     return {
       chatName,

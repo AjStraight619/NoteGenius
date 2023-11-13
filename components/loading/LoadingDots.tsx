@@ -15,3 +15,5 @@ function LoadingDots({ className }: LoadingDotsProps) {
 }
 
 export default LoadingDots;
+
+// className="left-2 bottom-6 absolute"

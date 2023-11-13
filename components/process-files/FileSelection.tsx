@@ -4,7 +4,11 @@ import { UIFile } from "@/types/otherTypes";
 import { useRef } from "react";
 import AddFileButton from "../component/ai-tutor/add-file/AddFileButton";
 
-const FileSelection = () => {
+type FileSelectionProps = {
+  className?: string;
+};
+
+const FileSelection = ({ className }: FileSelectionProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const { dispatch } = useFileContext();
 
@@ -43,7 +47,10 @@ const FileSelection = () => {
         onChange={handleFileChange}
         hidden
       />
-      <AddFileButton onClick={() => fileRef.current?.click()} />
+      <AddFileButton
+        onClick={() => fileRef.current?.click()}
+        className={className}
+      />
     </>
   );
 };

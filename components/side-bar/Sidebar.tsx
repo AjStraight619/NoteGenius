@@ -17,8 +17,8 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
           style={{
             height: "100vh",
             overflowY: "auto",
-            maxWidth: "200px",
-            width: "15vw",
+            maxWidth: "250px",
+            width: "20vw",
             minWidth: "150px",
           }}
           className={`bg-gray-1 border-r border-gray-3 p-3 transition shadow ${

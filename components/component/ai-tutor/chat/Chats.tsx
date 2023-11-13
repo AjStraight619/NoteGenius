@@ -1,6 +1,7 @@
 "use client";
 import { useFileContext } from "@/app/contexts/FileSelectionProvider";
 import LoadingDots from "@/components/loading/LoadingDots";
+import FileSelection from "@/components/process-files/FileSelection";
 import { AssistantAvatar, UserAvatar } from "@/components/ui/Avatars";
 import useMathResponse, { MathResponseProps } from "@/hooks/useMathResponse";
 import {
@@ -21,7 +22,6 @@ import {
 import { Message, useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ConvertFileToText } from "../add-file/ConvertFileContentToText";
 import AddFolder from "../utility-buttons/AddFolder";
 import StackButtonDialog from "../views/StackButtonDialog";
 import "./styles.css";
@@ -48,6 +48,8 @@ type ChatsProps = {
   links: Link[] | undefined;
   chats: ChatWithMessages[] | undefined;
 };
+
+const SCROLL_THRESHOLD = 100;
 
 function adjustTextAreaHeight(textArea: any) {
   const maxHeight = window.innerHeight * 0.25;
@@ -162,11 +164,11 @@ export default function Chats({
   }, [initialMessages, messages]);
 
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    if (isAutoScrollEnabled && scrollContainerRef.current) {
+      const { scrollHeight } = scrollContainerRef.current;
+      scrollContainerRef.current.scrollTop = scrollHeight;
     }
-  }, [displayMessages]);
+  }, [isAutoScrollEnabled, displayMessages]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isLoading) return;
@@ -186,9 +188,14 @@ export default function Chats({
 
     const { scrollTop, scrollHeight, clientHeight } =
       scrollContainerRef.current;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
 
-    setIsAutoScrollEnabled(isAtBottom);
+    // Check if the user is within the threshold from the bottom
+    if (distanceFromBottom <= SCROLL_THRESHOLD) {
+      setIsAutoScrollEnabled(true);
+    } else {
+      setIsAutoScrollEnabled(false);
+    }
   };
 
   return (
@@ -222,7 +229,7 @@ export default function Chats({
                   msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
                 }`}
               >
-                <Box className="w-1/3 py-5 px-4">
+                <Box className="w-1/2 py-5 px-4">
                   <Flex
                     direction="row"
                     justify="start"
@@ -273,7 +280,7 @@ export default function Chats({
           </Box>
         </Flex>
 
-        <Box className="w-1/3 relative">
+        <Box className="w-1/2 relative">
           <form onSubmit={handleSubmit}>
             <div className="container">
               <TextArea
@@ -311,13 +318,7 @@ export default function Chats({
             )}
           </form>
 
-          <ConvertFileToText
-            setIsProcessing={setIsProcessing}
-            state={state}
-            dispatch={dispatch}
-            className="left-2 bottom-6 absolute"
-            files={state.files}
-          />
+          <FileSelection className="left-2 bottom-6 absolute" />
         </Box>
       </Flex>
     </Flex>
