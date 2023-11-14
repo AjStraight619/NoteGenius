@@ -14,19 +14,13 @@ const SideBarToggle = ({
   className,
 }: SideBarToggleProps) => {
   return (
-    <div
-      className={`z-50  ${className}`}
-      // style={{
-      //   left: isSideBarOpen ? "140px" : "10px",
-      //   top: isSideBarOpen ? "13px" : "10px",
-      //   position: "fixed",
-      // }}
-    >
+    <div className={`z-50  ${className}`}>
       <IconButton
         onClick={toggleSidebar}
         size={"2"}
         variant="outline"
         radius="medium"
+        className="hover:cursor-pointer"
       >
         <HamburgerMenuIcon width={"20px"} height={"20px"} />
       </IconButton>

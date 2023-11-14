@@ -14,11 +14,11 @@
   }
    */
   
-  .rt-IconButton:hover {
+  /* .rt-IconButton:hover {
     background-color: transparent; 
     transform: scale(1.05); 
     box-shadow: 0 4px 12px rgba(34, 0, 224, 0.08); 
-  }
+  } */
 
 
   @keyframes fadeIn {

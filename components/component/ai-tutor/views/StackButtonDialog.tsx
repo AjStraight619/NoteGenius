@@ -50,7 +50,11 @@ const StackButtonDialog = ({
     <Dialog.Root open={open} onOpenChange={setOpen} key={state?.files.length}>
       <Dialog.Trigger>
         <IconButton variant="ghost" className="relative">
-          <StackIcon width={"25px"} height={"25px"} />
+          <StackIcon
+            width={"25px"}
+            height={"25px"}
+            className="hover:cursor-pointer"
+          />
           <Box className="absolute left-7 bottom-5 bg-indigo-3 rounded-l-3 rounded-r-3 rounded-t-3 rounded-b-3 p-1.5  min-w-4 flex items-center justify-center">
             <Text size="1">{state?.files.length}</Text>
           </Box>

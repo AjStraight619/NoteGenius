@@ -21,7 +21,11 @@ const FolderDropDown = ({
       <DropdownMenu.Trigger>
         <Box className="flex justify-start">
           <Tooltip content="Folders">
-            <IconButton variant="ghost" onClick={() => setView("folders")}>
+            <IconButton
+              variant="ghost"
+              onClick={() => setView("folders")}
+              className="hover:cursor-pointer"
+            >
               <FaFolder className="w-6 h-6" />
               <CaretDownIcon />
             </IconButton>

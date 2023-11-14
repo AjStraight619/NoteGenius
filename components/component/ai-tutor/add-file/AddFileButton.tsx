@@ -15,7 +15,7 @@ export default function AddFileButton({
       <IconButton
         radius="medium"
         variant="ghost"
-        className={`${className}`}
+        className={`${className} hover:cursor-pointer`}
         size={"1"}
         onClick={onClick}
       >

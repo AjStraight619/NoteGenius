@@ -1,4 +1,4 @@
-import { Box, Flex } from "@radix-ui/themes";
+import { Box, Flex, ScrollArea } from "@radix-ui/themes";
 import React from "react";
 import "./sidebar.css";
 
@@ -21,19 +21,22 @@ const Sidebar = ({ children, isSidebarOpen }: SidebarProps) => {
             width: "20vw",
             minWidth: "150px",
           }}
-          className={`bg-gray-1 border-r border-gray-3 p-3 transition shadow ${
+          className={`bg-gray-1 border-r border-gray-3 py-2 transition shadow overflow-x-hidden flex-shrink-0 absolute overflow-y-auto ${
             isSidebarOpen ? "sidebar-open" : "sidebar-closed"
           }`}
         >
-          <Flex
-            direction={"column"}
-            justify={"between"}
-            align={"center"}
-            className="space-y-2"
-            gap={"2"}
-          >
-            {isSidebarOpen && children}
-          </Flex>
+          <ScrollArea>
+            <Flex
+              direction={"column"}
+              justify={"between"}
+              align={"center"}
+              className="space-y-2"
+              gap={"2"}
+              p={"2"}
+            >
+              {isSidebarOpen && children}
+            </Flex>
+          </ScrollArea>
         </Box>
       )}
     </>

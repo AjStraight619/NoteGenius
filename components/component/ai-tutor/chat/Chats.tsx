@@ -11,14 +11,7 @@ import {
   UIFile,
 } from "@/types/otherTypes";
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
-import {
-  Box,
-  Flex,
-  IconButton,
-  ScrollArea,
-  Text,
-  TextArea,
-} from "@radix-ui/themes";
+import { Box, Flex, IconButton, ScrollArea, Text } from "@radix-ui/themes";
 import { Message } from "ai";
 import { useChat } from "ai/react";
 import { useSession } from "next-auth/react";
@@ -159,6 +152,8 @@ export default function Chats({
     };
   }, [selectedChatId, stop, setMessages]);
 
+  console.log("initial messages", initialMessages);
+
   const displayMessages = useMemo(() => {
     return [...(initialMessages?.chatMessages || []), ...messages];
   }, [initialMessages, messages]);
@@ -222,17 +217,17 @@ export default function Chats({
   };
 
   return (
-    <Flex>
-      <ScrollArea
-        type="always"
-        scrollbars="vertical"
-        ref={scrollContainerRef}
-        className="md:scroll-auto"
-        onScroll={handleScroll}
-        style={{ height: "100vh" }}
-      >
+    <ScrollArea
+      type="always"
+      scrollbars="vertical"
+      ref={scrollContainerRef}
+      className="md:scroll-auto"
+      onScroll={handleScroll}
+      style={{ height: "100vh" }}
+    >
+      <div className="flex flex-col">
         {currentLink && (
-          <div className="w-full p-4  my-4">
+          <div className="w-full p-4 my-4">
             <Flex justify={"center"} align={"center"}>
               <Box className="p-4 border border-gray-3 rounded-lg overflow-auto bg-gray-5">
                 <Text size={"2"} className="break-words whitespace-pre-wrap">
@@ -242,108 +237,88 @@ export default function Chats({
             </Flex>
           </div>
         )}
-        <ul className="w-full pb-12 mb-4 pr-3">
-          {displayMessages
-            .filter((msg) => msg.role !== "system")
-            .map((msg) => (
-              <li
-                key={msg.id}
-                className={`flex justify-center items-center w-full my-4  ${
-                  msg.role === "assistant" ? "bg-gray-3" : "bg-gray-1"
-                }`}
-              >
-                <Box className="w-1/2 py-5 px-4">
-                  <Flex
-                    direction="row"
-                    justify="start"
-                    align="start"
-                    className="whitespace-pre-line"
-                    gap="3"
-                  >
-                    <div
-                      className="shadow-5"
-                      style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
-                    >
+        <div className="w-full flex justify-center pt-6 pb-20">
+          <div className="max-w-[700px] w-full">
+            <ul className="space-y-4">
+              {displayMessages
+                .filter((msg) => msg.role !== "system")
+                .map((msg) => (
+                  <li key={msg.id} className="flex flex-col items-start py-5">
+                    <div className="flex gap-3 whitespace-pre-line">
                       {msg.role === "user" ? (
                         <UserAvatar name={session?.user?.name} />
                       ) : (
                         <AssistantAvatar />
                       )}
+                      <Text size={"2"}>{msg.content}</Text>
                     </div>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
+        <div className="absolute bottom-0 w-full pt-8 md:pt-0 border-t md:border-t-0">
+          <div className="flex justify-center items-center ml-2">
+            <div className="flex gap-2 mr-4">
+              <AddFolder folders={folders} />
 
-                    <Text size={"2"}>{msg.content}</Text>
-                  </Flex>
-                </Box>
-              </li>
-            ))}
-        </ul>
-      </ScrollArea>
-      <Flex
-        justify={"center"}
-        bottom={"0"}
-        width={"100%"}
-        position={"absolute"}
-        gap={"2"}
-      >
-        <Flex gap={"3"} mt={"2"} pr={"3"}>
-          <AddFolder folders={folders} />
-
-          <Box mr={"3"}>
-            <StackButtonDialog
-              folders={folders}
-              isProcessing={isProcessing}
-              addOptimisticFiles={addOptimisticFiles}
-              optimisticFiles={optimisticFiles}
-              dispatch={dispatch}
-              setSelectedFolder={setSelectedFolder || undefined}
-              selectedFolder={selectedFolder}
-              chats={chats}
-              setIsProcessing={setIsProcessing}
-            />
-          </Box>
-        </Flex>
-
-        <Box className="w-1/2 relative">
-          <form onSubmit={handleSubmit}>
-            <div className="container">
-              <TextArea
-                style={{
-                  backgroundColor: "#1A1A1A",
-                  paddingLeft: "2.1rem",
-                  paddingTop: "1rem",
-                  fontSize: "0.8rem",
-                  paddingRight: "2.6rem",
-                }}
-                variant="classic"
-                placeholder=""
-                className="shadow-md max-h-1/4-screen overflow-y-auto z-10 "
-                size={"1"}
-                mb={"2"}
-                value={input}
-                onChange={handleTextAreaChange}
-                onInput={handleTextAreaChange}
-                onKeyDown={handleKeyDown}
+              <StackButtonDialog
+                folders={folders}
+                isProcessing={isProcessing}
+                addOptimisticFiles={addOptimisticFiles}
+                optimisticFiles={optimisticFiles}
+                dispatch={dispatch}
+                setSelectedFolder={setSelectedFolder || undefined}
+                selectedFolder={selectedFolder}
+                chats={chats}
+                setIsProcessing={setIsProcessing}
               />
             </div>
 
-            {!isLoading ? (
-              <IconButton
-                radius="medium"
-                variant="solid"
-                type="submit"
-                className="right-2 bottom-5 absolute text-4"
-                disabled={isLoading}
-              >
-                <PaperPlaneIcon />
-              </IconButton>
-            ) : (
-              <LoadingDots className="right-2 bottom-4 absolute" />
-            )}
-          </form>
+            <form
+              className="items-stretch mx-2 flex flex-row last:mb-2 md:mx-4 md:last:mb-6 lg:max-w-2xl xl:max-w-3xl flex-1 "
+              onSubmit={handleSubmit}
+            >
+              <div className="relative flex h-full flex-1 items-stretch md:flex-col">
+                <div className="flex w-full items-center focus:ring-2">
+                  <textarea
+                    style={{
+                      backgroundColor: "#1A1A1A",
+                      maxHeight: "200px",
+                      height: "65px",
+                      overflowY: "hidden",
+                      paddingLeft: "2.5rem",
+                    }}
+                    rows={1}
+                    placeholder="Message Note Genius..."
+                    className="shadow-md max-h-1/4-screen overflow-y-hidden w-full resize-none m-0 border-0 py-2 pr-10 md:py-4 dark:bg-transparent md:pr-12 bg-[#1A1A1A] text-[#b9b9c2] placeholder-[#8e8ea0] rounded-3 focus:ring-2 focus:ring-indigo-5 focus:outline-none text-base leading-6"
+                    value={input}
+                    onChange={handleTextAreaChange}
+                    onInput={handleTextAreaChange}
+                    onKeyDown={handleKeyDown}
+                    tabIndex={0}
+                  />
 
-          <FileSelection className="left-2 bottom-6 absolute" />
-        </Box>
-      </Flex>
-    </Flex>
+                  {!isLoading ? (
+                    <IconButton
+                      radius="medium"
+                      variant="solid"
+                      type="submit"
+                      className="right-2 bottom-4 absolute text-4 hover:cursor-pointer"
+                      disabled={isLoading}
+                    >
+                      <PaperPlaneIcon />
+                    </IconButton>
+                  ) : (
+                    <LoadingDots className="right-2 bottom-4 absolute" />
+                  )}
+                  <FileSelection className="left-2 bottom-5 absolute" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </ScrollArea>
   );
 }

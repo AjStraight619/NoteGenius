@@ -18,7 +18,7 @@ export const addChat = async (formData: FormData) => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return {
     addedChat,
   };
@@ -33,7 +33,7 @@ export const deleteChat = async (chatId: string) => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return {
     deletedChat,
   };
@@ -55,7 +55,7 @@ export const addChatMessage = async (
       },
     },
   });
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
 
   return addedChatMessage;
 };
@@ -79,7 +79,7 @@ export const getMostRecentChatMessages = async () => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
 
   return chat;
 };
@@ -102,7 +102,7 @@ export const getChats = async () => {
       files: true,
     },
   });
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
 
   return chats;
 };
@@ -121,7 +121,7 @@ export const getFolders = async () => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
 
   return folders;
 };
@@ -182,7 +182,7 @@ export const addFile = async (formData: FormData) => {
   try {
     const addedFiles = await Promise.all(fileCreationPromises);
     // Presumably, revalidatePath is a function you have defined elsewhere to refresh some data.
-    revalidatePath("/ai-tutor");
+    revalidatePath("/chat");
     return {
       addedFiles,
     };
@@ -207,7 +207,7 @@ export const getMostRecentFile = async () => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return file;
 };
 
@@ -226,7 +226,7 @@ export const addFolder = async (formData: FormData) => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return {
     addedFolder,
   };
@@ -244,7 +244,7 @@ export const getAllChatsWithFiles = async () => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return chats;
 };
 
@@ -260,7 +260,7 @@ export const getAllNotesWithFilesAndChats = async () => {
     },
   });
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return notes;
 };
 
@@ -278,6 +278,6 @@ export const getMathResponses = async () => {
 
   console.log("mathResponses", mathResponses);
 
-  revalidatePath("/ai-tutor");
+  revalidatePath("/chat");
   return mathResponses;
 };

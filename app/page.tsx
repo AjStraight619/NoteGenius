@@ -46,9 +46,8 @@ export default async function Home() {
       </nav>
 
       <main className="flex-grow p-8">
-        <Section size="3"></Section>
         <Section size="3" className="mt-5 flex justify-center">
-          <Link href="/ai-tutor" passHref>
+          <Link href="/chat" passHref>
             <Button radius="medium" size="3">
               Chat with Note Genius
             </Button>

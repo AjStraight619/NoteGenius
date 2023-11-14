@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     experimental: {
-        serverActions: true,
-        serverComponentsExternalPackages: ['pdf2json', 'node-magickwand']
+        serverComponentsExternalPackages: ['pdf2json']
     },
         images: {
         domains: ['www6b3.wolframalpha.com']

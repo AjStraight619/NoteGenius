@@ -13,7 +13,7 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <Button size={"2"} variant={"outline"}>
+        <Button size={"2"} variant={"outline"} className="hover:cursor-pointer">
           <Text size={"1"}>New Chat</Text>
           <PlusIcon />
         </Button>
@@ -30,7 +30,7 @@ const AddChatDialog = ({ addOptimisticChats }: any) => {
         <Dialog.Close>
           <IconButton
             variant="ghost"
-            className="absolute top-2 right-2"
+            className="absolute top-2 right-2 hover:cursor-pointer"
             onClick={handleClose}
           >
             <Cross2Icon />

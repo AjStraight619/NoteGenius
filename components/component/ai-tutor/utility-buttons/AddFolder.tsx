@@ -40,7 +40,11 @@ const AddFolder = ({ folders }: any) => {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Tooltip content="Add Folder">
         <Dialog.Trigger>
-          <IconButton radius={"medium"} variant={"ghost"}>
+          <IconButton
+            radius={"medium"}
+            variant={"ghost"}
+            className="hover:cursor-pointer"
+          >
             <FolderPlusIcon className="w-6 h-6" />
           </IconButton>
         </Dialog.Trigger>

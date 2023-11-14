@@ -6,7 +6,7 @@ import {
   getMostRecentChatMessages,
   getMostRecentFile,
 } from "@/actions/actions";
-import SideBarAITutor from "@/components/component/ai-tutor/side-bar/SideBarAITutor";
+import ChatComponent from "@/components/component/chat/ChatComponent";
 import { ChatWithMessages, Link, UIFile } from "@/types/otherTypes";
 import { getSession } from "@/utils/getSession";
 import { redirect } from "next/navigation";
@@ -32,6 +32,8 @@ const ChatPage = async () => {
   const mathResponses = await getMathResponses();
   console.log("links", links);
 
+  console.log("chats", chats);
+
   const filesWithFolderInfo: UIFile[] | undefined = folders?.flatMap((folder) =>
     folder.files.map((file) => ({
       ...file,
@@ -39,19 +41,19 @@ const ChatPage = async () => {
     }))
   );
 
-  console.log("These are the math responses", mathResponses);
-
   return (
     <ChatSelectionProvider chats={chats} initialChat={mostRecentChat}>
       <FileProvider>
-        <SideBarAITutor
-          chats={chats}
-          mostRecentChat={mostRecentChat}
-          folders={folders}
-          files={filesWithFolderInfo}
-          mostRecentFile={mostRecentFile}
-          links={links}
-        />
+        <div className="overflow-hidden flex h-full w-full relative z-0">
+          <ChatComponent
+            chats={chats}
+            folders={folders}
+            mostRecentChat={mostRecentChat}
+            files={filesWithFolderInfo}
+            mostRecentFile={mostRecentFile}
+            links={links}
+          />
+        </div>
       </FileProvider>
     </ChatSelectionProvider>
   );
