@@ -28,12 +28,7 @@ const ChatPage = async () => {
   folders = await getFolders();
   const chatsWithFiles = await getAllChatsWithFiles();
   const links = transformToLinks(chatsWithFiles);
-
   const mathResponses = await getMathResponses();
-  console.log("links", links);
-
-  console.log("chats", chats);
-
   const filesWithFolderInfo: UIFile[] | undefined = folders?.flatMap((folder) =>
     folder.files.map((file) => ({
       ...file,
