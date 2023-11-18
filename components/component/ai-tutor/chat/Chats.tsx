@@ -102,14 +102,6 @@ export default function Chats({
   } = useChat({
     api: "api/chat",
     id: selectedChatId,
-    // If a math problem is specified, use the wolfram alpha response as the initial input
-    initialMessages: [
-      {
-        id: "",
-        role: "system",
-        content: "", // This is where the initial input for gpt will go, it will include the iniital problem, and the necessary information from the wolfram alpha response, i.e the answer, and the steps to solve the problem
-      },
-    ],
 
     onFinish: async () => {
       const messageData = {
@@ -291,7 +283,7 @@ export default function Chats({
                     }}
                     rows={1}
                     placeholder="Message Note Genius..."
-                    className="shadow-md max-h-1/4-screen overflow-y-hidden w-full resize-none m-0 border-0 py-2 pr-10 md:py-4 dark:bg-transparent md:pr-12 bg-[#1A1A1A] text-[#b9b9c2] placeholder-[#8e8ea0] rounded-3 focus:ring-2 focus:ring-indigo-5 focus:outline-none text-base leading-6"
+                    className="shadow-md max-h-1/4-screen overflow-y-hidden w-full resize-none m-0 border-0 py-2 pr-10 md:py-4 dark:bg-transparent md:pr-12 bg-[#1A1A1A] text-[#b9b9c2] placeholder-[#8e8ea0] rounded-3 focus:ring-2 focus:ring-indigo-5 focus:outline-none text-base leading-6 "
                     value={input}
                     onChange={handleTextAreaChange}
                     onInput={handleTextAreaChange}
