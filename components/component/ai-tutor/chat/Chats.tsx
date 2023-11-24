@@ -16,8 +16,6 @@ import { Message } from "ai";
 import { useChat } from "ai/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import AddFolder from "../utility-buttons/AddFolder";
-import StackButtonDialog from "../views/StackButtonDialog";
 import "./styles.css";
 
 export type GPTInitialMessage = {
@@ -229,13 +227,16 @@ export default function Chats({
             </Flex>
           </div>
         )}
-        <div className="w-full flex justify-center pt-6 pb-20">
-          <div className="max-w-[700px] w-full">
+        <div className="w-full flex  pt-6 pb-20">
+          <div className="max-w-[700px] w-full mx-auto">
             <ul className="space-y-4">
               {displayMessages
                 .filter((msg) => msg.role !== "system")
                 .map((msg) => (
-                  <li key={msg.id} className="flex flex-col items-start py-5">
+                  <li
+                    key={msg.id}
+                    className="flex flex-col items-start justify-start py-5"
+                  >
                     <div className="flex gap-3 whitespace-pre-line">
                       {msg.role === "user" ? (
                         <UserAvatar name={session?.user?.name} />
@@ -252,7 +253,7 @@ export default function Chats({
         <div className="absolute bottom-0 w-full pt-8 md:pt-0 border-t md:border-t-0">
           <div className="flex justify-center items-center ml-2">
             <div className="flex gap-2 mr-4">
-              <AddFolder folders={folders} />
+              {/* <AddFolder folders={folders} />
 
               <StackButtonDialog
                 folders={folders}
@@ -264,7 +265,7 @@ export default function Chats({
                 selectedFolder={selectedFolder}
                 chats={chats}
                 setIsProcessing={setIsProcessing}
-              />
+              /> */}
             </div>
 
             <form
